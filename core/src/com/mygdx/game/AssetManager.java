@@ -19,7 +19,7 @@ public class AssetManager {
     public static BitmapFont font;
 
     public static void load() {
-        imgFondo = new Texture(Gdx.files.internal("fondo.jpg"));
+        imgFondo = new Texture(Gdx.files.internal("fondo2.jpg"));
         imgFondo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
 
         background = new TextureRegion(imgFondo);
