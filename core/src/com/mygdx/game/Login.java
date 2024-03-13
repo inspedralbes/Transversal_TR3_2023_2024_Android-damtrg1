@@ -1,10 +1,14 @@
 package com.mygdx.game;
 
+import static com.badlogic.gdx.net.HttpRequestBuilder.json;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -18,25 +22,33 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
+
+
+import java.util.HashMap;
+
 import Utils.Settings;
 import objects.Background;
 
-public class RegisterScreen implements Screen {
+public class Login implements Screen {
+
+    Pixel_R6 game;
+
+    Background bg;
 
     Stage stage;
 
     OrthographicCamera camera;
 
-    Background bg;
-    private Skin skin, skin_windows;
-    Pixel_R6 game;
-
-    TextField Username, Password, Mail, FechaNA;
+    // Añade un Skin
+    Skin skin, skin_inputs;
 
 
-    public RegisterScreen(Pixel_R6 game) {
+    TextField Username, Password;
 
+
+    public Login(Pixel_R6 game) {
         this.game = game;
+
         AssetManager.load();
 
         // Creem la càmera de les dimensions del joc
@@ -51,19 +63,17 @@ public class RegisterScreen implements Screen {
 
         // Creem l'stage i assginem el viewport
         stage = new Stage(viewport);
-        Gdx.input.setInputProcessor(stage);
 
+        //CONFIGURACION DEL FONDO
         bg = new Background(0, 0, Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
 
         //AÑADIMOS EL FONDO AL STAGE
         stage.addActor(bg);
 
 
-
         //TITULO
         // Carga el Skin
         skin = new Skin(Gdx.files.internal("skin_txt/arcade-ui.json"));
-        skin_windows = new Skin(Gdx.files.internal("skin/uiskin.json"));
 
         // Registro del color blanco en el Skin
         Color blanco = Color.WHITE;
@@ -97,24 +107,98 @@ public class RegisterScreen implements Screen {
         stage.addActor(titleLabel);
 
 
-        //LABELS
-        // Obtener el estilo del Label del Skin
-        Label.LabelStyle labelStyle = skin_windows.get("title", Label.LabelStyle.class);
+        //BOTONES
+        // Cargar el Skin
+        skin_inputs = new Skin(Gdx.files.internal("skin/uiskin.json"));
 
-        // Crear una instancia de Label con el texto "Username" y el estilo definido
-        Label usernameLabel = new Label("Username", labelStyle);
+        TextButton.TextButtonStyle textButtonStyle = skin_inputs.get("round", TextButton.TextButtonStyle.class);
 
-        Label passwordLabel = new Label("Password", labelStyle);
+        // Crear instancia del TextButton con el estilo obtenido del Skin
+        TextButton btn_inicio = new TextButton("Inicio Sesion", textButtonStyle);
 
-        Label MailLabel = new Label("Correo", labelStyle);
 
-        Label fecha_nacimento = new Label("Fecha", labelStyle);
+        // Agregar un ClickListener al botón
+        btn_inicio.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                try {
+                    // Obtener el texto ingresado por el usuario en el TextField
+                    String nombreUsuario = Username.getText();
+                    String PasswordUsuario = Password.getText();
 
+
+                    // Imprimir el nombre de usuario por consola
+                    System.out.println("Nombre de usuario: " + nombreUsuario);
+                    System.out.println("Contraseña: " + PasswordUsuario);
+
+                    // Crear un HashMap para almacenar los datos del usuario
+                    HashMap<String, String> userData = new HashMap<>();
+                    userData.put("user", nombreUsuario);
+                    userData.put("pwd", PasswordUsuario);
+
+                    // Convertir el HashMap a JSON
+                    String jsonString = json.toJson(userData);
+
+                    System.out.println(jsonString);
+
+                    // Crear una solicitud HTTP POST
+                    Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+                    httpRequest.setUrl("http://192.168.206.255:3169/login"); // URL de tu servidor
+                    httpRequest.setHeader("Content-Type", "application/json");
+                    httpRequest.setContent(jsonString);
+
+                    // Enviar la solicitud al servidor
+                    Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
+                        @Override
+                        public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                            System.out.println("Respuesta: "+httpResponse);
+                            HttpStatus status = httpResponse.getStatus();
+                            if (status.getStatusCode() == HttpStatus.SC_OK) {
+                                // La solicitud fue exitosa
+                                System.out.println("Solicitud exitosa");
+                                // Puedes manejar la respuesta del servidor aquí
+                            } else {
+                                // La solicitud no fue exitosa
+                                System.out.println("Error en la solicitud: " + status.getStatusCode());
+                            }
+                        }
+
+                        @Override
+                        public void failed(Throwable t) {
+                            // Ocurrió un error al enviar la solicitud
+                            System.out.println("Error al enviar la solicitud: " + t.getMessage());
+                        }
+
+                        @Override
+                        public void cancelled() {
+                            // La solicitud fue cancelada
+                            System.out.println("Solicitud cancelada");
+                        }
+                    });
+
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        // Crear instancia del TextButton con el estilo obtenido del Skin
+        TextButton btn_registrar = new TextButton("Registrar", textButtonStyle);
+
+        btn_registrar.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("PANTALLA REGISTRO");
+                game.setScreen(new RegisterScreen(game));
+            }
+        });
 
 
         //INPUTS
         // Obtener el estilo del TextField del Skin
-        TextField.TextFieldStyle textFieldStyle = skin_windows.get("default", TextField.TextFieldStyle.class);
+        TextField.TextFieldStyle textFieldStyle = skin_inputs.get("default", TextField.TextFieldStyle.class);
 
         // Crear una instancia de TextField con el estilo obtenido
         Username = new TextField("Ingrese nombre", textFieldStyle);
@@ -160,50 +244,22 @@ public class RegisterScreen implements Screen {
             }
         });
 
-        Mail =  new TextField("Ingrese su correo", textFieldStyle);
 
-        Mail.addListener(new InputListener(){
-            @Override
-            public boolean keyDown(InputEvent event, int keycode) {
-                if (Mail.getText().equals("Ingrese Password")) {
-                    // Si lo es, borrar el texto
-                    Mail.setText("");
-                } else {
-                    // Procesa los datos ingresados por el usuario
-                    String passwordInput = Mail.getText();
-                    // Aquí puedes hacer algo con los datos ingresados, como validación o procesamiento.
-                    // Limpiar el TextField después de procesar los datos (opcional)
-                    Mail.setText(passwordInput);
-                }
-                return true;
-            }
-        });
+        //LABELS
+        // Obtener el estilo del Label del Skin
+        Label.LabelStyle labelStyle = skin_inputs.get("title", Label.LabelStyle.class);
 
-        FechaNA =  new TextField("Ingrese fecha de nacimiento", textFieldStyle);
-        FechaNA.addListener(new InputListener(){
-            @Override
-            public boolean keyDown(InputEvent event, int keycode) {
-                if (FechaNA.getText().equals("Ingrese Password")) {
-                    // Si lo es, borrar el texto
-                    FechaNA.setText("");
-                } else {
-                    // Procesa los datos ingresados por el usuario
-                    String passwordInput = FechaNA.getText();
-                    // Aquí puedes hacer algo con los datos ingresados, como validación o procesamiento.
-                    // Limpiar el TextField después de procesar los datos (opcional)
-                    FechaNA.setText(passwordInput);
-                }
-                return true;
-            }
-        });
+        // Crear una instancia de Label con el texto "Username" y el estilo definido
+        Label usernameLabel = new Label("Username", labelStyle);
 
+        Label passwordLabel = new Label("Password", labelStyle);
 
 
         //VENTANA
-        Window.WindowStyle windowStyle = skin_windows.get(Window.WindowStyle.class);
+        Window.WindowStyle windowStyle = skin_inputs.get(Window.WindowStyle.class);
 
         // Crea una instancia de Window con el estilo obtenido
-        Window window = new Window("Registrar", windowStyle);
+        Window window = new Window("Login", windowStyle);
         window.getTitleLabel().setAlignment(Align.center);
 
         // Obtén las dimensiones de la ventana del juego desde la clase Settings
@@ -223,46 +279,14 @@ public class RegisterScreen implements Screen {
         table.setFillParent(false); // La tabla ocupará todo el espacio del padre, que es la ventana en este caso
         window.add(table); // Agregar la tabla a la ventana
 
+        // Agregar los TextField a la tabla, uno debajo del otro
+        table.add(usernameLabel).pad(20);
+        table.add(Username).pad(20).prefSize(250, 50).row(); // La función row() indica que se moverá a la siguiente fila después de este componente
+        table.add(passwordLabel).pad(20);
+        table.add(Password).pad(20).prefSize(250, 50).row();
+
         // Agregar la ventana al Stage
         stage.addActor(window);
-
-        table.add(usernameLabel).pad(5).height(50);
-        table.add(Username).pad(5).prefSize(250, 50).row(); // La función row() indica que se moverá a la siguiente fila después de este componente
-        table.add(passwordLabel).pad(5).height(50);
-        table.add(Password).pad(5).prefSize(250, 50).row();
-        table.add(MailLabel).pad(5).height(50);
-        table.add(Mail).pad(5).prefSize(250,50).row();
-        table.add(fecha_nacimento).pad(5).height(50);
-        table.add(FechaNA).pad(5).prefSize(250,50).row();
-
-
-
-        //BOTONES
-        TextButton.TextButtonStyle textButtonStyle = skin_windows.get("round", TextButton.TextButtonStyle.class);
-
-        // Crear instancia del TextButton con el estilo obtenido del Skin
-        TextButton btn_registrarse = new TextButton("Registrarse", textButtonStyle);
-
-
-        // Agregar un ClickListener al botón
-        btn_registrarse.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                System.out.println("PANTALLA JUEGO");
-                game.setScreen(new GameSceen(game));
-            }
-        });
-
-        // Crear instancia del TextButton con el estilo obtenido del Skin
-        TextButton btn_volver = new TextButton("Volver", textButtonStyle);
-
-        btn_volver.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                System.out.println("PANTALLA PRINCIPAL");
-                game.setScreen(new Login(game));
-            }
-        });
 
 
         //POSICION BOTONES BAJO WINDOWS
@@ -270,74 +294,18 @@ public class RegisterScreen implements Screen {
         float btnY = windowY - 100; // Espacio vertical entre la ventana y los botones
 
         // Establecer la posición de los botones
-        btn_registrarse.setPosition(windowX + 10, btnY); // Posición del botón "Inicio Sesión"
-        btn_volver.setPosition(windowX + 270, btnY); // Posición del botón "Registrar"
+        btn_inicio.setPosition(windowX + 10, btnY); // Posición del botón "Inicio Sesión"
+        btn_registrar.setPosition(windowX + 250, btnY); // Posición del botón "Registrar"
 
         // Agregar los botones al Stage
-        stage.addActor(btn_registrarse);
-        stage.addActor(btn_volver);
+        stage.addActor(btn_inicio);
+        stage.addActor(btn_registrar);
 
         //PARA INTRODUCIR DATOS
         Gdx.input.setInputProcessor(stage);
 
-        /*
-        cuadratFons = new Image(AssetManager.imgCuadrado);
-        cuadratFons.setPosition(Settings.GAME_WIDTH / 2 - cuadratFons.getWidth() / 2, Settings.GAME_HEIGHT / 2 - cuadratFons.getHeight() / 2);
-
-        stage.addActor(cuadratFons);
-
-
-        Table table = new Table();
-        table.setFillParent(true);
-
-        TextField.TextFieldStyle tfs = new TextField.TextFieldStyle();
-        tfs.font = AssetManager.font;
-        tfs.fontColor = Color.BLACK; // Set a valid font color
-        tfs.cursor = new SpriteDrawable(new Sprite(new Texture(Gdx.files.internal("cursor.png")))); // Set a valid cursor
-
-
-        // Create text fields
-        usernameField = new TextField("", tfs);
-        passwordField = new TextField("", tfs);
-        passwordField.setPasswordMode(true);
-        passwordField.setPasswordCharacter('*');
-
-        Label.LabelStyle ls = new Label.LabelStyle();
-        ls.font = AssetManager.font;
-
-        // Create labels
-        Label usernameLabel = new Label("Username:", ls);
-        Label passwordLabel = new Label("Password:", ls);
-
-        TextButton.TextButtonStyle tbs = new TextButton.TextButtonStyle();
-        tbs.font = AssetManager.font;
-
-        // Create buttons
-        TextButton loginButton = new TextButton("Register", tbs);
-        loginButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                String username = usernameField.getText();
-                String password = passwordField.getText();
-
-                // Handle login logic here
-                System.out.println("Username: " + username);
-                System.out.println("Password: " + password);
-            }
-        });
-
-        // Add elements to the table
-        table.add(usernameLabel).pad(10);
-        table.add(usernameField).width(200).pad(10);
-        table.row();
-        table.add(passwordLabel).pad(10);
-        table.add(passwordField).width(200).pad(10);
-        table.row();
-        table.add(loginButton).colspan(2).pad(10);
-        stage.addActor(table);
-*/
-
     }
+
 
     @Override
     public void show() {

@@ -1,12 +1,8 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Pixel_R6 extends Game {
 
@@ -21,7 +17,7 @@ public class Pixel_R6 extends Game {
 		bitmapFont = new BitmapFont();
 
 		// I definim la pantalla principal com a la pantalla
-		setScreen(new PantallaPrincipal(this));
+		setScreen(new Login(this));
 
 	}
 
