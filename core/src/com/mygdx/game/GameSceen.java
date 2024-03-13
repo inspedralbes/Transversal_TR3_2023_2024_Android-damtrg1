@@ -1,8 +1,13 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import Utils.Settings;
@@ -17,6 +22,9 @@ public class GameSceen implements Screen {
     OrthographicCamera camera;
 
     Pixel_R6 game;
+
+    Skin skin, skin_txt;
+
 
     public GameSceen(Pixel_R6 game) {
         this.game = game;
@@ -38,6 +46,44 @@ public class GameSceen implements Screen {
 
         //CONFIGURACION DEL FONDO
         bg = new Background(0, 0, Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
+
+        stage.addActor(bg);
+
+        // Carga el Skin
+        skin_txt = new Skin(Gdx.files.internal("skin_txt/arcade-ui.json"));
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+
+        //TITULO
+        // Registro del color blanco en el Skin
+        Color blanco = Color.WHITE;
+        skin_txt.add("white", blanco);
+
+        // Obtén el estilo de la etiqueta "title" del Skin
+        Label.LabelStyle titleLabelStyle = skin_txt.get("title", Label.LabelStyle.class);
+
+        // Cambia el color del texto a blanco
+        titleLabelStyle.fontColor = blanco;
+
+        // Cambia el tamaño de la fuente del título
+        BitmapFont titleFont = skin_txt.getFont("title"); // Obtiene la fuente del título
+        titleFont.getData().setScale(2.0f); // Establece el tamaño de la fuente (cambia el valor como desees)
+
+
+        // Crea una instancia de Label con el texto "R6 PIXEL" y el nuevo estilo
+        Label titleLabel = new Label("R6 PIXEL", titleLabelStyle);
+
+
+        // Calcula la posición X centrada en la pantalla
+        float posX = (Settings.GAME_WIDTH - titleLabel.getWidth()) / 2;
+
+        // Calcula la posición Y en la parte superior de la pantalla
+        float posY = Settings.GAME_HEIGHT - titleLabel.getHeight(); // Margen de 20 píxeles
+
+        // Establece la posición del título
+        titleLabel.setPosition(posX, posY); // Alinea el título en la parte superior y centrado
+
+        // Añade el título al stage
+        stage.addActor(titleLabel);
     }
 
     @Override
@@ -47,7 +93,8 @@ public class GameSceen implements Screen {
 
     @Override
     public void render(float delta) {
-
+        stage.draw();
+        stage.act(delta);
     }
 
     @Override

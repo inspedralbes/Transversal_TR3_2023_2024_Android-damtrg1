@@ -259,7 +259,7 @@ public class Login implements Screen {
         Window.WindowStyle windowStyle = skin_inputs.get(Window.WindowStyle.class);
 
         // Crea una instancia de Window con el estilo obtenido
-        Window window = new Window("Login", windowStyle);
+        Window window = new Window("LOGIN", windowStyle);
         window.getTitleLabel().setAlignment(Align.center);
 
         // Obtén las dimensiones de la ventana del juego desde la clase Settings

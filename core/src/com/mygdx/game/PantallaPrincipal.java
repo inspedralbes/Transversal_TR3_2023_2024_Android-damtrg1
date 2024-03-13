@@ -1,15 +1,24 @@
 package com.mygdx.game;
 
+import static com.badlogic.gdx.net.HttpRequestBuilder.json;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.net.HttpStatus;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+
+import java.util.HashMap;
 
 import Utils.Settings;
 import objects.Background;
@@ -51,7 +60,6 @@ public class PantallaPrincipal implements Screen {
         stage.addActor(bg);
 
 
-
         // Carga el Skin
         skin_txt = new Skin(Gdx.files.internal("skin_txt/arcade-ui.json"));
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
@@ -90,31 +98,46 @@ public class PantallaPrincipal implements Screen {
         stage.addActor(titleLabel);
 
 
-
         //BOTONES
         TextButton.TextButtonStyle textButtonStyle = skin.get("round", TextButton.TextButtonStyle.class);
 
         // Crear instancia del TextButton con el estilo obtenido del Skin
         TextButton btn_play = new TextButton("PLAY", textButtonStyle);
 
+        btn_play.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new GameSceen(game));
+            }
+        });
+
         // Crear instancia del TextButton con el estilo obtenido del Skin
         TextButton btn_settings = new TextButton("SETTINGS", textButtonStyle);
 
+        btn_settings.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new ScreenSettings(game));
+            }
+        });
+
         //TAMAÑO DEL BOTON
-        btn_play.setSize(250,70);
-        btn_settings.setSize(250,70);
+        btn_play.setSize(250, 70);
+        btn_settings.setSize(250, 70);
 
         // Calcula las coordenadas X e Y para colocar los botones en el medio de la pantalla
         float btnX = (Settings.GAME_WIDTH - btn_play.getWidth()) / 2;
         float btnY = (Settings.GAME_HEIGHT - btn_play.getHeight()) / 2;
 
         // Establece la posición de los botones
-        btn_play.setPosition(btnX, btnY); // Posición del botón "PLAY"
-        btn_settings.setPosition(btnX , btnY - 100); // Posición del botón "SETTINGS"
+        btn_play.setPosition(btnX, btnY + 40); // Posición del botón "PLAY"
+        btn_settings.setPosition(btnX, btnY - 100); // Posición del botón "SETTINGS"
 
 
         stage.addActor(btn_play);
         stage.addActor(btn_settings);
+
+        Gdx.input.setInputProcessor(stage);
 
     }
 
