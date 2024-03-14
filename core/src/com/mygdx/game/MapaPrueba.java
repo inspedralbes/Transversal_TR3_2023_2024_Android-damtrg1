@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -67,7 +68,7 @@ public class MapaPrueba implements Screen {
         stage = new Stage(viewport);
 
         //CONFIGURACION DEL FONDO
-        bg = new Background(0, 0, Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
+        //bg = new Background(0, 0, Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
 
         jugador = new Jugador(Settings.JUGADOR_STARTX, Settings.JUGADOR_STARTY, Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT);
         camera.update();
@@ -102,6 +103,7 @@ public class MapaPrueba implements Screen {
 
     @Override
     public void render(float delta) {
+
 
         camera.position.set(jugador.getPosition().x , jugador.getPosition().y , 0);
         camera.update();
