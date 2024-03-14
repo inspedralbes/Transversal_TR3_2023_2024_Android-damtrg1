@@ -17,7 +17,7 @@ public class Pixel_R6 extends Game {
 		bitmapFont = new BitmapFont();
 
 		// I definim la pantalla principal com a la pantalla
-		setScreen(new PantallaPrincipal(this));
+		setScreen(new MapaPrueba(this));
 
 	}
 
