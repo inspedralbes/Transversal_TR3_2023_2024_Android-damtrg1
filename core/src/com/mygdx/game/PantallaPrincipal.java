@@ -4,6 +4,7 @@ import static com.badlogic.gdx.net.HttpRequestBuilder.json;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -35,10 +36,15 @@ public class PantallaPrincipal implements Screen {
 
     Skin skin, skin_txt;
 
+    Preferences preferences;
+
+
     public PantallaPrincipal(Pixel_R6 game) {
         this.game = game;
 
         AssetManager.load();
+
+        preferences = Gdx.app.getPreferences("Pref");
 
         // Creem la càmera de les dimensions del joc
         camera = new OrthographicCamera(Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
@@ -121,22 +127,57 @@ public class PantallaPrincipal implements Screen {
             }
         });
 
+        // Crear instancia del TextButton con el estilo obtenido del Skin
+        TextButton btn_log_out = new TextButton("CERRAR SESION", textButtonStyle);
+
+        btn_log_out.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new Login(game));
+                game.setLoggedIn(false, "");
+            }
+        });
+
         //TAMAÑO DEL BOTON
         btn_play.setSize(250, 70);
         btn_settings.setSize(250, 70);
+        btn_log_out.setSize(250, 70);
 
         // Calcula las coordenadas X e Y para colocar los botones en el medio de la pantalla
         float btnX = (Settings.GAME_WIDTH - btn_play.getWidth()) / 2;
         float btnY = (Settings.GAME_HEIGHT - btn_play.getHeight()) / 2;
 
         // Establece la posición de los botones
-        btn_play.setPosition(btnX, btnY + 40); // Posición del botón "PLAY"
-        btn_settings.setPosition(btnX, btnY - 100); // Posición del botón "SETTINGS"
+        btn_play.setPosition(btnX, btnY + 60); // Posición del botón "PLAY"
+        btn_settings.setPosition(btnX, btnY - 70); // Posición del botón "SETTINGS"
+        btn_log_out.setPosition(btnX, btnY - 200);
 
 
         stage.addActor(btn_play);
         stage.addActor(btn_settings);
+        stage.addActor(btn_log_out);
 
+
+        //USERNAME
+        // Obtener el estilo de la etiqueta "title" del Skin
+        Label.LabelStyle titlestyleUser = skin.get("title", Label.LabelStyle.class);
+
+
+        Label titUssername = new Label(preferences.getString("username"), titlestyleUser);
+
+        // Calcular la posición X para que el Label esté a la derecha de la pantalla
+        float posX2 = Settings.GAME_WIDTH - titUssername.getWidth();
+
+        // Calcular la posición Y para que el Label esté en la parte superior de la pantalla
+        float posY2 = Settings.GAME_HEIGHT - titUssername.getHeight();
+
+        // Establecer la posición del Label
+        titUssername.setPosition(posX2, posY2);
+
+        stage.addActor(titUssername);
+
+
+        //CONTROLAR INPUTS
         Gdx.input.setInputProcessor(stage);
 
     }
