@@ -8,17 +8,17 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Pixel_R6 extends Game {
 
-    private SpriteBatch spriteBatch;
-    private BitmapFont bitmapFont;
+	private SpriteBatch spriteBatch;
+	private BitmapFont bitmapFont;
 
     Preferences preferences;
 
 
-    @Override
-    public void create() {
+	@Override
+	public void create() {
 
-        spriteBatch = new SpriteBatch();
-        bitmapFont = new BitmapFont();
+		spriteBatch = new SpriteBatch();
+		bitmapFont = new BitmapFont();
 
         // Cargamos las preferencias
         preferences = Gdx.app.getPreferences("Pref");
@@ -31,15 +31,15 @@ public class Pixel_R6 extends Game {
         }
 
 
-    }
+	}
 
-    // Cridem per descartar els recursos carregats.
-    @Override
-    public void dispose() {
-        super.dispose();
-        spriteBatch.dispose();
-        bitmapFont.dispose();
-    }
+	// Cridem per descartar els recursos carregats.
+	@Override
+	public void dispose() {
+		super.dispose();
+		spriteBatch.dispose();
+		bitmapFont.dispose();
+	}
 
     // Método para actualizar el estado de logueo
     public void setLoggedIn(boolean loggedIn, String username) {
@@ -52,7 +52,7 @@ public class Pixel_R6 extends Game {
         return spriteBatch;
     }
 
-    public BitmapFont getBitmapFont() {
-        return bitmapFont;
-    }
+	public BitmapFont getBitmapFont() {
+		return bitmapFont;
+	}
 }
