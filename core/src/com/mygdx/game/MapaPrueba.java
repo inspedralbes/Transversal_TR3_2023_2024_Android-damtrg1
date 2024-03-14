@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -14,11 +15,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
+import java.net.URISyntaxException;
+
 import Utils.Settings;
 import helpers.InputHandlerGameScreen;
 import objects.Background;
 import objects.Jugador;
 
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 public class MapaPrueba implements Screen {
 
     Pixel_R6 game;
@@ -33,9 +39,13 @@ public class MapaPrueba implements Screen {
 
     Stage stage;
 
+    Batch batch;
+
     OrthographicCamera camera;
 
     OrthogonalTiledMapRenderer renderer;
+
+    Socket mSocket;
 
 
     public MapaPrueba(Pixel_R6 game) {
@@ -48,7 +58,7 @@ public class MapaPrueba implements Screen {
 
         // Posant el paràmetre a true configurem la càmera perquè
         // faci servir el sistema de coordenades Y-Down
-        camera.setToOrtho(false);
+        camera.setToOrtho(false );
 
         // Creem el viewport amb les mateixes dimensions que la càmera
         StretchViewport viewport = new StretchViewport(Settings.GAME_WIDTH, Settings.GAME_HEIGHT, camera);
@@ -60,16 +70,28 @@ public class MapaPrueba implements Screen {
         bg = new Background(0, 0, Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
 
         jugador = new Jugador(Settings.JUGADOR_STARTX, Settings.JUGADOR_STARTY, Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT);
+        camera.update();
 
         //AÑADIMOS EL FONDO AL STAGE
         //stage.addActor(bg);
         stage.addActor(jugador);
+
+        batch = stage.getBatch();
+
+        camera.zoom=0.5f;
 
         Gdx.input.setInputProcessor(stage);
 
         renderer = new OrthogonalTiledMapRenderer(AssetManager.tiledMap);
 
         Gdx.input.setInputProcessor(new InputHandlerGameScreen(this));
+
+        try {
+            mSocket = IO.socket("http://r6pixel.dam.inspedralbes.cat:3169");
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        mSocket.connect();
 
     }
 
@@ -80,6 +102,12 @@ public class MapaPrueba implements Screen {
 
     @Override
     public void render(float delta) {
+
+        camera.position.set(jugador.getPosition().x , jugador.getPosition().y , 0);
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        batch.end();
 
         renderer.setView(camera);
         renderer.render();

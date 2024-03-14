@@ -28,6 +28,10 @@ public class Jugador extends Actor {
 
     private Rectangle bounds; // Área de colisión del jugador
 
+    public Vector2 getPosition() {
+        return position;
+    }
+
     public Jugador(float x, float y, int width, int height) {
         this.position = new Vector2(x, y);
         this.width = width;
