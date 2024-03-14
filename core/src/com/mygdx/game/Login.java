@@ -4,6 +4,7 @@ import static com.badlogic.gdx.net.HttpRequestBuilder.json;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -23,6 +24,8 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -45,11 +48,16 @@ public class Login implements Screen {
 
     TextField Username, Password;
 
+    Preferences preferences;
+
+
 
     public Login(Pixel_R6 game) {
         this.game = game;
 
         AssetManager.load();
+
+        preferences = Gdx.app.getPreferences("Pref");
 
         // Creem la càmera de les dimensions del joc
         camera = new OrthographicCamera(Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
@@ -116,51 +124,79 @@ public class Login implements Screen {
         // Crear instancia del TextButton con el estilo obtenido del Skin
         TextButton btn_inicio = new TextButton("Inicio Sesion", textButtonStyle);
 
+        btn_inicio.setSize(200,70);
 
         // Agregar un ClickListener al botón
         btn_inicio.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+
                 try {
                     // Obtener el texto ingresado por el usuario en el TextField
                     String nombreUsuario = Username.getText();
                     String PasswordUsuario = Password.getText();
-
 
                     // Imprimir el nombre de usuario por consola
                     System.out.println("Nombre de usuario: " + nombreUsuario);
                     System.out.println("Contraseña: " + PasswordUsuario);
 
                     // Crear un HashMap para almacenar los datos del usuario
-                    HashMap<String, String> userData = new HashMap<>();
-                    userData.put("user", nombreUsuario);
-                    userData.put("pwd", PasswordUsuario);
+                    JSONObject json = new JSONObject();
+                    json.put("user", nombreUsuario);
+                    json.put("pwd", PasswordUsuario);
 
-                    // Convertir el HashMap a JSON
-                    String jsonString = json.toJson(userData);
+                    System.out.println(json);
 
-                    System.out.println(jsonString);
 
                     // Crear una solicitud HTTP POST
                     Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-                    httpRequest.setUrl("http://192.168.206.255:3169/login"); // URL de tu servidor
+                    httpRequest.setUrl("http://192.168.206.225:3169/login"); // URL de tu servidor
                     httpRequest.setHeader("Content-Type", "application/json");
-                    httpRequest.setContent(jsonString);
+                    String data = json.toString();
+                    httpRequest.setContent(data);
 
                     // Enviar la solicitud al servidor
                     Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
                         @Override
                         public void handleHttpResponse(Net.HttpResponse httpResponse) {
-                            System.out.println("Respuesta: "+httpResponse);
-                            HttpStatus status = httpResponse.getStatus();
-                            if (status.getStatusCode() == HttpStatus.SC_OK) {
-                                // La solicitud fue exitosa
-                                System.out.println("Solicitud exitosa");
-                                // Puedes manejar la respuesta del servidor aquí
-                            } else {
-                                // La solicitud no fue exitosa
-                                System.out.println("Error en la solicitud: " + status.getStatusCode());
+                            try {
+                                System.out.println("Respuesta: " + httpResponse);
+
+                                HttpStatus status = httpResponse.getStatus();
+
+                                System.out.println("ANTES DEL IF: " + status.getClass());
+
+
+                                // Obtener el contenido de la respuesta como una cadena
+                                String responseString = httpResponse.getResultAsString();
+
+                                // Imprimir la respuesta recibida desde el servidor
+                                System.out.println("Respuesta del servidor: " + responseString);
+
+                                // Analizar la respuesta como un objeto JSON
+                                JSONObject jsonResponse = new JSONObject(responseString);
+
+                                System.out.println("JSON: " + jsonResponse);
+
+                                boolean valido = jsonResponse.getBoolean("auth");
+
+                                System.out.println("Boolean: " + valido);
+
+                                if (valido) {
+                                    game.setLoggedIn(true, nombreUsuario);
+                                    // Redirige a la pantalla principal
+                                    Gdx.app.postRunnable(()->{
+                                        game.setScreen(new PantallaPrincipal(game));
+                                    });
+
+                                } else {
+                                    System.out.println("NO ESTA EN LA BASE");
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
+
                         }
 
                         @Override
@@ -175,7 +211,6 @@ public class Login implements Screen {
                             System.out.println("Solicitud cancelada");
                         }
                     });
-
 
 
                 } catch (Exception e) {
@@ -194,6 +229,8 @@ public class Login implements Screen {
                 game.setScreen(new RegisterScreen(game));
             }
         });
+
+        btn_registrar.setSize(200,70);
 
 
         //INPUTS
@@ -294,8 +331,8 @@ public class Login implements Screen {
         float btnY = windowY - 100; // Espacio vertical entre la ventana y los botones
 
         // Establecer la posición de los botones
-        btn_inicio.setPosition(windowX + 10, btnY); // Posición del botón "Inicio Sesión"
-        btn_registrar.setPosition(windowX + 250, btnY); // Posición del botón "Registrar"
+        btn_inicio.setPosition(windowX-20, btnY); // Posición del botón "Inicio Sesión"
+        btn_registrar.setPosition(windowX + 230, btnY); // Posición del botón "Registrar"
 
         // Agregar los botones al Stage
         stage.addActor(btn_inicio);

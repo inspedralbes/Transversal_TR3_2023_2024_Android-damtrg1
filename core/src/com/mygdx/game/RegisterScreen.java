@@ -18,6 +18,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import Utils.Settings;
 import objects.Background;
 
@@ -165,7 +168,7 @@ public class RegisterScreen implements Screen {
         Mail.addListener(new InputListener(){
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                if (Mail.getText().equals("Ingrese Password")) {
+                if (Mail.getText().equals("Ingrese su correo")) {
                     // Si lo es, borrar el texto
                     Mail.setText("");
                 } else {
@@ -183,7 +186,7 @@ public class RegisterScreen implements Screen {
         FechaNA.addListener(new InputListener(){
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                if (FechaNA.getText().equals("Ingrese Password")) {
+                if (FechaNA.getText().equals("Ingrese fecha de nacimiento")) {
                     // Si lo es, borrar el texto
                     FechaNA.setText("");
                 } else {
@@ -249,9 +252,29 @@ public class RegisterScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("PANTALLA JUEGO");
-                game.setScreen(new GameSceen(game));
+                System.out.println("Username: " +Username.getText());
+                System.out.println("Password: " + Password.getText());
+                System.out.println("Correo: "+ Mail.getText());
+                System.out.println("Fecha: "+ FechaNA.getText());
+
+                try{
+                    JSONObject json = new JSONObject();
+                    json.put("user", Username.getText());
+                    json.put("pwd", Password.getText());
+                    json.put("mail", Mail.getText());
+                    json.put("fechaN", FechaNA.getText());
+
+                    System.out.println(json);
+
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                //game.setScreen(new GameSceen(game));
             }
         });
+
+        btn_registrarse.setSize(200,70);
 
         // Crear instancia del TextButton con el estilo obtenido del Skin
         TextButton btn_volver = new TextButton("Volver", textButtonStyle);
@@ -264,14 +287,16 @@ public class RegisterScreen implements Screen {
             }
         });
 
+        btn_volver.setSize(200,70);
+
 
         //POSICION BOTONES BAJO WINDOWS
         // Ajustar la posición de los botones debajo de la ventana
         float btnY = windowY - 100; // Espacio vertical entre la ventana y los botones
 
         // Establecer la posición de los botones
-        btn_registrarse.setPosition(windowX + 10, btnY); // Posición del botón "Inicio Sesión"
-        btn_volver.setPosition(windowX + 270, btnY); // Posición del botón "Registrar"
+        btn_registrarse.setPosition(windowX - 20, btnY); // Posición del botón "Inicio Sesión"
+        btn_volver.setPosition(windowX + 230, btnY); // Posición del botón "Registrar"
 
         // Agregar los botones al Stage
         stage.addActor(btn_registrarse);
@@ -280,62 +305,6 @@ public class RegisterScreen implements Screen {
         //PARA INTRODUCIR DATOS
         Gdx.input.setInputProcessor(stage);
 
-        /*
-        cuadratFons = new Image(AssetManager.imgCuadrado);
-        cuadratFons.setPosition(Settings.GAME_WIDTH / 2 - cuadratFons.getWidth() / 2, Settings.GAME_HEIGHT / 2 - cuadratFons.getHeight() / 2);
-
-        stage.addActor(cuadratFons);
-
-
-        Table table = new Table();
-        table.setFillParent(true);
-
-        TextField.TextFieldStyle tfs = new TextField.TextFieldStyle();
-        tfs.font = AssetManager.font;
-        tfs.fontColor = Color.BLACK; // Set a valid font color
-        tfs.cursor = new SpriteDrawable(new Sprite(new Texture(Gdx.files.internal("cursor.png")))); // Set a valid cursor
-
-
-        // Create text fields
-        usernameField = new TextField("", tfs);
-        passwordField = new TextField("", tfs);
-        passwordField.setPasswordMode(true);
-        passwordField.setPasswordCharacter('*');
-
-        Label.LabelStyle ls = new Label.LabelStyle();
-        ls.font = AssetManager.font;
-
-        // Create labels
-        Label usernameLabel = new Label("Username:", ls);
-        Label passwordLabel = new Label("Password:", ls);
-
-        TextButton.TextButtonStyle tbs = new TextButton.TextButtonStyle();
-        tbs.font = AssetManager.font;
-
-        // Create buttons
-        TextButton loginButton = new TextButton("Register", tbs);
-        loginButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                String username = usernameField.getText();
-                String password = passwordField.getText();
-
-                // Handle login logic here
-                System.out.println("Username: " + username);
-                System.out.println("Password: " + password);
-            }
-        });
-
-        // Add elements to the table
-        table.add(usernameLabel).pad(10);
-        table.add(usernameField).width(200).pad(10);
-        table.row();
-        table.add(passwordLabel).pad(10);
-        table.add(passwordField).width(200).pad(10);
-        table.row();
-        table.add(loginButton).colspan(2).pad(10);
-        stage.addActor(table);
-*/
 
     }
 
