@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -11,6 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
@@ -33,11 +36,15 @@ public class ScreenSettings implements Screen {
 
     private float valorSliderVolumen, valorSliderMusic;
 
+    Preferences preferences;
+
 
     public ScreenSettings(Pixel_R6 game) {
         this.game = game;
 
         AssetManager.load();
+
+        preferences = Gdx.app.getPreferences("Settings");
 
         // Creem la càmera de les dimensions del joc
         camera = new OrthographicCamera(Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
@@ -62,6 +69,15 @@ public class ScreenSettings implements Screen {
         // Carga el Skin
         skin_txt = new Skin(Gdx.files.internal("skin_txt/arcade-ui.json"));
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+
+        //LABELS
+        // Obtener el estilo del Label del Skin
+        Label.LabelStyle labelStyle = skin.get("subtitle", Label.LabelStyle.class);
+
+        // Crear una instancia de Label con el texto "Username" y el estilo definido
+        Label sonido = new Label("SONIDO", labelStyle);
+
+        Label musica = new Label("MUSICA", labelStyle);
 
 
         //TITULO
@@ -112,7 +128,15 @@ public class ScreenSettings implements Screen {
         // Crear una instancia del Slider con el estilo horizontal
         Slider slider_volumen = new Slider(0, 100, 1, false, horizontalSliderStyle);
 
-        Slider slider_musica = new Slider(0,100,1,false, horizontalSliderStyle);
+        Slider slider_musica = new Slider(0, 100, 1, false, horizontalSliderStyle);
+
+        //ESTABLECER QUE LAS BARRAS DE SONIDO ESTEN LLENAS
+        float volumenGuardado = preferences.getFloat("volumen", 100); // 100 es el valor predeterminado si no se encuentra ningún valor guardado
+        float musicaGuardada = preferences.getFloat("musica", 100); // 100 es el valor predeterminado si no se encuentra ningún valor guardado
+
+        // Establece los valores de los sliders a los valores guardados
+        slider_volumen.setValue(volumenGuardado);
+        slider_musica.setValue(musicaGuardada);
 
 
         //BOTON DE MUTE
@@ -123,36 +147,39 @@ public class ScreenSettings implements Screen {
 
         Button btn_volumen = new Button(buttonStyle);
 
-        //ENCENDER BOTON
-        btn_volumen.setChecked(true);
+        //ENCENDER BOTONES
+        Boolean btn_boolean_volumen = preferences.getBoolean("estado_volumen", true); // TRUE es el valor predeterminado si no se encuentra ningún valor guardado
+        Boolean btn_boolean_musica = preferences.getBoolean("estado_musica", true); // TRUE es el valor predeterminado si no se encuentra ningún valor guardado
+
+        btn_volumen.setChecked(btn_boolean_volumen);
 
         btn_volumen.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-               if(btn_volumen.isChecked()){
-                   System.out.println("TRUE");
-                   slider_volumen.setValue(valorSliderVolumen);
-               }else{
-                   System.out.println("FALSE");
-                   // Guardar el valor actual del Slider
-                   valorSliderVolumen = slider_volumen.getValue();
-                   // Establecer el valor del Slider a 0
-                   slider_volumen.setValue(0);
-               }
+                if (btn_volumen.isChecked()) {
+                    System.out.println("TRUE");
+                    slider_volumen.setValue(valorSliderVolumen);
+                } else {
+                    System.out.println("FALSE");
+                    // Guardar el valor actual del Slider
+                    valorSliderVolumen = slider_volumen.getValue();
+                    // Establecer el valor del Slider a 0
+                    slider_volumen.setValue(0);
+                }
             }
         });
 
         Button btn_musica = new Button(buttonStylemusic);
 
-        btn_musica.setChecked(true);
+        btn_musica.setChecked(btn_boolean_musica);
 
-        btn_musica.addListener(new ClickListener(){
+        btn_musica.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(btn_musica.isChecked()){
+                if (btn_musica.isChecked()) {
                     System.out.println("TRUE");
                     slider_musica.setValue(valorSliderMusic);
-                }else{
+                } else {
                     System.out.println("FALSE");
                     // Guardar el valor actual del Slider
                     valorSliderMusic = slider_musica.getValue();
@@ -161,6 +188,20 @@ public class ScreenSettings implements Screen {
                 }
             }
         });
+
+        // Verifica si el valor del slider es diferente de cero para encender el botón correspondiente
+        if (volumenGuardado != 0) {
+            btn_volumen.setChecked(true);
+        }
+        if (musicaGuardada != 0) {
+            btn_musica.setChecked(true);
+        }
+        if (slider_musica.getValue() == 0) {
+            btn_musica.setChecked(false);
+        }
+        if (slider_volumen.getValue() == 0) {
+            btn_volumen.setChecked(false);
+        }
 
 
         //VENTANA
@@ -183,15 +224,47 @@ public class ScreenSettings implements Screen {
 
         window.setSize(400, 400); // Establece el tamaño como desees
 
+        window.add(sonido).row();
+
         window.add(btn_volumen);
 
         window.add(slider_volumen).prefSize(200, 80).row();
+
+        window.add(musica).row();
 
         window.add(btn_musica);
 
         window.add(slider_musica).prefSize(200, 80).row();
 
         stage.addActor(window);
+
+
+        TextButton.TextButtonStyle textButtonStyle = skin.get("round", TextButton.TextButtonStyle.class);
+
+        // Crear instancia del TextButton con el estilo obtenido del Skin
+        TextButton btn_volver = new TextButton("Volver", textButtonStyle);
+
+        btn_volver.setSize(200, 70);
+
+        btn_volver.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new PantallaPrincipal(game));
+
+                // Guardar el estado de los botones en las preferencias
+                preferences.putBoolean("estado_volumen", btn_volumen.isChecked());
+                preferences.putBoolean("estado_musica", btn_musica.isChecked());
+
+                preferences.putFloat("volumen", slider_volumen.getValue());
+                preferences.putFloat("musica", slider_musica.getValue());
+                preferences.flush(); // Esto es importante para guardar los cambios inmediatamente
+            }
+        });
+
+        btn_volver.setPosition(windowX + 100, windowY - 100);
+
+        stage.addActor(btn_volver);
+
 
         Gdx.input.setInputProcessor(stage);
 
