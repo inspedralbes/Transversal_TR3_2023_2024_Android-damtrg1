@@ -141,8 +141,12 @@ public class CodigoSalaScreen implements Screen {
                 String username = preferences.getString("username");
                 httpRequest.setUrl(url);
                 httpRequest.setHeader("Content-Type", "application/json");
-                httpRequest.setHeader("user", username);
-                httpRequest.setHeader("sala" , Username.getText());
+                JSONObject json = new JSONObject();
+                json.put("user", username);
+                json.put("sala", Username.getText());
+
+                httpRequest.setContent(json.toString());
+
 
 
                 // Send the HTTP request
