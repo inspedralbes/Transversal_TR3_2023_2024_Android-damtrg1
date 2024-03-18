@@ -132,7 +132,6 @@ public class CodigoSalaScreen implements Screen {
         btn_acceder.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("PANTALLA REGISTRO");
                 // Create an HTTP request
                 Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
 
@@ -146,8 +145,6 @@ public class CodigoSalaScreen implements Screen {
                 json.put("sala", Username.getText());
 
                 httpRequest.setContent(json.toString());
-
-
 
                 // Send the HTTP request
                 Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
