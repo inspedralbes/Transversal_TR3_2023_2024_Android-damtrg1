@@ -41,12 +41,12 @@ public class AssetManager {
         pixmapgrisTransparente.fill();
         imgCuadrado = new Texture(pixmapgrisTransparente);
 
-        tiledMap = new TmxMapLoader().load("mapaPrueba.tmx");
+        tiledMap = new TmxMapLoader().load("mapas/mapaCastillo.tmx");
 
         spritesheet_joc = new Texture(Gdx.files.internal("swat_sprite.png"));
         spritesheet_joc.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
-        jugador = new TextureRegion(spritesheet_joc, 38, 1, 46, 38);
+        jugador = new TextureRegion(spritesheet_joc, 47, 8, 31, 23);
         // Crear una nueva Sprite con la región de textura
         jugadorSprite = new Sprite(jugador);
 
