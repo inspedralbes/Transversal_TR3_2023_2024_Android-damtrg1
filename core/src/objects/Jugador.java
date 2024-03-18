@@ -41,7 +41,7 @@ public class Jugador extends Actor {
         return position;
     }
 
-    ShapeRenderer shapeRenderer = new ShapeRenderer();
+    //ShapeRenderer shapeRenderer = new ShapeRenderer();
     public Jugador(float x, float y, int width, int height) {
         this.position = new Vector2(x, y);
         this.width = width;
@@ -91,12 +91,11 @@ public class Jugador extends Actor {
         batch.draw(AssetManager.jugadorSprite, position.x, position.y, width, height);
         // Draw the player hitbox (for debugging purposes)
         batch.end();
-        shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
+        /*shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.RED);
         shapeRenderer.rect(bounds.x, bounds.y, bounds.width, bounds.height);
-        shapeRenderer.end();
-        shapeRenderer.end();
+        shapeRenderer.end();*/
         batch.begin();
 
     }

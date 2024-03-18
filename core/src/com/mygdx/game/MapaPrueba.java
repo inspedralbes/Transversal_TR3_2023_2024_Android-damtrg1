@@ -94,34 +94,6 @@ public class MapaPrueba implements Screen {
 
         Gdx.input.setInputProcessor(new InputHandlerGameScreen(this));
 
-        try {
-            mSocket = IO.socket("http://r6pixel.dam.inspedralbes.cat:3169");
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        mSocket.connect();
-        JSONObject jsonUser = new JSONObject();
-        jsonUser.put("user", preferences.getString("username"));
-        mSocket.emit("userNuevo", jsonUser.toString());
-
-
-        mSocket.on("userNuevo",  new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                String jsonString = (String) args[0];
-                try {
-                    JSONObject data = new JSONObject(jsonString);
-                    String user = data.getString("user");
-                    if(!user.equals(preferences.getString("username"))){
-                        Jugador newJugador = new Jugador(Settings.JUGADOR_STARTX + 5, Settings.JUGADOR_STARTY, Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT);
-                        stage.addActor(newJugador);
-                    }
-                    System.out.println("Nuevo usuario: " + user);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     @Override
