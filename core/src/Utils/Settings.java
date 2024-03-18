@@ -7,7 +7,7 @@ public class Settings {
 
     public static final float BG_SPEED = -200; // Por ejemplo, la velocidad del fondo es 2.0
 
-    public static float JUGADOR_VELOCITY = 500;
+    public static float JUGADOR_VELOCITY = 20;
     public static final int JUGADOR_WIDTH = 100;
     public static final int JUGADOR_HEIGHT = 50;
     public static final float JUGADOR_STARTX = 20;

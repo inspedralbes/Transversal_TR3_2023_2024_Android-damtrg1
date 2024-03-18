@@ -41,7 +41,7 @@ public class InputHandlerGameScreen implements InputProcessor {
                 break;
             case Input.Keys.D:
                 // Mover hacia la derecha
-                jugador.move(50, 0);
+                jugador.move(1, 0);
                 break;
         }
         return true; // Devuelve true para indicar que la tecla ha sido procesada
