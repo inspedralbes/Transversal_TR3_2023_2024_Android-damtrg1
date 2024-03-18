@@ -105,36 +105,20 @@ public class Jugador extends Actor {
     public boolean collidesWithWalls(TiledMap map) {
         // Obtener la capa de objetos del mapa
         MapLayer objectLayer = map.getLayers().get("Capa de Objetos 1");
+        // Iterar sobre los objetos de la capa de objetos
+        for (MapObject object : objectLayer.getObjects()) {
+            if (object instanceof RectangleMapObject) {
+                RectangleMapObject rectObject = (RectangleMapObject) object;
+                Rectangle rect = rectObject.getRectangle();
 
-        // Obtener la capa de colisión del mapa
-        TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("paredCasa");
-
-        // Obtener las celdas que intersectan con el área de colisión del jugador
-        int startX = (int) (position.x / collisionLayer.getTileWidth());
-        int startY = (int) (position.y / collisionLayer.getTileHeight());
-        int endX = (int) ((position.x + bounds.getWidth()) / collisionLayer.getTileWidth());
-        int endY = (int) ((position.y + bounds.getHeight()) / collisionLayer.getTileHeight());
-
-        System.out.println("StartX: " + startX + ", StartY: " + startY + ", EndX: " + endX + ", EndY: " + endY);
-
-        // Iterar sobre las celdas del área de colisión del jugador
-        for (int x = startX; x <= endX; x++) {
-            for (int y = startY; y <= endY; y++) {
-                TiledMapTileLayer.Cell cell = collisionLayer.getCell(x, y);
-                if (cell != null && cell.getTile() != null) {
-                    System.out.println("CELDA");
-                    // Get the tile from the cell
-                    int tileId = cell.getTile().getId();
-
-                    TiledMapTileSets ts = map.getTileSets();
-                    TiledMapTileSet terrenosExteriores = ts.getTileSet("TerrenosExterirores");
-                    MapProperties properties = terrenosExteriores.getTile(383).getProperties();
-                  
-
-
+                // Verificar si el área de colisión del jugador se superpone con este objeto de rectángulo
+                if (bounds.overlaps(rect)) {
+                    System.out.println("true");
+                    return true; // Hay colisión
                 }
             }
         }
+        System.out.println("false");
 
         // No hay colisión
         return false;
