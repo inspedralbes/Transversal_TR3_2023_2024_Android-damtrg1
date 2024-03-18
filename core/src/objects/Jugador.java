@@ -31,9 +31,10 @@ public class Jugador extends Actor {
     private int width, height;
     private int direction;
 
-    public static final int COTXE_STRAIGHT = 0;
-    public static final int COTXE_UP = 1;
-    public static final int COTXE_DOWN = 2;
+    public static boolean COLISIO_DRETA = false;
+    public static boolean COLISIO_ABAIX = false;
+    public static boolean COLISIO_ESQUERRA = false;
+    public static boolean COLISIO_ADALT = false;
 
     private Rectangle bounds; // Área de colisión del jugador
 
@@ -53,7 +54,6 @@ public class Jugador extends Actor {
     }
 
     public void move(float deltaX, float deltaY) {
-
         // Guardar la posición anterior del jugador
         float previousX = position.x;
         float previousY = position.y;
@@ -63,19 +63,56 @@ public class Jugador extends Actor {
         // position.add(velocidadX * delta, velocidadY * delta);
 
         // Verificar colisiones con las paredes del mapa
-        if (collidesWithWalls(AssetManager.tiledMap)) {
-            // Si hay colisión, deshacer el último movimiento
-            position.set(previousX, previousY);
+        boolean collisionX = false;
+        boolean collisionY = false;
+
+        if (deltaX > 0) {
+            position.x += deltaX * Settings.JUGADOR_VELOCITY;
             bounds.setPosition(position);
+            if (collidesWithWalls(AssetManager.tiledMap)) {
+                collisionX = true;
+                position.x = previousX;
+                bounds.setPosition(position);
+                COLISIO_DRETA = true;
+            }
         }
 
-        else {
-            // Mover el jugador y actualizar el área de colisión
-            position.add(deltaX, deltaY);
+        else if (deltaX < 0) {
+            position.x += deltaX * Settings.JUGADOR_VELOCITY;
             bounds.setPosition(position);
+            if (collidesWithWalls(AssetManager.tiledMap)) {
+                collisionX = true;
+                position.x = previousX;
+                bounds.setPosition(position);
+                COLISIO_ESQUERRA = true;
+            }
         }
+
+        if (deltaY > 0) {
+            position.y += deltaY * Settings.JUGADOR_VELOCITY;
+            bounds.setPosition(position);
+            if (collidesWithWalls(AssetManager.tiledMap)) {
+                collisionY = true;
+                position.y = previousY;
+                bounds.setPosition(position);
+                COLISIO_ADALT = true;
+            }
+        }
+
+        else if (deltaY < 0) {
+            position.y += deltaY * Settings.JUGADOR_VELOCITY;
+            bounds.setPosition(position);
+            if (collidesWithWalls(AssetManager.tiledMap)) {
+                collisionY = true;
+                position.y = previousY;
+                bounds.setPosition(position);
+                COLISIO_ABAIX = true;
+            }
+        }
+
 
     }
+
 
     @Override
     public void act(float delta) {
