@@ -13,6 +13,7 @@ import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -49,7 +50,6 @@ public class Login implements Screen {
     TextField Username, Password;
 
     Preferences preferences;
-
 
 
     public Login(Pixel_R6 game) {
@@ -124,7 +124,7 @@ public class Login implements Screen {
         // Crear instancia del TextButton con el estilo obtenido del Skin
         TextButton btn_inicio = new TextButton("Inicio Sesion", textButtonStyle);
 
-        btn_inicio.setSize(200,70);
+        btn_inicio.setSize(200, 70);
 
         // Agregar un ClickListener al botón
         btn_inicio.addListener(new ClickListener() {
@@ -185,11 +185,52 @@ public class Login implements Screen {
                                 if (valido) {
                                     game.setLoggedIn(true, nombreUsuario);
                                     // Redirige a la pantalla principal
-                                    Gdx.app.postRunnable(()->{
+                                    Gdx.app.postRunnable(() -> {
                                         game.setScreen(new PantallaPrincipal(game));
                                     });
 
                                 } else {
+
+                                    Window.WindowStyle windowStyle = skin_inputs.get(Window.WindowStyle.class);
+                                    // Crea una instancia de Window con el estilo obtenido
+                                    Window windowerror = new Window("ERROR", windowStyle);
+                                    windowerror.getTitleLabel().setAlignment(Align.center);
+
+                                    // Calcula las coordenadas X e Y para colocar la ventana en el centro de la pantalla
+                                    float windowErrorX = ((Settings.GAME_WIDTH *0.93f) - windowerror.getWidth()) / 2;
+                                    float windowErrorY = (Settings.GAME_HEIGHT - windowerror.getHeight()) / 2;
+
+                                    // Establece la posición de la ventana en el centro de la pantalla
+                                    windowerror.setPosition(windowErrorX, windowErrorY);
+
+                                    windowerror.setSize(200,100);
+
+                                    Label.LabelStyle labelStyle = skin_inputs.get("error", Label.LabelStyle.class);
+
+                                    Label errorUser = new Label("Usuario no registrado", labelStyle);
+
+                                    windowerror.add(errorUser);
+
+                                    stage.addActor(windowerror);
+
+                                    windowerror.setName("error_window");
+
+                                    // Crear instancia del TextButton con el estilo obtenido del Skin
+                                    TextButton btn_cerrar = new TextButton("CERRRAR", textButtonStyle);
+
+                                    btn_cerrar.setPosition(windowErrorX + 40, windowErrorY - 50);
+
+                                    stage.addActor(btn_cerrar);
+
+                                    btn_cerrar.setName("btn_cerrar_windows");
+
+                                    btn_cerrar.addListener(new ClickListener(){
+                                        @Override
+                                        public void clicked(InputEvent event, float x, float y) {
+                                            stage.getRoot().findActor("error_window").remove();
+                                            stage.getRoot().findActor("btn_cerrar_windows").remove();
+                                        }
+                                    });
                                     System.out.println("NO ESTA EN LA BASE");
                                 }
 
@@ -230,7 +271,7 @@ public class Login implements Screen {
             }
         });
 
-        btn_registrar.setSize(200,70);
+        btn_registrar.setSize(200, 70);
 
 
         //INPUTS
@@ -292,6 +333,7 @@ public class Login implements Screen {
         Label passwordLabel = new Label("Password", labelStyle);
 
 
+
         //VENTANA
         Window.WindowStyle windowStyle = skin_inputs.get(Window.WindowStyle.class);
 
@@ -331,7 +373,7 @@ public class Login implements Screen {
         float btnY = windowY - 100; // Espacio vertical entre la ventana y los botones
 
         // Establecer la posición de los botones
-        btn_inicio.setPosition(windowX-20, btnY); // Posición del botón "Inicio Sesión"
+        btn_inicio.setPosition(windowX - 20, btnY); // Posición del botón "Inicio Sesión"
         btn_registrar.setPosition(windowX + 230, btnY); // Posición del botón "Registrar"
 
         // Agregar los botones al Stage
