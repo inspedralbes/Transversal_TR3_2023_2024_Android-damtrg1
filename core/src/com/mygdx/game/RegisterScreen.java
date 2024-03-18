@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -20,6 +21,10 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import Utils.Settings;
 import objects.Background;
@@ -60,7 +65,6 @@ public class RegisterScreen implements Screen {
 
         //AÑADIMOS EL FONDO AL STAGE
         stage.addActor(bg);
-
 
 
         //TITULO
@@ -114,7 +118,6 @@ public class RegisterScreen implements Screen {
         Label fecha_nacimento = new Label("Fecha", labelStyle);
 
 
-
         //INPUTS
         // Obtener el estilo del TextField del Skin
         TextField.TextFieldStyle textFieldStyle = skin_windows.get("default", TextField.TextFieldStyle.class);
@@ -163,9 +166,9 @@ public class RegisterScreen implements Screen {
             }
         });
 
-        Mail =  new TextField("Ingrese su correo", textFieldStyle);
+        Mail = new TextField("Ingrese su correo", textFieldStyle);
 
-        Mail.addListener(new InputListener(){
+        Mail.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (Mail.getText().equals("Ingrese su correo")) {
@@ -182,8 +185,8 @@ public class RegisterScreen implements Screen {
             }
         });
 
-        FechaNA =  new TextField("Ingrese fecha de nacimiento", textFieldStyle);
-        FechaNA.addListener(new InputListener(){
+        FechaNA = new TextField("Ingrese fecha de nacimiento", textFieldStyle);
+        FechaNA.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (FechaNA.getText().equals("Ingrese fecha de nacimiento")) {
@@ -199,7 +202,6 @@ public class RegisterScreen implements Screen {
                 return true;
             }
         });
-
 
 
         //VENTANA
@@ -234,10 +236,9 @@ public class RegisterScreen implements Screen {
         table.add(passwordLabel).pad(5).height(50);
         table.add(Password).pad(5).prefSize(250, 50).row();
         table.add(MailLabel).pad(5).height(50);
-        table.add(Mail).pad(5).prefSize(250,50).row();
+        table.add(Mail).pad(5).prefSize(250, 50).row();
         table.add(fecha_nacimento).pad(5).height(50);
-        table.add(FechaNA).pad(5).prefSize(250,50).row();
-
+        table.add(FechaNA).pad(5).prefSize(250, 50).row();
 
 
         //BOTONES
@@ -251,30 +252,135 @@ public class RegisterScreen implements Screen {
         btn_registrarse.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("PANTALLA JUEGO");
-                System.out.println("Username: " +Username.getText());
-                System.out.println("Password: " + Password.getText());
-                System.out.println("Correo: "+ Mail.getText());
-                System.out.println("Fecha: "+ FechaNA.getText());
+                // Dentro del método clicked() del botón btn_registrarse
+                String fechaNacimiento = FechaNA.getText(); // Obtiene la fecha de nacimiento en formato "dd-mm-yyyy"
+                String username = Username.getText();
 
-                try{
+                // Crea un objeto SimpleDateFormat para el formato de entrada "dd-MM-yyyy"
+                SimpleDateFormat sdfInput = new SimpleDateFormat("dd-MM-yyyy");
+
+                // Crea un objeto SimpleDateFormat para el formato de salida "yyyy-MM-dd"
+                SimpleDateFormat sdfOutput = new SimpleDateFormat("yyyy-MM-dd");
+
+                try {
+
+                    // Parsea la fecha de nacimiento en formato "dd-MM-yyyy"
+                    Date date = sdfInput.parse(fechaNacimiento);
+
+                    // Formatea la fecha en el nuevo formato "yyyy-MM-dd"
+                    String fechaFormateada = sdfOutput.format(date);
+
+                    // Ahora, fechaFormateada contiene la fecha en el formato deseado
+                    System.out.println("Fecha formateada: " + fechaFormateada);
+
                     JSONObject json = new JSONObject();
                     json.put("user", Username.getText());
                     json.put("pwd", Password.getText());
                     json.put("mail", Mail.getText());
-                    json.put("fechaN", FechaNA.getText());
+                    json.put("fechaN", fechaFormateada);
 
                     System.out.println(json);
 
+                    // Crear una solicitud HTTP POST
+                    Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+                    httpRequest.setUrl("http://r6pixel.dam.inspedralbes.cat:3169/register"); // URL de tu servidor
+                    httpRequest.setHeader("Content-Type", "application/json");
+                    String data = json.toString();
+                    httpRequest.setContent(data);
 
-                }catch (JSONException e){
+                    Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
+                        @Override
+                        public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                            try {
+                                // Obtener el contenido de la respuesta como una cadena
+                                String responseString = httpResponse.getResultAsString();
+
+                                // Imprimir la respuesta recibida desde el servidor
+                                System.out.println("Respuesta del servidor: " + responseString);
+
+                                // Analizar la respuesta como un objeto JSON
+                                JSONObject jsonResponse = new JSONObject(responseString);
+
+                                System.out.println("JSON: " + jsonResponse);
+
+                                boolean valido = jsonResponse.getBoolean("auth");
+
+                                if (valido) {
+                                    game.setLoggedIn(true, Username.getText().toString());
+                                    // Redirige a la pantalla principal
+                                    Gdx.app.postRunnable(() -> {
+                                        game.setScreen(new PantallaPrincipal(game));
+                                    });
+                                } else {
+                                    Window.WindowStyle windowStyle = skin_windows.get(Window.WindowStyle.class);
+                                    // Crea una instancia de Window con el estilo obtenido
+                                    Window windowerror = new Window("ERROR", windowStyle);
+                                    windowerror.getTitleLabel().setAlignment(Align.center);
+
+                                    // Calcula las coordenadas X e Y para colocar la ventana en el centro de la pantalla
+                                    float windowErrorX = ((Settings.GAME_WIDTH * 0.93f) - windowerror.getWidth()) / 2;
+                                    float windowErrorY = (Settings.GAME_HEIGHT - windowerror.getHeight()) / 2;
+
+                                    // Establece la posición de la ventana en el centro de la pantalla
+                                    windowerror.setPosition(windowErrorX, windowErrorY);
+
+                                    windowerror.setSize(200, 100);
+
+                                    Label.LabelStyle labelStyle = skin_windows.get("error", Label.LabelStyle.class);
+
+                                    Label errorUser = new Label("USERNAME REPETIDO CAMBIALO", labelStyle);
+
+                                    windowerror.add(errorUser);
+
+                                    stage.addActor(windowerror);
+
+                                    windowerror.setName("error_window");
+
+                                    // Crear instancia del TextButton con el estilo obtenido del Skin
+                                    TextButton btn_cerrar = new TextButton("CERRRAR", textButtonStyle);
+
+                                    btn_cerrar.setPosition(windowErrorX + 40, windowErrorY - 50);
+
+                                    stage.addActor(btn_cerrar);
+
+                                    btn_cerrar.setName("btn_cerrar_windows");
+
+                                    btn_cerrar.addListener(new ClickListener() {
+                                        @Override
+                                        public void clicked(InputEvent event, float x, float y) {
+                                            stage.getRoot().findActor("error_window").remove();
+                                            stage.getRoot().findActor("btn_cerrar_windows").remove();
+                                        }
+                                    });
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void failed(Throwable t) {
+                            System.out.println("Error al enviar la solicitud: " + t.getMessage());
+                        }
+
+                        @Override
+                        public void cancelled() {
+                            System.out.println("Solicitud cancelada");
+                        }
+                    });
+
+
+                } catch (JSONException e) {
                     e.printStackTrace();
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
                 }
                 //game.setScreen(new GameSceen(game));
             }
         });
 
-        btn_registrarse.setSize(200,70);
+        btn_registrarse.setSize(200, 70);
 
         // Crear instancia del TextButton con el estilo obtenido del Skin
         TextButton btn_volver = new TextButton("Volver", textButtonStyle);
@@ -287,7 +393,7 @@ public class RegisterScreen implements Screen {
             }
         });
 
-        btn_volver.setSize(200,70);
+        btn_volver.setSize(200, 70);
 
 
         //POSICION BOTONES BAJO WINDOWS
