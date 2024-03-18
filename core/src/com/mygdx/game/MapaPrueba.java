@@ -161,8 +161,18 @@ public class MapaPrueba implements Screen {
         camera.update();
 
         // Actualizar la posición del Touchpad en relación con el jugador
-        float touchpadX = jugador.getX() - touchpad.getWidth() / 2; // Centrar el Touchpad horizontalmente
-        float touchpadY = jugador.getY() - touchpad.getHeight() / 2 - 50; // Offset vertical para alinear con el jugador
+        float touchpadX = jugador.getPosition().x - touchpad.getWidth() / 2 + 50; // Centrar el Touchpad horizontalmente
+        float touchpadY = jugador.getPosition().y - touchpad.getHeight() / 2 - 150; // Offset vertical para alinear con el jugador
+
+
+
+
+        // Limitar la posición del Touchpad para que no se salga del mapa
+        touchpadX = MathUtils.clamp(touchpadX, minX, maxX);
+        touchpadY = MathUtils.clamp(touchpadY, minY, maxY);
+
+
+
         touchpad.setPosition(touchpadX, touchpadY);
 
         // Dibujar el mapa
