@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
@@ -53,6 +54,10 @@ public class MapaPrueba implements Screen {
     Socket mSocket;
 
     Preferences preferences;
+
+    Skin skin;
+
+    Touchpad touchpad;
 
     public MapaPrueba(Pixel_R6 game) {
         preferences = Gdx.app.getPreferences("Pref");
@@ -122,6 +127,13 @@ public class MapaPrueba implements Screen {
                 }
             }
         });
+
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+
+        Touchpad.TouchpadStyle touchpadStyle = skin.get("default", Touchpad.TouchpadStyle.class);
+        touchpad = new Touchpad(0, touchpadStyle);
+        touchpad.setBounds(40, 225, 100, 100); // Establecer posición y tamaño del Touchpad
+        stage.addActor(touchpad); // Agregar el Touchpad al Stage
     }
 
     @Override
@@ -131,25 +143,41 @@ public class MapaPrueba implements Screen {
 
     @Override
     public void render(float delta) {
+        // Actualizar la posición de la cámara para que siga al jugador
+        camera.position.set(jugador.getPosition().x, jugador.getPosition().y, 0);
 
+        // Limitar la posición de la cámara para que no se salga del mapa
+        float halfWidth = camera.viewportWidth * camera.zoom / 2;
+        float halfHeight = camera.viewportHeight * camera.zoom / 2;
+        float minX = halfWidth;
+        float minY = halfHeight;
+        float maxX = AssetManager.tiledMap.getProperties().get("width", Integer.class) * AssetManager.tiledMap.getProperties().get("tilewidth", Integer.class) - halfWidth;
+        float maxY = AssetManager.tiledMap.getProperties().get("height", Integer.class) * AssetManager.tiledMap.getProperties().get("tileheight", Integer.class) - halfHeight;
 
-        camera.position.set(jugador.getPosition().x , jugador.getPosition().y , 0);
+        camera.position.x = MathUtils.clamp(camera.position.x, minX, maxX);
+        camera.position.y = MathUtils.clamp(camera.position.y, minY, maxY);
+
+        // Actualizar la cámara
         camera.update();
+
+        // Actualizar la posición del Touchpad en relación con el jugador
+        float touchpadX = jugador.getX() - touchpad.getWidth() / 2; // Centrar el Touchpad horizontalmente
+        float touchpadY = jugador.getY() - touchpad.getHeight() / 2 - 50; // Offset vertical para alinear con el jugador
+        touchpad.setPosition(touchpadX, touchpadY);
+
+        // Dibujar el mapa
+        renderer.setView(camera);
+        renderer.render();
+
+        // Dibujar y actualizar el stage
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.end();
 
-        renderer.setView(camera);
-        renderer.render();
-
         stage.draw();
         stage.act(delta);
-
-
-
-
-
     }
+
 
     @Override
     public void resize(int width, int height) {
