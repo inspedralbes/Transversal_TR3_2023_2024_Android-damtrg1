@@ -105,6 +105,8 @@ public class MapaPrueba implements Screen {
         touchpad = new Touchpad(0, touchpadStyle);
         touchpad.setBounds(40, 225, 100, 100); // Establecer posición y tamaño del Touchpad
         stage.addActor(touchpad); // Agregar el Touchpad al Stage
+
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
