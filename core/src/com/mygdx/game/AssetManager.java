@@ -41,7 +41,7 @@ public class AssetManager {
         pixmapgrisTransparente.fill();
         imgCuadrado = new Texture(pixmapgrisTransparente);
 
-        tiledMap = new TmxMapLoader().load("mapas/mapaCastillo.tmx");
+        tiledMap = new TmxMapLoader().load("mapas/mapaPrueba.tmx");
 
         spritesheet_joc = new Texture(Gdx.files.internal("swat_sprite.png"));
         spritesheet_joc.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
