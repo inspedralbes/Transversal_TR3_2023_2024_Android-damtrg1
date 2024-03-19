@@ -14,6 +14,8 @@ import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -55,8 +57,10 @@ public class CreacionPartidaScreen implements Screen {
     Skin skin, skin_inputs;
     ArrayList<String> usuarisSala = new ArrayList<>();
     ArrayList<Label> labelsUsuaris = new ArrayList<>();
-    Label salaLabel;
+    Label salaLabel, seleccioMapa;
 
+    String[] mapes = {""};
+    int numMapa = 0;
 String salaId;
 JSONObject json;
     Preferences preferences;
@@ -116,6 +120,44 @@ JSONObject json;
                 // Handle the case where the HTTP request was cancelled
             }
         });
+
+        Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
+
+        httpRequest2.setUrl("http://r6pixel.dam.inspedralbes.cat:3169/getMapes");
+        httpRequest2.setHeader("Content-Type", "application/json");
+
+        // Send the HTTP request
+        Gdx.net.sendHttpRequest(httpRequest2, new Net.HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                HttpStatus status = httpResponse.getStatus();
+                if (status.getStatusCode() == 200) {
+                    // If the request was successful (status code 200)
+                    String responseData = httpResponse.getResultAsString();
+
+                    // Remove the square brackets, quotes, and commas from the string
+                    String cleanInput = responseData.replaceAll("[\\[\\]\"]", "");
+                    // Split the string into an array by empty space
+                    mapes = cleanInput.split(",");
+                    // Output the array elements
+                } else {
+                    // If the request failed, handle the error
+                    System.out.println("HTTP request failed with status code: " + status.getStatusCode());
+                }
+            }
+
+            @Override
+            public void failed(Throwable t) {
+                // Handle the case where the HTTP request failed
+                t.printStackTrace();
+            }
+
+            @Override
+            public void cancelled() {
+                // Handle the case where the HTTP request was cancelled
+            }
+        });
+
 
         // Creem la càmera de les dimensions del joc
         camera = new OrthographicCamera(Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
@@ -180,6 +222,8 @@ JSONObject json;
         TextButton.TextButtonStyle textButtonStyle = skin_inputs.get("round", TextButton.TextButtonStyle.class);
 
         TextButton botonListo = new TextButton("EMPEZAR PARTIDA", textButtonStyle);
+
+
 
 
         //LABELS
@@ -249,6 +293,37 @@ JSONObject json;
         table.add(labelPlayer8);
         table.add(labelPlayer9);
         table.add(labelPlayer10);
+        table.row();
+
+
+
+
+        Label.LabelStyle labelStyle2 = skin_inputs.get("subtitle", Label.LabelStyle.class);
+
+        seleccioMapa = new Label("Mapa Castillo", labelStyle2);
+
+
+        Button botoEsquerra = new Button(skin_inputs.get("left", Button.ButtonStyle.class));
+        Button botoDreta = new Button(skin_inputs.get("right", Button.ButtonStyle.class));
+
+
+
+        table.add(botoEsquerra);
+        table.add(seleccioMapa);
+        table.add(botoDreta);
+
+        botoEsquerra.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                cambiarMapa(-1);
+            }
+        });
+        botoDreta.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                cambiarMapa(1);
+            }
+        });
 
 
 
@@ -317,6 +392,25 @@ JSONObject json;
 
     }
 
+    public void cambiarMapa(int num){
+        switch (num){
+            case 1:
+                if(numMapa == mapes.length -1){
+                    numMapa = 0;
+                }else{
+                    numMapa++;
+                }
+                break;
+            case -1:
+                if(numMapa == 0){
+                    numMapa = mapes.length -1;
+                }else{
+                    numMapa--;
+                }
+        }
+
+    }
+
     @Override
     public void render(float delta) {
         stage.draw();
@@ -325,6 +419,7 @@ JSONObject json;
         for(int i = 0; i < labelsUsuaris.size(); i++){
             labelsUsuaris.get(i).setText(usuarisSala.get(i));
         }
+        seleccioMapa.setText(mapes[numMapa]);
 
     }
 
