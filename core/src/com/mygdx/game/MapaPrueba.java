@@ -96,7 +96,6 @@ public class MapaPrueba implements Screen {
 
         renderer = new OrthogonalTiledMapRenderer(AssetManager.tiledMap);
 
-        Gdx.input.setInputProcessor(new InputHandlerGameScreen(this));
 
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
 
@@ -105,7 +104,48 @@ public class MapaPrueba implements Screen {
         touchpad.setBounds(40, 225, 100, 100); // Establecer posición y tamaño del Touchpad
         stage.addActor(touchpad); // Agregar el Touchpad al Stage
 
-        //Gdx.input.setInputProcessor(stage);
+        Gdx.input.setInputProcessor(stage);
+
+        //Gdx.input.setInputProcessor(new InputHandlerGameScreen(this, touchpad));
+
+        // En el constructor de MapaPrueba
+        touchpad.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // Este método se llama cuando el touchpad es tocado
+                //System.out.println("Touchpad tocado");
+                // Aquí puedes mostrar cualquier mensaje que desees
+            }
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                // Al tocar el touchpad, establecer la velocidad del jugador en 0 para evitar movimientos inesperados
+                //System.out.println("ABAJO TOUCHPAD");
+                //jugador.move(0, -1);
+                //jugador.setVelocity(0, 0);
+                return true;
+            }
+
+            @Override
+            public void touchDragged(InputEvent event, float x, float y, int pointer) {
+
+                System.out.println("MOVIMINETO TOUCHPAD");
+                float knobX = touchpad.getKnobPercentX();
+                float knobY = touchpad.getKnobPercentY();
+
+                // Llama al método move del jugador con los valores de deltaX y deltaY adecuados
+                jugador.move(knobX, knobY);
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                // Al soltar el touchpad, establecer la velocidad del jugador en 0 para detener el movimiento
+                //jugador.setVelocity(0, 0);
+                //System.out.println("ARRIBA TOUCHPAD");
+                //jugador.move(0, 1); // Cambia los valores según la velocidad de movimiento deseada
+            }
+        });
+
+
     }
 
     @Override

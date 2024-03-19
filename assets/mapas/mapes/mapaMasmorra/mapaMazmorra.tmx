@@ -16,8 +16,8 @@
  <tileset firstgid="1801" source="assetsMapa/hyptosis_tile-art-batch-3.tsx"/>
  <tileset firstgid="2701" source="assetsMapa/hyptosis_tile-art-batch-4.tsx"/>
  <tileset firstgid="3601" source="assetsMapa/hyptosis_tile-art-batch-5.tsx"/>
- <tileset firstgid="4323" source="C:/Users/alum-01/Downloads/TerrenosInteriores.tsx"/>
- <tileset firstgid="6339" source="C:/Users/alum-01/Downloads/TerrenosExterirores.tsx"/>
+ <tileset firstgid="4323" source="assetsMapa/terrenosInterior.tsx"/>
+ <tileset firstgid="6339" source="assetsMapa/TerrenosExteriores.tsx"/>
  <layer id="2" name="capaSuelo" width="75" height="75">
   <data encoding="csv">
 729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,1610613228,522,522,522,522,522,522,522,522,2684355052,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,
