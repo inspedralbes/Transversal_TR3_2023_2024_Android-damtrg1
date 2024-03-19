@@ -123,6 +123,13 @@ public class CodigoSalaScreen implements Screen {
         // Añade el título al stage
         stage.addActor(titleLabel);
 
+        try {
+            mSocket = IO.socket("http://r6pixel.dam.inspedralbes.cat:3169");
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        mSocket.connect();
+
         TextButton.TextButtonStyle textButtonStyle = skin_inputs.get("round", TextButton.TextButtonStyle.class);
 
         // Crear instancia del TextButton con el estilo obtenido del Skin
@@ -157,7 +164,7 @@ public class CodigoSalaScreen implements Screen {
                             JSONObject jsonResponse = new JSONObject(responseData);
                             if (jsonResponse.getBoolean("auth")) {
                                 System.out.println("UNIDO A LA SALA");
-                                mSocket.emit("userNuevo", json);
+                                mSocket.emit("userNuevo", json.toString());
                                 Gdx.app.postRunnable(() -> {
                                     game.setScreen(new UnidoSalaScreen(game, json.getString("sala")));
                                 });
