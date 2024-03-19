@@ -22,7 +22,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
+import Utils.Sala;
 import Utils.Settings;
 import helpers.InputHandlerGameScreen;
 import objects.Background;
@@ -36,6 +38,7 @@ public class MapaPrueba implements Screen {
     Pixel_R6 game;
 
     Background bg;
+    int numJugador;
 
     Jugador jugador;
 
@@ -58,8 +61,9 @@ public class MapaPrueba implements Screen {
     Skin skin;
 
     Touchpad touchpad;
+    ArrayList<Jugador> jugadors = new ArrayList<>();
 
-    public MapaPrueba(Pixel_R6 game) {
+    public MapaPrueba(Pixel_R6 game, Sala sala) {
         preferences = Gdx.app.getPreferences("Pref");
 
         this.game = game;
@@ -82,12 +86,20 @@ public class MapaPrueba implements Screen {
         //CONFIGURACION DEL FONDO
         //bg = new Background(0, 0, Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
 
-        jugador = new Jugador(Settings.JUGADOR_STARTX, Settings.JUGADOR_STARTY, Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT);
+        int contador = 0;
+        for (String usuari: sala.getUsers()) {
+            Jugador player = new Jugador(Settings.JUGADOR_STARTX, Settings.JUGADOR_STARTY, Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari);
+            jugadors.add(player);
+            stage.addActor(player);
+            if(usuari.equals(preferences.getString("username"))){
+                numJugador = contador;
+            }
+            contador++;
+        }
         camera.update();
 
         //AÑADIMOS EL FONDO AL STAGE
         //stage.addActor(bg);
-        stage.addActor(jugador);
 
         batch = stage.getBatch();
 
@@ -116,7 +128,7 @@ public class MapaPrueba implements Screen {
     @Override
     public void render(float delta) {
         // Actualizar la posición de la cámara para que siga al jugador
-        camera.position.set(jugador.getPosition().x, jugador.getPosition().y, 0);
+        camera.position.set(jugadors.get(numJugador).getPosition().x, jugadors.get(numJugador).getPosition().y, 0);
 
         // Limitar la posición de la cámara para que no se salga del mapa
         float halfWidth = camera.viewportWidth * camera.zoom / 2;

@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import Utils.Sala;
 import Utils.Settings;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -282,7 +283,23 @@ public class UnidoSalaScreen implements Screen {
             }
         });
         salaLabel.setText(idSala);
-
+        mSocket.on("startGame", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                String jsonString = (String) args[0];
+                try {
+                    JSONObject data = new JSONObject(jsonString);
+                    String sala = data.getString("sala");
+                    if(sala.equals(salaId)) {
+                        Sala salaNova = new Sala(sala, usuarisSala);
+                        Gdx.app.postRunnable(() -> {
+                            game.setScreen(new MapaPrueba(game, salaNova));
+                        });                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        } );
     }
 
 

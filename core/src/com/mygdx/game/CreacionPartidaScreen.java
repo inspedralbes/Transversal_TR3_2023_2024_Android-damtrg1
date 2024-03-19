@@ -34,6 +34,7 @@ import org.json.JSONObject;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import Utils.Sala;
 import Utils.Settings;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -67,7 +68,7 @@ JSONObject json;
 
     public CreacionPartidaScreen(Pixel_R6 game){
         this.game = game;
-
+        AssetManager.load();
         preferences = Gdx.app.getPreferences("Pref");
         for (int i = 0; i < 10; i++) {
             usuarisSala.add("NO PLAYER");
@@ -390,9 +391,12 @@ JSONObject json;
                 String jsonString = (String) args[0];
                 try {
                     JSONObject data = new JSONObject(jsonString);
-                    String sala = data.getString("salaId");
+                    String sala = data.getString("sala");
                     if(sala.equals(salaId)) {
-                        game.setScreen(new MapaPrueba(game));
+                        Sala salaNova = new Sala(sala, usuarisSala);
+                        Gdx.app.postRunnable(() -> {
+                            game.setScreen(new MapaPrueba(game, salaNova));
+                        });
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -404,6 +408,8 @@ JSONObject json;
             public void clicked(InputEvent event, float x, float y) {
                 JSONObject jsonEnviar = new JSONObject();
                 jsonEnviar.put("sala", salaId);
+                //game.setScreen(new MapaPrueba(game));
+
                 mSocket.emit("startGame", jsonEnviar.toString());
             }
         });

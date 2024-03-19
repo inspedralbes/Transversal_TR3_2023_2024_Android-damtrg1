@@ -30,6 +30,7 @@ public class Jugador extends Actor {
     private Vector2 position;
     private int width, height;
     private int direction;
+    private String nomUsuari;
 
     public static boolean COLISIO_DRETA = false;
     public static boolean COLISIO_ABAIX = false;
@@ -43,11 +44,12 @@ public class Jugador extends Actor {
     }
 
     //ShapeRenderer shapeRenderer = new ShapeRenderer();
-    public Jugador(float x, float y, int width, int height) {
+    public Jugador(float x, float y, int width, int height, String nomUsuari) {
         this.position = new Vector2(x, y);
         this.width = width;
         this.height = height;
         this.direction = 0;
+        this.nomUsuari = nomUsuari;
 
         // Inicializar el área de colisión
         this.bounds = new Rectangle(x, y, width/2, height);
@@ -159,4 +161,9 @@ public class Jugador extends Actor {
         // No hay colisión
         return false;
     }
+
+    public String getNomUsuari() {
+        return nomUsuari;
+    }
+
 }
