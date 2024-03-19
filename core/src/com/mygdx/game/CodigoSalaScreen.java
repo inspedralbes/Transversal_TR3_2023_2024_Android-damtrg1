@@ -61,7 +61,7 @@ public class CodigoSalaScreen implements Screen {
     String salaId;
     Preferences preferences;
 
-    public CodigoSalaScreen(Game game) {
+    public CodigoSalaScreen(Pixel_R6 game) {
         this.game = game;
 
         preferences = Gdx.app.getPreferences("Pref");

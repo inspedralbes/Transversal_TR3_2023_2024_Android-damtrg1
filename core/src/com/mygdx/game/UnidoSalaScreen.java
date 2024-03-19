@@ -51,7 +51,7 @@ public class UnidoSalaScreen implements Screen {
     String salaId;
     Preferences preferences;
 
-    public UnidoSalaScreen(Game game, String idSala){
+    public UnidoSalaScreen(Pixel_R6 game, String idSala){
         this.game = game;
 
         preferences = Gdx.app.getPreferences("Pref");

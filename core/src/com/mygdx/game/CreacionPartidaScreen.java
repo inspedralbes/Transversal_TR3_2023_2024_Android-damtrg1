@@ -65,7 +65,7 @@ String salaId;
 JSONObject json;
     Preferences preferences;
 
-    public CreacionPartidaScreen(Game game){
+    public CreacionPartidaScreen(Pixel_R6 game){
         this.game = game;
 
         preferences = Gdx.app.getPreferences("Pref");
@@ -384,6 +384,29 @@ JSONObject json;
             }
         });
 
+        mSocket.on("startGame", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                String jsonString = (String) args[0];
+                try {
+                    JSONObject data = new JSONObject(jsonString);
+                    String sala = data.getString("salaId");
+                    if(sala.equals(salaId)) {
+                        game.setScreen(new MapaPrueba(game));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        } );
+        botonListo.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                JSONObject jsonEnviar = new JSONObject();
+                jsonEnviar.put("sala", salaId);
+                mSocket.emit("startGame", jsonEnviar.toString());
+            }
+        });
     }
 
 
