@@ -179,7 +179,7 @@ JSONObject json;
 
         TextButton.TextButtonStyle textButtonStyle = skin_inputs.get("round", TextButton.TextButtonStyle.class);
 
-        TextButton botonListo = new TextButton("LISTO", textButtonStyle);
+        TextButton botonListo = new TextButton("EMPEZAR PARTIDA", textButtonStyle);
 
 
         //LABELS

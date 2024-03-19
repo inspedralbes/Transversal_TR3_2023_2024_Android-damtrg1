@@ -126,7 +126,7 @@ public class CodigoSalaScreen implements Screen {
         TextButton.TextButtonStyle textButtonStyle = skin_inputs.get("round", TextButton.TextButtonStyle.class);
 
         // Crear instancia del TextButton con el estilo obtenido del Skin
-        TextButton btn_acceder = new TextButton("EMPEZAR PARTIDA", textButtonStyle);
+        TextButton btn_acceder = new TextButton("ENTRAR", textButtonStyle);
 
         btn_acceder.addListener(new ClickListener() {
             @Override
