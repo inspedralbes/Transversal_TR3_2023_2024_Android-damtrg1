@@ -157,6 +157,7 @@ public class CodigoSalaScreen implements Screen {
                             JSONObject jsonResponse = new JSONObject(responseData);
                             if (jsonResponse.getBoolean("auth")) {
                                 System.out.println("UNIDO A LA SALA");
+                                mSocket.emit("userNuevo", json);
                                 Gdx.app.postRunnable(() -> {
                                     game.setScreen(new UnidoSalaScreen(game, json.getString("sala")));
                                 });
