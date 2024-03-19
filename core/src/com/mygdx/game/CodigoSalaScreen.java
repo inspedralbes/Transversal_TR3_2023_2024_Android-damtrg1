@@ -59,10 +59,9 @@ public class CodigoSalaScreen implements Screen {
     Label salaLabel;
 
     String salaId;
-    JSONObject json;
     Preferences preferences;
 
-    public CodigoSalaScreen(Game game){
+    public CodigoSalaScreen(Game game) {
         this.game = game;
 
         preferences = Gdx.app.getPreferences("Pref");
@@ -127,7 +126,7 @@ public class CodigoSalaScreen implements Screen {
         TextButton.TextButtonStyle textButtonStyle = skin_inputs.get("round", TextButton.TextButtonStyle.class);
 
         // Crear instancia del TextButton con el estilo obtenido del Skin
-        TextButton btn_acceder = new TextButton("ACCEDER", textButtonStyle);
+        TextButton btn_acceder = new TextButton("EMPEZAR PARTIDA", textButtonStyle);
 
         btn_acceder.addListener(new ClickListener() {
             @Override
@@ -155,6 +154,13 @@ public class CodigoSalaScreen implements Screen {
                             // If the request was successful (status code 200)
                             String responseData = httpResponse.getResultAsString();
                             // Handle the response data here
+                            JSONObject jsonResponse = new JSONObject(responseData);
+                            if (jsonResponse.getBoolean("auth")) {
+                                System.out.println("UNIDO A LA SALA");
+                                Gdx.app.postRunnable(() -> {
+                                    game.setScreen(new UnidoSalaScreen(game, json.getString("sala")));
+                                });
+                            }
                             System.out.println(responseData);
                         } else {
                             // If the request failed, handle the error
@@ -175,12 +181,10 @@ public class CodigoSalaScreen implements Screen {
                 });
 
 
-
             }
         });
 
-        btn_acceder.setSize(200,70);
-
+        btn_acceder.setSize(200, 70);
 
 
         TextField.TextFieldStyle textFieldStyle = skin_inputs.get("default", TextField.TextFieldStyle.class);
@@ -228,7 +232,7 @@ public class CodigoSalaScreen implements Screen {
 
         // Calcula las coordenadas X e Y para colocar la ventana en el centro de la pantalla
         float windowX = ((gameWidth / 2) - window.getWidth() * 3.3f);
-        float windowY = ((gameHeight / 2) - window.getHeight() *1.7f);
+        float windowY = ((gameHeight / 2) - window.getHeight() * 1.7f);
 
         // Establece la posición de la ventana en el centro de la pantalla
         window.setPosition(windowX, windowY);
@@ -237,7 +241,6 @@ public class CodigoSalaScreen implements Screen {
 
         Table table = new Table();
         table.setFillParent(false); // La tabla ocupará todo el espacio del padre, que es la ventana en este caso
-
 
 
         table.add(salaLabel);

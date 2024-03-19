@@ -1,7 +1,5 @@
 package com.mygdx.game;
 
-import static com.badlogic.gdx.net.HttpRequestBuilder.json;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
@@ -11,18 +9,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.net.HttpStatus;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.json.JSONArray;
@@ -37,10 +30,8 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import objects.Background;
-import objects.Jugador;
-import sun.font.TextLabel;
 
-public class CreacionPartidaScreen implements Screen {
+public class UnidoSalaScreen implements Screen {
 
     Game game;
 
@@ -57,29 +48,28 @@ public class CreacionPartidaScreen implements Screen {
     ArrayList<Label> labelsUsuaris = new ArrayList<>();
     Label salaLabel;
 
-String salaId;
-JSONObject json;
+    String salaId;
     Preferences preferences;
 
-    public CreacionPartidaScreen(Game game){
+    public UnidoSalaScreen(Game game, String idSala){
         this.game = game;
 
         preferences = Gdx.app.getPreferences("Pref");
         for (int i = 0; i < 10; i++) {
             usuarisSala.add("NO PLAYER");
         }
-// Create an HTTP request
+
+        // Create an HTTP request
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
-// Construct the URL with query parameters
-        String url = "http://r6pixel.dam.inspedralbes.cat:3169/crearSala";
+        // Construct the URL with query parameters
+        String url = "http://r6pixel.dam.inspedralbes.cat:3169/getSala?idSala=" + idSala;
         String username = preferences.getString("username");
-        url += "?user=" + username;
 
         httpRequest.setUrl(url);
         httpRequest.setHeader("Content-Type", "application/json");
 
-// Send the HTTP request
+        // Send the HTTP request
         Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
             @Override
             public void handleHttpResponse(Net.HttpResponse httpResponse) {
@@ -91,9 +81,9 @@ JSONObject json;
                     JSONObject json = new JSONObject(responseData);
                     salaId = json.getString("salaId");// Parse the JSON response string
                     JSONArray jsonArray = new JSONArray(json.getJSONArray("users"));
-
                     // Iterate through the JSON array
                     for (int i = 0; i < jsonArray.length(); i++) {
+                        System.out.println(jsonArray);
                         // Get each element from the JSON array and add it to the list
                         String element = jsonArray.getString(i);
                         usuarisSala.set(i, element);
@@ -173,14 +163,7 @@ JSONObject json;
         stage.addActor(titleLabel);
 
 
-        //BOTONES
-        // Cargar el Skin
         skin_inputs = new Skin(Gdx.files.internal("skin/uiskin.json"));
-
-        TextButton.TextButtonStyle textButtonStyle = skin_inputs.get("round", TextButton.TextButtonStyle.class);
-
-        TextButton botonListo = new TextButton("LISTO", textButtonStyle);
-
 
         //LABELS
         // Obtener el estilo del Label del Skin
@@ -256,20 +239,10 @@ JSONObject json;
 
         // Agregar la ventana al Stage
         stage.addActor(window);
-        // Ajustar la posición de los botones debajo de la ventana
-        float btnY = windowY - 100; // Espacio vertical entre la ventana y los botones
 
-        // Establecer la posición de los botones
-        botonListo.setPosition(windowX-20, btnY); // Posición del botón "Inicio Sesión"
-
-        // Agregar los botones al Stage
-        stage.addActor(botonListo);
 
         //PARA INTRODUCIR DATOS
         Gdx.input.setInputProcessor(stage);
-
-
-
 
 
 
@@ -290,7 +263,7 @@ JSONObject json;
                     JSONObject data = new JSONObject(jsonString);
                     String user = data.getString("user");
                     String sala = data.getString("sala");
-                    if(sala.equals(salaId)) {
+                    if(sala.equals(idSala)) {
                         if (!user.equals(preferences.getString("username"))) {
                             int contador = 0;
                             for (String usuari : usuarisSala
@@ -308,6 +281,7 @@ JSONObject json;
                 }
             }
         });
+        salaLabel.setText(idSala);
 
     }
 
@@ -350,6 +324,6 @@ JSONObject json;
 
     @Override
     public void dispose() {
-    mSocket.disconnect();
+        mSocket.disconnect();
     }
 }
