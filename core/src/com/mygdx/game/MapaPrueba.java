@@ -93,7 +93,6 @@ public class MapaPrueba implements Screen {
 
         camera.zoom=0.5f;
 
-        Gdx.input.setInputProcessor(stage);
 
         renderer = new OrthogonalTiledMapRenderer(AssetManager.tiledMap);
 
@@ -135,7 +134,7 @@ public class MapaPrueba implements Screen {
         touchpad.setBounds(40, 225, 100, 100); // Establecer posición y tamaño del Touchpad
         stage.addActor(touchpad); // Agregar el Touchpad al Stage
 
-        Gdx.input.setInputProcessor(stage);
+        //Gdx.input.setInputProcessor(stage);
     }
 
     @Override
@@ -162,17 +161,17 @@ public class MapaPrueba implements Screen {
         // Actualizar la cámara
         camera.update();
 
-        // Actualizar la posición del Touchpad en relación con el jugador
-        float touchpadX = jugador.getPosition().x - touchpad.getWidth() / 2 + 50; // Centrar el Touchpad horizontalmente
-        float touchpadY = jugador.getPosition().y - touchpad.getHeight() / 2 - 150; // Offset vertical para alinear con el jugador
+        // Actualizar la posición del Touchpad en relación con la cámara
+        float touchpadX = camera.position.x - camera.viewportWidth / 2 + 10; // Ajustar la posición del Touchpad en X
+        float touchpadY = camera.position.y - camera.viewportHeight / 2 + 10; // Ajustar la posición del Touchpad en Y
 
+        // Establecer límites para el Touchpad
+        touchpadX = MathUtils.clamp(touchpadX, 0, Gdx.graphics.getWidth() - touchpad.getWidth());
+        touchpadY = MathUtils.clamp(touchpadY, 0, Gdx.graphics.getHeight() - touchpad.getHeight());
 
-
-
-        // Limitar la posición del Touchpad para que no se salga del mapa
-        touchpadX = MathUtils.clamp(touchpadX, minX, maxX);
-        touchpadY = MathUtils.clamp(touchpadY, minY, maxY);
-
+        // Establecer límites para el Touchpad
+        touchpadX = MathUtils.clamp(touchpadX, camera.position.x - minX, Gdx.graphics.getWidth() - touchpad.getWidth());
+        touchpadY = MathUtils.clamp(touchpadY, camera.position.y - 200, Gdx.graphics.getHeight() - touchpad.getHeight());
 
 
         touchpad.setPosition(touchpadX, touchpadY);
@@ -186,12 +185,10 @@ public class MapaPrueba implements Screen {
         batch.begin();
         batch.end();
 
-        renderer.setView(camera);
-        renderer.render();
-
         stage.draw();
         stage.act(delta);
     }
+
 
 
     @Override
