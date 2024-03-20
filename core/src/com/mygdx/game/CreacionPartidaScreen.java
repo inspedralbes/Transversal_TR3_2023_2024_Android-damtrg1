@@ -9,12 +9,16 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -23,6 +27,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -62,11 +67,11 @@ public class CreacionPartidaScreen implements Screen {
 
     String[] mapes = {""};
     int numMapa = 0;
-String salaId;
-JSONObject json;
+    String salaId;
+    JSONObject json;
     Preferences preferences;
 
-    public CreacionPartidaScreen(Pixel_R6 game){
+    public CreacionPartidaScreen(Pixel_R6 game) {
         this.game = game;
         AssetManager.load();
         preferences = Gdx.app.getPreferences("Pref");
@@ -225,8 +230,6 @@ JSONObject json;
         TextButton botonListo = new TextButton("EMPEZAR PARTIDA", textButtonStyle);
 
 
-
-
         //LABELS
         // Obtener el estilo del Label del Skin
         Label.LabelStyle labelStyle = skin_inputs.get("title", Label.LabelStyle.class);
@@ -248,7 +251,7 @@ JSONObject json;
 
         // Calcula las coordenadas X e Y para colocar la ventana en el centro de la pantalla
         float windowX = ((gameWidth / 2) - window.getWidth() * 3.3f);
-        float windowY = ((gameHeight / 2) - window.getHeight() *1.7f);
+        float windowY = ((gameHeight / 2) - window.getHeight() * 1.7f);
 
         // Establece la posición de la ventana en el centro de la pantalla
         window.setPosition(windowX, windowY);
@@ -297,21 +300,34 @@ JSONObject json;
         table.row();
 
 
-
-
         Label.LabelStyle labelStyle2 = skin_inputs.get("subtitle", Label.LabelStyle.class);
 
         seleccioMapa = new Label("Mapa Castillo", labelStyle2);
+
+        // Establecer la alineación del texto en el centro
+        seleccioMapa.setAlignment(Align.center);
+        seleccioMapa.setFontScale(2);
+
+        // Llamar a cambiarMapa(0) para establecer el primer mapa como el seleccionado inicialmente
+        cambiarMapa(0);
 
 
         Button botoEsquerra = new Button(skin_inputs.get("left", Button.ButtonStyle.class));
         Button botoDreta = new Button(skin_inputs.get("right", Button.ButtonStyle.class));
 
+        Texture mapa1 = AssetManager.mapa1;
+        Texture mapa2 = AssetManager.mapa2;
 
+        Image mapa1Img = new Image(mapa1);
+        Image mapa2Img = new Image(mapa2);
 
-        table.add(botoEsquerra);
-        table.add(seleccioMapa);
-        table.add(botoDreta);
+        table.add(botoEsquerra).prefSize(40,40);
+        table.add(seleccioMapa).prefSize(150, 40);
+        table.add(botoDreta).prefSize(40,40);
+        /*
+        table.add(mapa1Img).prefSize(100,100);
+        table.add(mapa2Img).prefSize(100,100);*/
+
 
         botoEsquerra.addListener(new ClickListener() {
             @Override
@@ -319,13 +335,12 @@ JSONObject json;
                 cambiarMapa(-1);
             }
         });
-        botoDreta.addListener(new ClickListener(){
+        botoDreta.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y){
+            public void clicked(InputEvent event, float x, float y) {
                 cambiarMapa(1);
             }
         });
-
 
 
         window.add(table); // Agregar la tabla a la ventana
@@ -336,7 +351,8 @@ JSONObject json;
         float btnY = windowY - 100; // Espacio vertical entre la ventana y los botones
 
         // Establecer la posición de los botones
-        botonListo.setPosition(windowX-20, btnY); // Posición del botón "Inicio Sesión"
+        botonListo.setPosition(windowX + 350, btnY); // Posición del botón "Inicio Sesión"
+        botonListo.setSize(300, 70);
 
         // Agregar los botones al Stage
         stage.addActor(botonListo);
@@ -358,7 +374,7 @@ JSONObject json;
         JSONObject jsonUser = new JSONObject();
         jsonUser.put("user", preferences.getString("username"));
 
-        mSocket.on("userNuevo",  new Emitter.Listener() {
+        mSocket.on("userNuevo", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 String jsonString = (String) args[0];
@@ -366,7 +382,7 @@ JSONObject json;
                     JSONObject data = new JSONObject(jsonString);
                     String user = data.getString("user");
                     String sala = data.getString("sala");
-                    if(sala.equals(salaId)) {
+                    if (sala.equals(salaId)) {
                         if (!user.equals(preferences.getString("username"))) {
                             int contador = 0;
                             for (String usuari : usuarisSala
@@ -402,14 +418,12 @@ JSONObject json;
                     e.printStackTrace();
                 }
             }
-        } );
+        });
         botonListo.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 JSONObject jsonEnviar = new JSONObject();
                 jsonEnviar.put("sala", salaId);
-                //game.setScreen(new MapaPrueba(game));
-
                 mSocket.emit("startGame", jsonEnviar.toString());
             }
         });
@@ -421,19 +435,19 @@ JSONObject json;
 
     }
 
-    public void cambiarMapa(int num){
-        switch (num){
+    public void cambiarMapa(int num) {
+        switch (num) {
             case 1:
-                if(numMapa == mapes.length -1){
+                if (numMapa == mapes.length - 1) {
                     numMapa = 0;
-                }else{
+                } else {
                     numMapa++;
                 }
                 break;
             case -1:
-                if(numMapa == 0){
-                    numMapa = mapes.length -1;
-                }else{
+                if (numMapa == 0) {
+                    numMapa = mapes.length - 1;
+                } else {
                     numMapa--;
                 }
         }
@@ -444,8 +458,8 @@ JSONObject json;
     public void render(float delta) {
         stage.draw();
         stage.act(delta);
-        salaLabel.setText("Sala: " + salaId );
-        for(int i = 0; i < labelsUsuaris.size(); i++){
+        salaLabel.setText("Sala: " + salaId);
+        for (int i = 0; i < labelsUsuaris.size(); i++) {
             labelsUsuaris.get(i).setText(usuarisSala.get(i));
         }
         seleccioMapa.setText(mapes[numMapa]);
@@ -474,6 +488,6 @@ JSONObject json;
 
     @Override
     public void dispose() {
-    mSocket.disconnect();
+        mSocket.disconnect();
     }
 }
