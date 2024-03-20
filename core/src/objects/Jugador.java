@@ -142,7 +142,7 @@ public class Jugador extends Actor {
     // Método para verificar colisiones con las paredes del mapa
     public boolean collidesWithWalls(TiledMap map) {
         // Obtener la capa de objetos del mapa
-        MapLayer objectLayer = map.getLayers().get("Capa de Objetos 1");
+        MapLayer objectLayer = map.getLayers().get("colision");
         // Iterar sobre los objetos de la capa de objetos
         for (MapObject object : objectLayer.getObjects()) {
             if (object instanceof RectangleMapObject) {

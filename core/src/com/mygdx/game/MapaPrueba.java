@@ -88,7 +88,7 @@ public class MapaPrueba implements Screen {
 
         int contador = 0;
         for (String usuari: sala.getUsers()) {
-            Jugador player = new Jugador(Settings.JUGADOR_STARTX, Settings.JUGADOR_STARTY, Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari);
+            Jugador player = new Jugador(Settings.JUGADOR_STARTX + 50, Settings.JUGADOR_STARTY, Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari);
             jugadors.add(player);
             stage.addActor(player);
             if(usuari.equals(preferences.getString("username"))){
@@ -145,7 +145,7 @@ public class MapaPrueba implements Screen {
                 float knobY = touchpad.getKnobPercentY();
 
                 // Llama al método move del jugador con los valores de deltaX y deltaY adecuados
-                jugador.move(knobX, knobY);
+                jugadors.get(numJugador).move(knobX, knobY);
             }
 
             @Override
