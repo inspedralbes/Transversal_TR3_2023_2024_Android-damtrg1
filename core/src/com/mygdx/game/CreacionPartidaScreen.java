@@ -71,6 +71,10 @@ public class CreacionPartidaScreen implements Screen {
     JSONObject json;
     Preferences preferences;
 
+    Texture[] mapTextures; // Array de texturas de los mapas
+    Texture currentMapTexture; // Textura del mapa actual
+    int currentMapIndex = 0; // Índice del mapa actual
+
     public CreacionPartidaScreen(Pixel_R6 game) {
         this.game = game;
         AssetManager.load();
@@ -308,9 +312,6 @@ public class CreacionPartidaScreen implements Screen {
         seleccioMapa.setAlignment(Align.center);
         seleccioMapa.setFontScale(2);
 
-        // Llamar a cambiarMapa(0) para establecer el primer mapa como el seleccionado inicialmente
-        cambiarMapa(0);
-
 
         Button botoEsquerra = new Button(skin_inputs.get("left", Button.ButtonStyle.class));
         Button botoDreta = new Button(skin_inputs.get("right", Button.ButtonStyle.class));
@@ -323,22 +324,26 @@ public class CreacionPartidaScreen implements Screen {
 
         table.add(botoEsquerra).prefSize(40,40);
         table.add(seleccioMapa).prefSize(150, 40);
-        table.add(botoDreta).prefSize(40,40);
-        /*
-        table.add(mapa1Img).prefSize(100,100);
-        table.add(mapa2Img).prefSize(100,100);*/
+        table.add(botoDreta).prefSize(40,40).row();
+
+        table.add(mapa1Img).prefSize(200,200);
+        //table.add(mapa2Img).prefSize(100,100);
 
 
         botoEsquerra.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 cambiarMapa(-1);
+                table.add(mapa1Img).prefSize(200,200);
+                table.removeActor(mapa2Img);
             }
         });
         botoDreta.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 cambiarMapa(1);
+                table.add(mapa2Img).prefSize(200,200);
+                table.removeActor(mapa1Img);
             }
         });
 
