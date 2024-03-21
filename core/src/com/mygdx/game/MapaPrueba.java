@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import Utils.Sala;
 import Utils.Settings;
 import helpers.InputHandlerGameScreen;
+import helpers.JsonLoader;
 import objects.Background;
 import objects.Jugador;
 
@@ -86,14 +87,21 @@ public class MapaPrueba implements Screen {
         //CONFIGURACION DEL FONDO
         //bg = new Background(0, 0, Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
 
+        JsonLoader jsonLoader = new JsonLoader();
+        JSONObject jsonPosicions = jsonLoader.loadJson("posicions.json");
+        jsonPosicions = jsonPosicions.getJSONObject("Mazmorra");
         int contador = 0;
         for (String usuari: sala.getUsers()) {
-            Jugador player = new Jugador(Settings.JUGADOR_STARTX + 50, Settings.JUGADOR_STARTY, Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari);
-            jugadors.add(player);
-            stage.addActor(player);
+            if(!usuari.equals("NO PLAYER")) {
+                JSONObject posicions = jsonPosicions.getJSONObject("pos" + (contador + 1));
+                Jugador player = new Jugador(Float.valueOf((String) posicions.get("x")),Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari);
+                jugadors.add(player);
+                stage.addActor(player);
+            }
             if(usuari.equals(preferences.getString("username"))){
                 numJugador = contador;
             }
+
             contador++;
         }
         camera.update();
