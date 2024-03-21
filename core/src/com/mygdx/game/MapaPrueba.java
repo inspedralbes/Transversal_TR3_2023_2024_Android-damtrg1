@@ -192,9 +192,9 @@ public class MapaPrueba implements Screen {
         mSocket.on("touchDragged", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                String jsonString = (String) args[0];
+                JSONObject data = (JSONObject) args[0];
                 try {
-                    JSONObject data = new JSONObject(jsonString);
+                    //JSONObject data = new JSONObject(jsonString);
                     String salaMovement = data.getString("sala");
                     if(salaMovement.equals(sala.getId())) {
                         if(!data.getString("user").equals(jugadors.get(numJugador).getNomUsuari())){
