@@ -82,7 +82,7 @@ public class UnidoSalaScreen implements Screen {
                     // Handle the response data here
                     JSONObject json = new JSONObject(responseData);
                     salaId = json.getString("salaId");// Parse the JSON response string
-                    JSONArray jsonArray = new JSONArray(json.getJSONArray("users"));
+                    JSONArray jsonArray = json.getJSONArray("users");
                     // Iterate through the JSON array
                     for (int i = 0; i < jsonArray.length(); i++) {
                         System.out.println(jsonArray);

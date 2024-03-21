@@ -64,19 +64,28 @@ public class MapaPrueba implements Screen {
     Touchpad touchpad;
     ArrayList<Jugador> jugadors = new ArrayList<>();
 
+    float knobXAnterior = 0;
+    float knobYAnterior = 0;
+
     public MapaPrueba(Pixel_R6 game, Sala sala) {
         preferences = Gdx.app.getPreferences("Pref");
 
         this.game = game;
 
         AssetManager.load();
+        try {
+            mSocket = IO.socket("http://r6pixel.dam.inspedralbes.cat:3169");
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        mSocket.connect();
 
         // Creem la càmera de les dimensions del joc
         camera = new OrthographicCamera(Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
 
         // Posant el paràmetre a true configurem la càmera perquè
         // faci servir el sistema de coordenades Y-Down
-        camera.setToOrtho(false );
+        camera.setToOrtho(false);
 
         // Creem el viewport amb les mateixes dimensions que la càmera
         StretchViewport viewport = new StretchViewport(Settings.GAME_WIDTH, Settings.GAME_HEIGHT, camera);
@@ -91,14 +100,14 @@ public class MapaPrueba implements Screen {
         JSONObject jsonPosicions = jsonLoader.loadJson("posicions.json");
         jsonPosicions = jsonPosicions.getJSONObject("Mazmorra");
         int contador = 0;
-        for (String usuari: sala.getUsers()) {
-            if(!usuari.equals("NO PLAYER")) {
+        for (String usuari : sala.getUsers()) {
+            if (!usuari.equals("NO PLAYER")) {
                 JSONObject posicions = jsonPosicions.getJSONObject("pos" + (contador + 1));
-                Jugador player = new Jugador(Float.valueOf((String) posicions.get("x")),Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari);
+                Jugador player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari);
                 jugadors.add(player);
                 stage.addActor(player);
             }
-            if(usuari.equals(preferences.getString("username"))){
+            if (usuari.equals(preferences.getString("username"))) {
                 numJugador = contador;
             }
 
@@ -111,7 +120,7 @@ public class MapaPrueba implements Screen {
 
         batch = stage.getBatch();
 
-        camera.zoom=0.5f;
+        camera.zoom = 0.5f;
 
 
         renderer = new OrthogonalTiledMapRenderer(AssetManager.tiledMap);
@@ -136,6 +145,7 @@ public class MapaPrueba implements Screen {
                 //System.out.println("Touchpad tocado");
                 // Aquí puedes mostrar cualquier mensaje que desees
             }
+
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 // Al tocar el touchpad, establecer la velocidad del jugador en 0 para evitar movimientos inesperados
@@ -147,13 +157,27 @@ public class MapaPrueba implements Screen {
 
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
-
-                System.out.println("MOVIMINETO TOUCHPAD");
                 float knobX = touchpad.getKnobPercentX();
                 float knobY = touchpad.getKnobPercentY();
 
+
+                if(knobX - knobXAnterior >= 0.1f || knobY - knobYAnterior >= 0.1f ||knobX - knobXAnterior <= -0.1f ||  knobY - knobYAnterior <= -0.1){
+                    System.out.println("-------------------------------------------");
+                    System.out.println("X: " + knobX);
+                    System.out.println("Y: " + knobY);
+                    knobXAnterior = knobX;
+                    knobYAnterior = knobY;
+                    JSONObject movement = new JSONObject();
+                    movement.put("knobX", knobX);
+                    movement.put("knobY", knobY);
+                    movement.put("sala", sala.getId());
+                    movement.put("user", jugadors.get(numJugador).getNomUsuari());
+                    mSocket.emit("touchDragged", movement);
+                }
+
                 // Llama al método move del jugador con los valores de deltaX y deltaY adecuados
                 jugadors.get(numJugador).move(knobX, knobY);
+
             }
 
             @Override
@@ -165,9 +189,27 @@ public class MapaPrueba implements Screen {
             }
         });
 
-
+        mSocket.on("touchDragged", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                String jsonString = (String) args[0];
+                try {
+                    JSONObject data = new JSONObject(jsonString);
+                    String salaMovement = data.getString("sala");
+                    if(salaMovement.equals(sala.getId())) {
+                        if(!data.getString("user").equals(jugadors.get(numJugador).getNomUsuari())){
+                            int id = jugadors.indexOf(data.getString("user"));
+                            float knobX = data.getFloat("knobX");
+                            float knobY = data.getFloat("knobY");
+                            jugadors.get(id).move(knobX, knobY);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
-
     @Override
     public void show() {
 
