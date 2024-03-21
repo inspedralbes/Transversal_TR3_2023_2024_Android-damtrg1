@@ -13,7 +13,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 
 public class AssetManager {
 
-    public static Texture imgFondo, imgCuadrado, mapa1, mapa2;
+    public static Texture imgFondo, imgCuadrado, mapaCastillo, mapaMazmorra;
 
     public static TextureRegion background;
 
@@ -35,8 +35,8 @@ public class AssetManager {
         background = new TextureRegion(imgFondo);
 
         //MAPAS
-        mapa1 = new Texture(Gdx.files.internal("mapas/mapes/mapaCastell/mapa1.jpg"));
-        mapa2 = new Texture(Gdx.files.internal("mapas/mapes/mapaMasmorra/mapa2.jpg"));
+        mapaCastillo = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapaCastillo.jpg"));
+        mapaMazmorra = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapaMazmorra.jpg"));
 
 
         grisTransparente = new Color(115/255f,115/255f,115/255f, 150/255f);
