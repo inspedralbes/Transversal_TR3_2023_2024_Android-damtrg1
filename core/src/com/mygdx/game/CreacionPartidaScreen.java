@@ -1,7 +1,5 @@
 package com.mygdx.game;
 
-import static com.badlogic.gdx.net.HttpRequestBuilder.json;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
@@ -11,25 +9,18 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.json.JSONArray;
@@ -45,7 +36,6 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import objects.Background;
-import objects.Jugador;
 import sun.font.TextLabel;
 
 public class CreacionPartidaScreen implements Screen {
@@ -82,10 +72,10 @@ public class CreacionPartidaScreen implements Screen {
         for (int i = 0; i < 10; i++) {
             usuarisSala.add("NO PLAYER");
         }
-// Create an HTTP request
+        // Create an HTTP request
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
-// Construct the URL with query parameters
+        // Construct the URL with query parameters
         String url = "http://r6pixel.dam.inspedralbes.cat:3169/crearSala";
         String username = preferences.getString("username");
         url += "?user=" + username;
@@ -93,7 +83,7 @@ public class CreacionPartidaScreen implements Screen {
         httpRequest.setUrl(url);
         httpRequest.setHeader("Content-Type", "application/json");
 
-// Send the HTTP request
+        // Send the HTTP request
         Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
             @Override
             public void handleHttpResponse(Net.HttpResponse httpResponse) {
@@ -104,7 +94,7 @@ public class CreacionPartidaScreen implements Screen {
                     // Handle the response data here
                     JSONObject json = new JSONObject(responseData);
                     salaId = json.getString("salaId");// Parse the JSON response string
-                    JSONArray jsonArray = new JSONArray(json.getJSONArray("users"));
+                    JSONArray jsonArray = json.getJSONArray("users");
 
                     // Iterate through the JSON array
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -149,6 +139,11 @@ public class CreacionPartidaScreen implements Screen {
                     String cleanInput = responseData.replaceAll("[\\[\\]\"]", "");
                     // Split the string into an array by empty space
                     mapes = cleanInput.split(",");
+
+                    for (String ma : mapes) {
+                        System.out.println(ma);
+                    }
+
                     // Output the array elements
                 } else {
                     // If the request failed, handle the error
@@ -316,34 +311,46 @@ public class CreacionPartidaScreen implements Screen {
         Button botoEsquerra = new Button(skin_inputs.get("left", Button.ButtonStyle.class));
         Button botoDreta = new Button(skin_inputs.get("right", Button.ButtonStyle.class));
 
-        Texture mapa1 = AssetManager.mapa1;
-        Texture mapa2 = AssetManager.mapa2;
+        Texture MCastillo = AssetManager.mapaCastillo;
+        Texture MMazmorra = AssetManager.mapaMazmorra;
 
-        Image mapa1Img = new Image(mapa1);
-        Image mapa2Img = new Image(mapa2);
+        Image IMGCastillo = new Image(MCastillo);
+        Image IMGMazmorra = new Image(MMazmorra);
 
-        table.add(botoEsquerra).prefSize(40,40);
+        table.add(botoEsquerra).prefSize(40, 40);
         table.add(seleccioMapa).prefSize(150, 40);
-        table.add(botoDreta).prefSize(40,40).row();
+        table.add(botoDreta).prefSize(40, 40).row();
 
-        table.add(mapa1Img).prefSize(200,200);
-        //table.add(mapa2Img).prefSize(100,100);
+        //table.add(IMGCastillo).prefSize(200, 200);
+        //table.add(IMGMazmorra).prefSize(100,100);
+
+        System.out.println("Cont: " + mapes.length);
+
+        JSONObject jsonMapes = new JSONObject();
+
+        for(int i=0;i < mapes.length;i++){
+
+            jsonMapes.put(mapes[i], MCastillo);
+            jsonMapes.put(mapes[i], MMazmorra);
+        }
+        System.out.println("JSON MAPES: "+jsonMapes);
+
 
 
         botoEsquerra.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 cambiarMapa(-1);
-                table.add(mapa1Img).prefSize(200,200);
-                table.removeActor(mapa2Img);
+                table.add(IMGCastillo).prefSize(200, 200);
+                table.removeActor(IMGMazmorra);
             }
         });
         botoDreta.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 cambiarMapa(1);
-                table.add(mapa2Img).prefSize(200,200);
-                table.removeActor(mapa1Img);
+                table.add(IMGMazmorra).prefSize(200, 200);
+                table.removeActor(IMGCastillo);
             }
         });
 
@@ -364,10 +371,6 @@ public class CreacionPartidaScreen implements Screen {
 
         //PARA INTRODUCIR DATOS
         Gdx.input.setInputProcessor(stage);
-
-
-
-
 
 
         try {
@@ -413,7 +416,7 @@ public class CreacionPartidaScreen implements Screen {
                 try {
                     JSONObject data = new JSONObject(jsonString);
                     String sala = data.getString("sala");
-                    if(sala.equals(salaId)) {
+                    if (sala.equals(salaId)) {
                         Sala salaNova = new Sala(sala, usuarisSala);
                         Gdx.app.postRunnable(() -> {
                             game.setScreen(new MapaPrueba(game, salaNova));
