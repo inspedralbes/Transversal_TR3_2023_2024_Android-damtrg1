@@ -196,9 +196,11 @@ public class MapaPrueba implements Screen {
                 try {
                     //JSONObject data = new JSONObject(jsonString);
                     String salaMovement = data.getString("sala");
+                    System.out.println(data);
                     if(salaMovement.equals(sala.getId())) {
                         if(!data.getString("user").equals(jugadors.get(numJugador).getNomUsuari())){
                             int id = jugadors.indexOf(data.getString("user"));
+                            System.out.println(id +": " + jugadors.indexOf(data.getString("user")) );
                             float knobX = data.getFloat("knobX");
                             float knobY = data.getFloat("knobY");
                             jugadors.get(id).move(knobX, knobY);
