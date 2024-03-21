@@ -76,6 +76,7 @@ public class UnidoSalaScreen implements Screen {
             public void handleHttpResponse(Net.HttpResponse httpResponse) {
                 HttpStatus status = httpResponse.getStatus();
                 if (status.getStatusCode() == 200) {
+                    System.out.println("HECHA PETICION SALA");
                     // If the request was successful (status code 200)
                     String responseData = httpResponse.getResultAsString();
                     // Handle the response data here
