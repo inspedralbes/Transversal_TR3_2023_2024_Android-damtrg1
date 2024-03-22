@@ -23,6 +23,8 @@ import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import Utils.Sala;
 import Utils.Settings;
@@ -52,6 +54,7 @@ public class MapaPrueba implements Screen {
     Batch batch;
 
     OrthographicCamera camera;
+    private Timer timer;
 
     OrthogonalTiledMapRenderer renderer;
 
@@ -66,10 +69,11 @@ public class MapaPrueba implements Screen {
 
     float knobXAnterior = 0;
     float knobYAnterior = 0;
+    Sala sala;
 
     public MapaPrueba(Pixel_R6 game, Sala sala) {
         preferences = Gdx.app.getPreferences("Pref");
-
+this.sala= sala;
         this.game = game;
 
         AssetManager.load();
@@ -196,14 +200,22 @@ public class MapaPrueba implements Screen {
                 try {
                     //JSONObject data = new JSONObject(jsonString);
                     String salaMovement = data.getString("sala");
-                    System.out.println(data);
                     if(salaMovement.equals(sala.getId())) {
                         if(!data.getString("user").equals(jugadors.get(numJugador).getNomUsuari())){
-                            int id = jugadors.indexOf(data.getString("user"));
-                            System.out.println(id +": " + jugadors.indexOf(data.getString("user")) );
+                            String usernameToFind = data.getString("user");
+                            // Loop through the list of Jugadors
+                            int index = -1; // Initialize index to -1 (not found)
+                            for (int i = 0; i < jugadors.size(); i++) {
+                                Jugador jugador = jugadors.get(i);
+                                if (jugador.getNomUsuari().equals(usernameToFind)) {
+                                    // Found the Jugador with the specified username
+                                    index = i;
+                                    break; // No need to continue searching
+                                }
+                            }
                             float knobX = data.getFloat("knobX");
                             float knobY = data.getFloat("knobY");
-                            jugadors.get(id).move(knobX, knobY);
+                            jugadors.get(index).move(knobX, knobY);
                         }
                     }
                 } catch (JSONException e) {
@@ -211,10 +223,52 @@ public class MapaPrueba implements Screen {
                 }
             }
         });
+
+        mSocket.on("posicioCorrecio", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                JSONObject data = (JSONObject) args[0];
+                try {
+                    //JSONObject data = new JSONObject(jsonString);
+                    String salaMovement = data.getString("sala");
+                    if(salaMovement.equals(sala.getId())) {
+                        if(!data.getString("user").equals(jugadors.get(numJugador).getNomUsuari())){
+                            String usernameToFind = data.getString("user");
+                            // Loop through the list of Jugadors
+                            int index = -1; // Initialize index to -1 (not found)
+                            for (int i = 0; i < jugadors.size(); i++) {
+                                Jugador jugador = jugadors.get(i);
+                                if (jugador.getNomUsuari().equals(usernameToFind)) {
+                                    // Found the Jugador with the specified username
+                                    index = i;
+                                    break; // No need to continue searching
+                                }
+                            }
+                            float x = data.getFloat("x");
+                            float y = data.getFloat("y");
+                            jugadors.get(index).setPosition(x, y);                       }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }});
     }
     @Override
     public void show() {
-
+// Create a timer task to emit socket events every 2 seconds
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                // Emit socket event here
+                JSONObject jsonEnviar = new JSONObject();
+                jsonEnviar.put("user", jugadors.get(numJugador).getNomUsuari());
+                jsonEnviar.put("sala", sala.getId());
+                jsonEnviar.put("x", jugadors.get(numJugador).getPosition().x);
+                jsonEnviar.put("y", jugadors.get(numJugador).getPosition().y);
+                mSocket.emit("posicioCorrecio", jsonEnviar);
+            }
+        }, 0, 2000);
     }
 
     @Override
