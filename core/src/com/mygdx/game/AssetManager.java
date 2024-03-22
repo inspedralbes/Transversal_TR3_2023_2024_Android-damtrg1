@@ -35,8 +35,8 @@ public class AssetManager {
         background = new TextureRegion(imgFondo);
 
         //MAPAS
-        mapaCastillo = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapaCastillo.jpg"));
-        mapaMazmorra = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapaMazmorra.jpg"));
+        mapaCastillo = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapacastillo.jpg"));
+        mapaMazmorra = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapamazmorra.jpg"));
 
 
         grisTransparente = new Color(115/255f,115/255f,115/255f, 150/255f);
