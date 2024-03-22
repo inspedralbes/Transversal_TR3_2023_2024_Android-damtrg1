@@ -115,7 +115,7 @@ public class Jugador extends Actor {
 
     }
 
-    public void setPosition(Float x, Float y) {
+    public void setPosition(float x, float y) {
         this.position.x = x;
         this.position.y = y;
     }

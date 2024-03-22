@@ -165,10 +165,7 @@ this.sala= sala;
                 float knobY = touchpad.getKnobPercentY();
 
 
-                if(knobX - knobXAnterior >= 0.1f || knobY - knobYAnterior >= 0.1f ||knobX - knobXAnterior <= -0.1f ||  knobY - knobYAnterior <= -0.1){
-                    System.out.println("-------------------------------------------");
-                    System.out.println("X: " + knobX);
-                    System.out.println("Y: " + knobY);
+                //if(knobX - knobXAnterior >= 0.1f || knobY - knobYAnterior >= 0.1f ||knobX - knobXAnterior <= -0.1f ||  knobY - knobYAnterior <= -0.1){
                     knobXAnterior = knobX;
                     knobYAnterior = knobY;
                     JSONObject movement = new JSONObject();
@@ -177,7 +174,7 @@ this.sala= sala;
                     movement.put("sala", sala.getId());
                     movement.put("user", jugadors.get(numJugador).getNomUsuari());
                     mSocket.emit("touchDragged", movement);
-                }
+                //}
 
                 // Llama al método move del jugador con los valores de deltaX y deltaY adecuados
                 jugadors.get(numJugador).move(knobX, knobY);
@@ -247,7 +244,7 @@ this.sala= sala;
                             float x = data.getFloat("x");
                             float y = data.getFloat("y");
                             System.out.println("CORRECIO DE " + jugadors.get(index).getNomUsuari() + "X / Y: " + x + "/" + y);
-                            jugadors.get(index).setPosition(x, y);                       }
+                            jugadors.get(index).setPosition(x, y);                 }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
