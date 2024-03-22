@@ -20,6 +20,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
@@ -61,9 +63,13 @@ public class CreacionPartidaScreen implements Screen {
     JSONObject json;
     Preferences preferences;
 
-    Texture[] mapTextures; // Array de texturas de los mapas
-    Texture currentMapTexture; // Textura del mapa actual
-    int currentMapIndex = 0; // Índice del mapa actual
+    Image IMGMapas;
+
+    TextureRegionDrawable castillo, mazmorra;
+
+    Sala salaNova;
+
+    String mapaSelecionado;
 
     public CreacionPartidaScreen(Pixel_R6 game) {
         this.game = game;
@@ -139,11 +145,6 @@ public class CreacionPartidaScreen implements Screen {
                     String cleanInput = responseData.replaceAll("[\\[\\]\"]", "");
                     // Split the string into an array by empty space
                     mapes = cleanInput.split(",");
-
-                    for (String ma : mapes) {
-                        System.out.println(ma);
-                    }
-
                     // Output the array elements
                 } else {
                     // If the request failed, handle the error
@@ -311,51 +312,37 @@ public class CreacionPartidaScreen implements Screen {
         Button botoEsquerra = new Button(skin_inputs.get("left", Button.ButtonStyle.class));
         Button botoDreta = new Button(skin_inputs.get("right", Button.ButtonStyle.class));
 
-        Texture MCastillo = AssetManager.mapaCastillo;
-        Texture MMazmorra = AssetManager.mapaMazmorra;
 
-        Image IMGCastillo = new Image(MCastillo);
-        Image IMGMazmorra = new Image(MMazmorra);
+        IMGMapas = new Image();
+        castillo = new TextureRegionDrawable(AssetManager.mapaCastillo);
+        mazmorra = new TextureRegionDrawable(AssetManager.mapaMazmorra);
 
-        table.add(botoEsquerra).prefSize(40, 40);
-        table.add(seleccioMapa).prefSize(150, 40);
-        table.add(botoDreta).prefSize(40, 40).row();
+        Table tableInfo = new Table();
+        tableInfo.add(botoEsquerra).prefSize(40, 40).pad(20);
+        tableInfo.add(seleccioMapa).prefSize(150, 40).pad(20);
+        tableInfo.add(botoDreta).prefSize(40, 40).pad(20).row();
 
-        //table.add(IMGCastillo).prefSize(200, 200);
-        //table.add(IMGMazmorra).prefSize(100,100);
-
-        System.out.println("Cont: " + mapes.length);
-
-        JSONObject jsonMapes = new JSONObject();
-
-        for(int i=0;i < mapes.length;i++){
-
-            jsonMapes.put(mapes[i], MCastillo);
-            jsonMapes.put(mapes[i], MMazmorra);
-        }
-        System.out.println("JSON MAPES: "+jsonMapes);
-
-
+        Table tableImg = new Table();
+        tableImg.add(IMGMapas).prefSize(200, 200);
 
         botoEsquerra.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 cambiarMapa(-1);
-                table.add(IMGCastillo).prefSize(200, 200);
-                table.removeActor(IMGMazmorra);
             }
         });
         botoDreta.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 cambiarMapa(1);
-                table.add(IMGMazmorra).prefSize(200, 200);
-                table.removeActor(IMGCastillo);
             }
+
         });
 
 
-        window.add(table); // Agregar la tabla a la ventana
+        window.add(table).row(); // Agregar la tabla a la ventana
+        window.add(tableInfo).row();
+        window.add(tableImg);
 
         // Agregar la ventana al Stage
         stage.addActor(window);
@@ -416,7 +403,7 @@ public class CreacionPartidaScreen implements Screen {
                     JSONObject data = new JSONObject(jsonString);
                     String sala = data.getString("sala");
                     if (sala.equals(salaId)) {
-                        Sala salaNova = new Sala(sala, usuarisSala);
+                        salaNova = new Sala(sala, usuarisSala, mapaSelecionado);
                         Gdx.app.postRunnable(() -> {
                             game.setScreen(new MapaPrueba(game, salaNova));
                         });
@@ -432,6 +419,7 @@ public class CreacionPartidaScreen implements Screen {
                 JSONObject jsonEnviar = new JSONObject();
                 jsonEnviar.put("sala", salaId);
                 mSocket.emit("startGame", jsonEnviar.toString());
+                mapaSelecionado = seleccioMapa.getText().toString();
             }
         });
     }
@@ -453,7 +441,7 @@ public class CreacionPartidaScreen implements Screen {
                 break;
             case -1:
                 if (numMapa == 0) {
-                    numMapa = mapes.length - 1;
+                    numMapa  = mapes.length - 1;
                 } else {
                     numMapa--;
                 }
@@ -470,6 +458,13 @@ public class CreacionPartidaScreen implements Screen {
             labelsUsuaris.get(i).setText(usuarisSala.get(i));
         }
         seleccioMapa.setText(mapes[numMapa]);
+
+
+        if(seleccioMapa.getText().toString().equals("castillo")){
+            IMGMapas.setDrawable(castillo);
+        }else{
+            IMGMapas.setDrawable(mazmorra);
+        }
 
     }
 

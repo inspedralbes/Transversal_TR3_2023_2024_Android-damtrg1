@@ -3,17 +3,15 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -28,7 +26,6 @@ import java.util.TimerTask;
 
 import Utils.Sala;
 import Utils.Settings;
-import helpers.InputHandlerGameScreen;
 import helpers.JsonLoader;
 import objects.Background;
 import objects.Jugador;
@@ -65,6 +62,8 @@ public class MapaPrueba implements Screen {
     Skin skin;
 
     Touchpad touchpad;
+
+    Button disparo;
     ArrayList<Jugador> jugadors = new ArrayList<>();
 
     float knobXAnterior = 0;
@@ -73,7 +72,7 @@ public class MapaPrueba implements Screen {
 
     public MapaPrueba(Pixel_R6 game, Sala sala) {
         preferences = Gdx.app.getPreferences("Pref");
-this.sala= sala;
+        this.sala= sala;
         this.game = game;
 
         AssetManager.load();
@@ -107,7 +106,12 @@ this.sala= sala;
         for (String usuari : sala.getUsers()) {
             if (!usuari.equals("NO PLAYER")) {
                 JSONObject posicions = jsonPosicions.getJSONObject("pos" + (contador + 1));
-                Jugador player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari);
+                Jugador player;
+                if(sala.getNombreMapa().equals("castillo")){
+                     player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari, AssetManager.tiledCastillo);
+                }else{
+                     player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari, AssetManager.tiledMazmorra);
+                }
                 jugadors.add(player);
                 stage.addActor(player);
             }
@@ -126,17 +130,51 @@ this.sala= sala;
 
         camera.zoom = 0.5f;
 
-        renderer = new OrthogonalTiledMapRenderer(AssetManager.tiledMap);
+        if(sala.getNombreMapa().equals("castillo")){
+            renderer = new OrthogonalTiledMapRenderer(AssetManager.tiledCastillo);
+        }else{
+            renderer = new OrthogonalTiledMapRenderer(AssetManager.tiledMazmorra);
+        }
 
 
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
 
         Touchpad.TouchpadStyle touchpadStyle = skin.get("default", Touchpad.TouchpadStyle.class);
+        /*
+        // Obtener el Drawable del fondo del Touchpad
+        Drawable touchpadBackground = touchpadStyle.background;
+
+        Color color = touchpadBackground.getColor();
+
+        // Establecer la opacidad del color (transparencia)
+        color.a = 0.2f; // Establece la opacidad a 0.2 (20%)
+
+        // Establecer el color modificado en el Drawable
+        touchpadBackground.setTint(color);*/
+
         touchpad = new Touchpad(0, touchpadStyle);
         touchpad.setBounds(40, 225, 100, 100); // Establecer posición y tamaño del Touchpad
         stage.addActor(touchpad); // Agregar el Touchpad al Stage
 
         Gdx.input.setInputProcessor(stage);
+
+        Button.ButtonStyle buttonStyle = skin.get("default",Button.ButtonStyle.class);
+
+        // Crea una instancia de ImageButton con el estilo obtenido
+        disparo = new Button(buttonStyle);
+
+        // Asigna un listener para manejar eventos de clic en el botón
+        disparo.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("DISPARO");
+            }
+        });
+
+        disparo.setBounds(40, 225, 50, 50);
+
+        // Agrega el ImageButton al Stage para que se pueda dibujar y recibir eventos de entrada
+        stage.addActor(disparo);
 
         //Gdx.input.setInputProcessor(new InputHandlerGameScreen(this, touchpad));
 
@@ -279,8 +317,8 @@ this.sala= sala;
         float halfHeight = camera.viewportHeight * camera.zoom / 2;
         float minX = halfWidth;
         float minY = halfHeight;
-        float maxX = AssetManager.tiledMap.getProperties().get("width", Integer.class) * AssetManager.tiledMap.getProperties().get("tilewidth", Integer.class) - halfWidth;
-        float maxY = AssetManager.tiledMap.getProperties().get("height", Integer.class) * AssetManager.tiledMap.getProperties().get("tileheight", Integer.class) - halfHeight;
+        float maxX = AssetManager.tiledMazmorra.getProperties().get("width", Integer.class) * AssetManager.tiledMazmorra.getProperties().get("tilewidth", Integer.class) - halfWidth;
+        float maxY = AssetManager.tiledMazmorra.getProperties().get("height", Integer.class) * AssetManager.tiledMazmorra.getProperties().get("tileheight", Integer.class) - halfHeight;
 
         camera.position.x = MathUtils.clamp(camera.position.x, minX, maxX);
         camera.position.y = MathUtils.clamp(camera.position.y, minY, maxY);
@@ -300,8 +338,19 @@ this.sala= sala;
         touchpadX = MathUtils.clamp(touchpadX, camera.position.x - minX, Gdx.graphics.getWidth() - touchpad.getWidth());
         touchpadY = MathUtils.clamp(touchpadY, camera.position.y - 200, Gdx.graphics.getHeight() - touchpad.getHeight());
 
-
         touchpad.setPosition(touchpadX, touchpadY);
+
+
+        // Definir la posición del botón de disparo
+        float buttonX = camera.position.x + camera.viewportWidth / 2; // Ajustar la posición del botón en X
+        float buttonY = camera.position.y - camera.viewportHeight / 2 + 10; // Ajustar la posición del botón en Y
+
+        // Establecer límites para el botón de disparo
+        buttonX = MathUtils.clamp(buttonX, camera.position.x - minX, Gdx.graphics.getWidth() - touchpad.getWidth());
+        buttonY = MathUtils.clamp(buttonY, 0, Gdx.graphics.getHeight() - disparo.getHeight());
+
+        // Actualizar la posición del botón de disparo
+        disparo.setPosition(buttonX, buttonY);
 
         // Dibujar el mapa
         renderer.setView(camera);

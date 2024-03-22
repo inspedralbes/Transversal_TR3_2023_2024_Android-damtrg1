@@ -22,7 +22,7 @@ public class AssetManager {
 
     public static BitmapFont font;
 
-    public static TiledMap tiledMap;
+    public static TiledMap tiledMazmorra, tiledCastillo;
 
     public static Texture spritesheet_joc;
 
@@ -36,8 +36,8 @@ public class AssetManager {
         background = new TextureRegion(imgFondo);
 
         //MAPAS
-        mapaCastillo = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapaCastillo.jpg"));
-        mapaMazmorra = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapaMazmorra.jpg"));
+        mapaCastillo = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapacastillo.jpg"));
+        mapaMazmorra = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapamazmorra.jpg"));
 
 
         grisTransparente = new Color(115/255f,115/255f,115/255f, 150/255f);
@@ -46,7 +46,8 @@ public class AssetManager {
         pixmapgrisTransparente.fill();
         imgCuadrado = new Texture(pixmapgrisTransparente);
 
-        tiledMap = new TmxMapLoader().load("mapas/mapes/mapaMasmorra/mapaMazmorra.tmx");
+        tiledMazmorra = new TmxMapLoader().load("mapas/mapes/mapaMasmorra/mapaMazmorra.tmx");
+        tiledCastillo = new TmxMapLoader().load("mapas/mapes/mapaCastell/mapaCastell.tmx");
 
         spritesheet_joc = new Texture(Gdx.files.internal("swat_sprite.png"));
         spritesheet_joc.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
