@@ -9,6 +9,8 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -60,6 +62,8 @@ public class MapaPrueba implements Screen {
     Skin skin;
 
     Touchpad touchpad;
+
+    Button disparo;
     ArrayList<Jugador> jugadors = new ArrayList<>();
 
     float knobXAnterior = 0;
@@ -153,6 +157,24 @@ public class MapaPrueba implements Screen {
         stage.addActor(touchpad); // Agregar el Touchpad al Stage
 
         Gdx.input.setInputProcessor(stage);
+
+        Button.ButtonStyle buttonStyle = skin.get("default",Button.ButtonStyle.class);
+
+        // Crea una instancia de ImageButton con el estilo obtenido
+        disparo = new Button(buttonStyle);
+
+        // Asigna un listener para manejar eventos de clic en el botón
+        disparo.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("DISPARO");
+            }
+        });
+
+        disparo.setBounds(40, 225, 50, 50);
+
+        // Agrega el ImageButton al Stage para que se pueda dibujar y recibir eventos de entrada
+        stage.addActor(disparo);
 
         //Gdx.input.setInputProcessor(new InputHandlerGameScreen(this, touchpad));
 
@@ -317,6 +339,18 @@ public class MapaPrueba implements Screen {
         touchpadY = MathUtils.clamp(touchpadY, camera.position.y - 200, Gdx.graphics.getHeight() - touchpad.getHeight());
 
         touchpad.setPosition(touchpadX, touchpadY);
+
+
+        // Definir la posición del botón de disparo
+        float buttonX = camera.position.x + camera.viewportWidth / 2; // Ajustar la posición del botón en X
+        float buttonY = camera.position.y - camera.viewportHeight / 2 + 10; // Ajustar la posición del botón en Y
+
+        // Establecer límites para el botón de disparo
+        buttonX = MathUtils.clamp(buttonX, camera.position.x - minX, Gdx.graphics.getWidth() - touchpad.getWidth());
+        buttonY = MathUtils.clamp(buttonY, 0, Gdx.graphics.getHeight() - disparo.getHeight());
+
+        // Actualizar la posición del botón de disparo
+        disparo.setPosition(buttonX, buttonY);
 
         // Dibujar el mapa
         renderer.setView(camera);
