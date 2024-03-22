@@ -13,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 
 public class AssetManager {
 
+    public static Sprite[] imatgesJugador;
     public static Texture imgFondo, imgCuadrado, mapaCastillo, mapaMazmorra;
 
     public static TextureRegion background;
@@ -56,6 +57,15 @@ public class AssetManager {
 
         FileHandle fontFile = Gdx.files.internal("default.fnt"); // Assuming your font is in the "fonts" folder
         font = new BitmapFont(fontFile);
+
+
+        imatgesJugador = new Sprite[360];
+
+        for (int angle = 0; angle < 360; angle++) {
+            // Create a rotated TextureRegion for the current angle
+            imatgesJugador[angle] = new Sprite(jugador);
+            imatgesJugador[angle].rotate(45);
+        }
     }
 
     public static void dispose() {

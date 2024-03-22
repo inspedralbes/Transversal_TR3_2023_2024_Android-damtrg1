@@ -126,7 +126,6 @@ this.sala= sala;
 
         camera.zoom = 0.5f;
 
-
         renderer = new OrthogonalTiledMapRenderer(AssetManager.tiledMap);
 
 

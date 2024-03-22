@@ -3,6 +3,7 @@ package objects;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -131,14 +132,11 @@ public class Jugador extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
 
-        batch.draw(AssetManager.jugadorSprite, position.x, position.y, width, height);
+        Sprite a = AssetManager.imatgesJugador[180];
+        a.setRotation(180f);
+        batch.draw(a, position.x, position.y, width, height);
         // Draw the player hitbox (for debugging purposes)
         batch.end();
-        /*shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.RED);
-        shapeRenderer.rect(bounds.x, bounds.y, bounds.width, bounds.height);
-        shapeRenderer.end();*/
         batch.begin();
 
     }
