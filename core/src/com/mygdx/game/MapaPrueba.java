@@ -246,6 +246,7 @@ this.sala= sala;
                             }
                             float x = data.getFloat("x");
                             float y = data.getFloat("y");
+                            System.out.println("CORRECIO DE " + jugadors.get(index).getNomUsuari() + "X / Y: " + x + "/" + y);
                             jugadors.get(index).setPosition(x, y);                       }
                     }
                 } catch (JSONException e) {
@@ -267,6 +268,7 @@ this.sala= sala;
                 jsonEnviar.put("x", jugadors.get(numJugador).getPosition().x);
                 jsonEnviar.put("y", jugadors.get(numJugador).getPosition().y);
                 mSocket.emit("posicioCorrecio", jsonEnviar);
+                System.out.println("CORRECIO ENVIADA");
             }
         }, 0, 2000);
     }

@@ -115,6 +115,10 @@ public class Jugador extends Actor {
 
     }
 
+    public void setPosition(Float x, Float y) {
+        this.position.x = x;
+        this.position.y = y;
+    }
 
     @Override
     public void act(float delta) {
