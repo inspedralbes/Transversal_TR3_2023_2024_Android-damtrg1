@@ -1,27 +1,14 @@
 package objects;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
-import com.badlogic.gdx.maps.tiled.TiledMapTileSets;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.mygdx.game.AssetManager;
-import com.mygdx.game.GameSceen;
-
-import java.util.Iterator;
-import java.util.Map;
 
 import Utils.Settings;
 
@@ -71,7 +58,7 @@ public class Jugador extends Actor {
         if (deltaX > 0) {
             position.x += deltaX * Settings.JUGADOR_VELOCITY;
             bounds.setPosition(position);
-            if (collidesWithWalls(AssetManager.tiledMap)) {
+            if (collidesWithWalls(AssetManager.tiledMazmorra)) {
                 collisionX = true;
                 position.x = previousX;
                 bounds.setPosition(position);
@@ -82,7 +69,7 @@ public class Jugador extends Actor {
         else if (deltaX < 0) {
             position.x += deltaX * Settings.JUGADOR_VELOCITY;
             bounds.setPosition(position);
-            if (collidesWithWalls(AssetManager.tiledMap)) {
+            if (collidesWithWalls(AssetManager.tiledMazmorra)) {
                 collisionX = true;
                 position.x = previousX;
                 bounds.setPosition(position);
@@ -93,7 +80,7 @@ public class Jugador extends Actor {
         if (deltaY > 0) {
             position.y += deltaY * Settings.JUGADOR_VELOCITY;
             bounds.setPosition(position);
-            if (collidesWithWalls(AssetManager.tiledMap)) {
+            if (collidesWithWalls(AssetManager.tiledMazmorra)) {
                 collisionY = true;
                 position.y = previousY;
                 bounds.setPosition(position);
@@ -104,7 +91,7 @@ public class Jugador extends Actor {
         else if (deltaY < 0) {
             position.y += deltaY * Settings.JUGADOR_VELOCITY;
             bounds.setPosition(position);
-            if (collidesWithWalls(AssetManager.tiledMap)) {
+            if (collidesWithWalls(AssetManager.tiledMazmorra)) {
                 collisionY = true;
                 position.y = previousY;
                 bounds.setPosition(position);

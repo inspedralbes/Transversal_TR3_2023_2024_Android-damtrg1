@@ -21,7 +21,7 @@ public class AssetManager {
 
     public static BitmapFont font;
 
-    public static TiledMap tiledMap;
+    public static TiledMap tiledMazmorra, tiledCastillo;
 
     public static Texture spritesheet_joc;
 
@@ -45,7 +45,8 @@ public class AssetManager {
         pixmapgrisTransparente.fill();
         imgCuadrado = new Texture(pixmapgrisTransparente);
 
-        tiledMap = new TmxMapLoader().load("mapas/mapes/mapaMasmorra/mapaMazmorra.tmx");
+        tiledMazmorra = new TmxMapLoader().load("mapas/mapes/mapaMasmorra/mapaMazmorra.tmx");
+        tiledCastillo = new TmxMapLoader().load("mapas/mapes/mapaCastell/mapaCastell.tmx");
 
         spritesheet_joc = new Texture(Gdx.files.internal("swat_sprite.png"));
         spritesheet_joc.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);

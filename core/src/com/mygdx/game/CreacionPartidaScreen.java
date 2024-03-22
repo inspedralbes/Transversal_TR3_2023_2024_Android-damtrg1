@@ -67,6 +67,10 @@ public class CreacionPartidaScreen implements Screen {
 
     TextureRegionDrawable castillo, mazmorra;
 
+    Sala salaNova;
+
+    String mapaSelecionado;
+
     public CreacionPartidaScreen(Pixel_R6 game) {
         this.game = game;
         AssetManager.load();
@@ -318,11 +322,13 @@ public class CreacionPartidaScreen implements Screen {
         castillo = new TextureRegionDrawable(AssetManager.mapaCastillo);
         mazmorra = new TextureRegionDrawable(AssetManager.mapaMazmorra);
 
+        Table tableInfo = new Table();
+        tableInfo.add(botoEsquerra).prefSize(40, 40).pad(20);
+        tableInfo.add(seleccioMapa).prefSize(150, 40).pad(20);
+        tableInfo.add(botoDreta).prefSize(40, 40).pad(20).row();
 
-        table.add(botoEsquerra).prefSize(40, 40);
-        table.add(seleccioMapa).prefSize(150, 40);
-        table.add(botoDreta).prefSize(40, 40).row();
-        table.add(IMGMapas).prefSize(200, 200);
+        Table tableImg = new Table();
+        tableImg.add(IMGMapas).prefSize(200, 200);
 
         botoEsquerra.addListener(new ClickListener() {
             @Override
@@ -339,7 +345,9 @@ public class CreacionPartidaScreen implements Screen {
         });
 
 
-        window.add(table); // Agregar la tabla a la ventana
+        window.add(table).row(); // Agregar la tabla a la ventana
+        window.add(tableInfo).row();
+        window.add(tableImg);
 
         // Agregar la ventana al Stage
         stage.addActor(window);
@@ -400,7 +408,7 @@ public class CreacionPartidaScreen implements Screen {
                     JSONObject data = new JSONObject(jsonString);
                     String sala = data.getString("sala");
                     if (sala.equals(salaId)) {
-                        Sala salaNova = new Sala(sala, usuarisSala);
+                        salaNova = new Sala(sala, usuarisSala, mapaSelecionado);
                         Gdx.app.postRunnable(() -> {
                             game.setScreen(new MapaPrueba(game, salaNova));
                         });
@@ -416,6 +424,7 @@ public class CreacionPartidaScreen implements Screen {
                 JSONObject jsonEnviar = new JSONObject();
                 jsonEnviar.put("sala", salaId);
                 mSocket.emit("startGame", jsonEnviar.toString());
+                mapaSelecionado = seleccioMapa.getText().toString();
             }
         });
     }
@@ -455,11 +464,13 @@ public class CreacionPartidaScreen implements Screen {
         }
         seleccioMapa.setText(mapes[numMapa]);
 
+
         if(seleccioMapa.getText().toString().equals("castillo")){
             IMGMapas.setDrawable(castillo);
         }else{
             IMGMapas.setDrawable(mazmorra);
         }
+
     }
 
     @Override
