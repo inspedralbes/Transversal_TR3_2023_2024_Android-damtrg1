@@ -102,7 +102,12 @@ public class MapaPrueba implements Screen {
         for (String usuari : sala.getUsers()) {
             if (!usuari.equals("NO PLAYER")) {
                 JSONObject posicions = jsonPosicions.getJSONObject("pos" + (contador + 1));
-                Jugador player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari);
+                Jugador player;
+                if(sala.getNombreMapa().equals("castillo")){
+                     player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari, AssetManager.tiledCastillo);
+                }else{
+                     player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari, AssetManager.tiledMazmorra);
+                }
                 jugadors.add(player);
                 stage.addActor(player);
             }

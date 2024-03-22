@@ -145,11 +145,6 @@ public class CreacionPartidaScreen implements Screen {
                     String cleanInput = responseData.replaceAll("[\\[\\]\"]", "");
                     // Split the string into an array by empty space
                     mapes = cleanInput.split(",");
-
-                    for (String ma : mapes) {
-                        System.out.println(ma);
-                    }
-
                     // Output the array elements
                 } else {
                     // If the request failed, handle the error
