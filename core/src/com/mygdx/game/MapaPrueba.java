@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -59,7 +60,9 @@ public class MapaPrueba implements Screen {
 
     Preferences preferences;
 
-    Skin skin;
+    Skin skin, skin_vida;
+
+    ProgressBar progressBar;
 
     Touchpad touchpad;
 
@@ -74,6 +77,10 @@ public class MapaPrueba implements Screen {
         preferences = Gdx.app.getPreferences("Pref");
         this.sala= sala;
         this.game = game;
+
+
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        skin_vida = new Skin(Gdx.files.internal("skin_vida2/tubular-ui.json"));
 
         AssetManager.load();
         try {
@@ -114,6 +121,16 @@ public class MapaPrueba implements Screen {
                 }
                 jugadors.add(player);
                 stage.addActor(player);
+                //BARRA DE VIDA
+                ProgressBar.ProgressBarStyle progressBarStyle = skin_vida.get("default-horizontal", ProgressBar.ProgressBarStyle.class);
+
+                // Crear e inicializar el ProgressBar con el estilo obtenido
+                progressBar = new ProgressBar(0, 100, 1, false, progressBarStyle);
+                progressBar.setHeight(10);
+                progressBar.setWidth(50);
+                progressBar.setValue(100); // Establecer el valor inicial del ProgressBar
+                //progressBar.setPosition(100,300);
+                stage.addActor(progressBar); // Agregar el ProgressBar al Stage
             }
             if (usuari.equals(preferences.getString("username"))) {
                 numJugador = contador;
@@ -136,8 +153,6 @@ public class MapaPrueba implements Screen {
             renderer = new OrthogonalTiledMapRenderer(AssetManager.tiledMazmorra);
         }
 
-
-        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
 
         Touchpad.TouchpadStyle touchpadStyle = skin.get("default", Touchpad.TouchpadStyle.class);
         /*
@@ -168,6 +183,8 @@ public class MapaPrueba implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("DISPARO");
+                progressBar.setValue(progressBar.getValue()-10);
+                System.out.println("BARRA: " + progressBar.getValue());
             }
         });
 
@@ -176,7 +193,10 @@ public class MapaPrueba implements Screen {
         // Agrega el ImageButton al Stage para que se pueda dibujar y recibir eventos de entrada
         stage.addActor(disparo);
 
-        //Gdx.input.setInputProcessor(new InputHandlerGameScreen(this, touchpad));
+
+
+
+
 
         // En el constructor de MapaPrueba
         touchpad.addListener(new ClickListener() {
@@ -339,6 +359,9 @@ public class MapaPrueba implements Screen {
         touchpadY = MathUtils.clamp(touchpadY, camera.position.y - 200, Gdx.graphics.getHeight() - touchpad.getHeight());
 
         touchpad.setPosition(touchpadX, touchpadY);
+
+        // Actualizar la posición del ProgressBar para que esté encima del jugador
+        progressBar.setPosition(jugadors.get(numJugador).getPosition().x,  jugadors.get(numJugador).getPosition().y +  jugadors.get(numJugador).getHeight() + 20);
 
 
         // Definir la posición del botón de disparo
