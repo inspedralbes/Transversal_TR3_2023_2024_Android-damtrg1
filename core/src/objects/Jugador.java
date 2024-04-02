@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.mygdx.game.AssetManager;
+import com.mygdx.game.MapaPrueba;
 
 import Utils.Settings;
 
@@ -84,6 +85,8 @@ public class Jugador extends Actor {
                 bounds.setPosition(position);
                 COLISIO_DRETA = true;
             }
+            Disparo disparo = new Disparo(previousX, previousY, previousX+deltaX*10, previousY+deltaY*10, deltaX*10, deltaY*10);
+            MapaPrueba.stage.addActor(disparo);
         }
 
         else if (deltaX < 0) {
@@ -95,6 +98,8 @@ public class Jugador extends Actor {
                 bounds.setPosition(position);
                 COLISIO_ESQUERRA = true;
             }
+            Disparo disparo = new Disparo(previousX, previousY, previousX+deltaX*10, previousY+deltaY*10, deltaX*10, deltaY*10);
+            MapaPrueba.stage.addActor(disparo);
         }
 
         if (deltaY > 0) {

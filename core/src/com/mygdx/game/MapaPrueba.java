@@ -47,7 +47,7 @@ public class MapaPrueba implements Screen {
         return jugador;
     }
 
-    Stage stage;
+    public static Stage stage;
 
     Batch batch;
 
@@ -350,9 +350,6 @@ public class MapaPrueba implements Screen {
         float touchpadX = camera.position.x - camera.viewportWidth / 2 + 10; // Ajustar la posición del Touchpad en X
         float touchpadY = camera.position.y - camera.viewportHeight / 2 + 10; // Ajustar la posición del Touchpad en Y
 
-        // Establecer límites para el Touchpad
-        touchpadX = MathUtils.clamp(touchpadX, 0, Gdx.graphics.getWidth() - touchpad.getWidth());
-        touchpadY = MathUtils.clamp(touchpadY, 0, Gdx.graphics.getHeight() - touchpad.getHeight());
 
         // Establecer límites para el Touchpad
         touchpadX = MathUtils.clamp(touchpadX, camera.position.x - minX, Gdx.graphics.getWidth() - touchpad.getWidth());
@@ -365,13 +362,22 @@ public class MapaPrueba implements Screen {
 
 
         // Definir la posición del botón de disparo
-        float buttonX = camera.position.x + camera.viewportWidth / 2; // Ajustar la posición del botón en X
+        /*
+        float buttonX = camera.position.x + camera.viewportWidth / 2 + 10; // Ajustar la posición del botón en X
         float buttonY = camera.position.y - camera.viewportHeight / 2 + 10; // Ajustar la posición del botón en Y
 
+
+         */
+
+        float buttonX = 50; // Ajustar la posición del botón en X
+        float buttonY = 50; // Ajustar la posición del botón en Y
+        /*
         // Establecer límites para el botón de disparo
         buttonX = MathUtils.clamp(buttonX, camera.position.x - minX, Gdx.graphics.getWidth() - touchpad.getWidth());
         buttonY = MathUtils.clamp(buttonY, 0, Gdx.graphics.getHeight() - disparo.getHeight());
 
+
+         */
         // Actualizar la posición del botón de disparo
         disparo.setPosition(buttonX, buttonY);
 
