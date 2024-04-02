@@ -6,6 +6,7 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -24,6 +25,8 @@ public class Jugador extends Actor {
     public static boolean COLISIO_ABAIX = false;
     public static boolean COLISIO_ESQUERRA = false;
     public static boolean COLISIO_ADALT = false;
+
+    public static Sprite spriteJugador;
 
     private Rectangle bounds; // Área de colisión del jugador
 
@@ -51,6 +54,9 @@ public class Jugador extends Actor {
         // Guardar la posición anterior del jugador
         float previousX = position.x;
         float previousY = position.y;
+
+        System.out.println(deltaX);
+        System.out.println(deltaY);
 
         // Mover el jugador basado en la lógica del juego
         // Por ejemplo:
@@ -104,6 +110,23 @@ public class Jugador extends Actor {
             }
         }
 
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            if (deltaX > 0) {
+                Jugador.spriteJugador = AssetManager.jugadorSprite_dreta;
+            }
+            else if (deltaX < 0){
+                Jugador.spriteJugador = AssetManager.jugadorSprite_esquerra;
+            }
+        }
+        else {
+            if (deltaY > 0) {
+                Jugador.spriteJugador = AssetManager.jugadorSprite_amunt;
+            }
+            else if (deltaY < 0){
+                Jugador.spriteJugador = AssetManager.jugadorSprite_avall;
+            }
+        }
+
 
     }
 
@@ -123,9 +146,7 @@ public class Jugador extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
 
-        Sprite a = AssetManager.imatgesJugador[180];
-        a.setRotation(180f);
-        batch.draw(a, position.x, position.y, width, height);
+        batch.draw(spriteJugador, position.x, position.y, width, height);
         // Draw the player hitbox (for debugging purposes)
         batch.end();
         batch.begin();
