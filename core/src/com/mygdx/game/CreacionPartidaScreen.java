@@ -418,8 +418,9 @@ public class CreacionPartidaScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 JSONObject jsonEnviar = new JSONObject();
                 jsonEnviar.put("sala", salaId);
-                mSocket.emit("startGame", jsonEnviar.toString());
                 mapaSelecionado = seleccioMapa.getText().toString();
+                jsonEnviar.put("mapaSelecionado", mapaSelecionado);
+                mSocket.emit("startGame", jsonEnviar.toString());
             }
         });
     }

@@ -162,7 +162,7 @@ public class PantallaPrincipal implements Screen {
         btn_tenda.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new ScreenSettings(game));
+                game.setScreen(new ShopScreen(game));
             }
         });
 
