@@ -20,13 +20,20 @@ public class Jugador extends Actor {
     private int width, height;
     private int direction;
     private String nomUsuari;
+    private Sprite spriteJugador;
 
     public static boolean COLISIO_DRETA = false;
     public static boolean COLISIO_ABAIX = false;
     public static boolean COLISIO_ESQUERRA = false;
     public static boolean COLISIO_ADALT = false;
 
-    public static Sprite spriteJugador;
+    public void setSpriteJugador(Sprite spriteJugador) {
+        this.spriteJugador = spriteJugador;
+    }
+
+    public Sprite getSpriteJugador() {
+        return spriteJugador;
+    }
 
     private Rectangle bounds; // Área de colisión del jugador
 
@@ -48,6 +55,8 @@ public class Jugador extends Actor {
 
         // Inicializar el área de colisión
         this.bounds = new Rectangle(x, y, width/2, height);
+
+        this.spriteJugador = AssetManager.jugadorSprite_dreta;
     }
 
     public void move(float deltaX, float deltaY) {
@@ -112,18 +121,18 @@ public class Jugador extends Actor {
 
         if (Math.abs(deltaX) > Math.abs(deltaY)) {
             if (deltaX > 0) {
-                Jugador.spriteJugador = AssetManager.jugadorSprite_dreta;
+                this.spriteJugador = AssetManager.jugadorSprite_dreta;
             }
             else if (deltaX < 0){
-                Jugador.spriteJugador = AssetManager.jugadorSprite_esquerra;
+                this.spriteJugador = AssetManager.jugadorSprite_esquerra;
             }
         }
         else {
             if (deltaY > 0) {
-                Jugador.spriteJugador = AssetManager.jugadorSprite_amunt;
+                this.spriteJugador = AssetManager.jugadorSprite_amunt;
             }
             else if (deltaY < 0){
-                Jugador.spriteJugador = AssetManager.jugadorSprite_avall;
+                this.spriteJugador = AssetManager.jugadorSprite_avall;
             }
         }
 
