@@ -13,6 +13,7 @@ import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -154,6 +155,18 @@ public class PantallaPrincipal implements Screen {
         btn_log_out.setPosition(btnX, btnY - 200);
 
 
+        TextButton btn_tenda = new TextButton("TENDA", textButtonStyle);
+        btn_tenda.setSize(70,70);
+        btn_tenda.setPosition(0, Settings.GAME_HEIGHT - btn_tenda.getHeight());
+
+        btn_tenda.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new ScreenSettings(game));
+            }
+        });
+
+        stage.addActor(btn_tenda);
         stage.addActor(btn_play);
         stage.addActor(btn_settings);
         stage.addActor(btn_log_out);
