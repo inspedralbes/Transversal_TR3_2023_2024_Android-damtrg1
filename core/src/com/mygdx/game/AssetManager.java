@@ -83,8 +83,6 @@ public class AssetManager {
         // Crear una nueva Sprite con la región de textura
         jugadorSprite_amunt = new Sprite(jugador_amunt);
 
-        Jugador.spriteJugador = jugadorSprite_amunt;
-
         FileHandle fontFile = Gdx.files.internal("default.fnt"); // Assuming your font is in the "fonts" folder
         font = new BitmapFont(fontFile);
 

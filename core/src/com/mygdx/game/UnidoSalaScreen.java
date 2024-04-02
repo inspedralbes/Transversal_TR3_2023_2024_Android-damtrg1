@@ -291,8 +291,9 @@ public class UnidoSalaScreen implements Screen {
                 try {
                     JSONObject data = new JSONObject(jsonString);
                     String sala = data.getString("sala");
+                    String mapaSelecionado = data.getString("mapaSelecionado");
                     if(sala.equals(salaId)) {
-                        Sala salaNova = new Sala(sala, usuarisSala);
+                        Sala salaNova = new Sala(sala, usuarisSala, mapaSelecionado);
                         Gdx.app.postRunnable(() -> {
                             game.setScreen(new MapaPrueba(game, salaNova));
                         });                    }
