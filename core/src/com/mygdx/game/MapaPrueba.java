@@ -1,16 +1,19 @@
 package com.mygdx.game;
 
+import static com.mygdx.game.AssetManager.font;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
@@ -27,7 +30,6 @@ import java.util.TimerTask;
 
 import Utils.Sala;
 import Utils.Settings;
-import helpers.InputHandlerGameScreen;
 import helpers.JsonLoader;
 import objects.Background;
 import objects.Jugador;
@@ -35,6 +37,7 @@ import objects.Jugador;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+
 public class MapaPrueba implements Screen {
 
     Pixel_R6 game;
@@ -62,8 +65,12 @@ public class MapaPrueba implements Screen {
 
     Touchpad touchpad;
 
+    Label LabelNomJugador;
+
     Button disparo;
-    public static ArrayList<Jugador> jugadors = new ArrayList<>();
+    ArrayList<Jugador> jugadors = new ArrayList<>();
+
+    ArrayList<ProgressBar> progressBars = new ArrayList<>();
 
     float knobXAnterior = 0;
     float knobYAnterior = 0;
@@ -117,6 +124,7 @@ public class MapaPrueba implements Screen {
                 }
                 jugadors.add(player);
                 stage.addActor(player);
+
                 //BARRA DE VIDA
                 ProgressBar.ProgressBarStyle progressBarStyle = skin_vida.get("default-horizontal", ProgressBar.ProgressBarStyle.class);
 
@@ -125,7 +133,7 @@ public class MapaPrueba implements Screen {
                 progressBar.setHeight(10);
                 progressBar.setWidth(50);
                 progressBar.setValue(100); // Establecer el valor inicial del ProgressBar
-                //progressBar.setPosition(100,300);
+                progressBars.add(progressBar); // Agregar la ProgressBar a la lista
                 stage.addActor(progressBar); // Agregar el ProgressBar al Stage
             }
             if (usuari.equals(preferences.getString("username"))) {
@@ -191,7 +199,13 @@ public class MapaPrueba implements Screen {
 
 
 
-
+        //NOMBRES DE JUGADORES EN PANTALLA
+        for(int i = 0; i < jugadors.size(); i++){
+            Label.LabelStyle labelStyle = skin_vida.get("default", Label.LabelStyle.class);
+            LabelNomJugador = new Label(jugadors.get(i).getNomUsuari(), labelStyle);
+            LabelNomJugador.setPosition(jugadors.get(i).getPosition().x, jugadors.get(i).getPosition().y + jugadors.get(i).getHeight() + 30);
+            stage.addActor(LabelNomJugador);
+        }
 
 
         // En el constructor de MapaPrueba
@@ -303,11 +317,7 @@ public class MapaPrueba implements Screen {
                     e.printStackTrace();
                 }
             }});
-
-        Gdx.input.setInputProcessor(new InputHandlerGameScreen(this));
     }
-
-
     @Override
     public void show() {
 // Create a timer task to emit socket events every 2 seconds
@@ -370,6 +380,14 @@ public class MapaPrueba implements Screen {
         // Actualizar la posición del ProgressBar para que esté encima del jugador
         progressBar.setPosition(jugadors.get(numJugador).getPosition().x,  jugadors.get(numJugador).getPosition().y +  jugadors.get(numJugador).getHeight() + 20);
 
+        // Actualizar la posición de las ProgressBar para que estén encima de cada jugador
+        for (int i = 0; i < jugadors.size(); i++) {
+            progressBars.get(i).setPosition(jugadors.get(i).getPosition().x, jugadors.get(i).getPosition().y + jugadors.get(i).getHeight() + 25);
+        }
+
+        for (int i= 0; i < jugadors.size(); i++){
+            LabelNomJugador.setPosition(jugadors.get(i).getPosition().x, jugadors.get(i).getPosition().y + jugadors.get(i).getHeight() + 30);
+        }
 
         // Definir la posición del botón de disparo
 
