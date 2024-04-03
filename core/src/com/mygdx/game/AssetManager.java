@@ -10,13 +10,14 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import objects.Jugador;
 
 public class AssetManager {
 
     public static Sprite[] imatgesJugador;
-    public static Texture imgFondo, imgCuadrado, mapaCastillo, mapaMazmorra;
+    public static Texture imgFondo, imgCuadrado, mapaCastillo, mapaMazmorra, persona;
 
     public static TextureRegion background;
 
@@ -39,6 +40,8 @@ public class AssetManager {
     public static Sprite jugadorSprite_esquerra;
     public static TextureRegion jugador_amunt;
     public static Sprite jugadorSprite_amunt;
+
+    public static Drawable prova;
 
     public static void load() {
         imgFondo = new Texture(Gdx.files.internal("fondo2.jpg"));
@@ -86,10 +89,12 @@ public class AssetManager {
         FileHandle fontFile = Gdx.files.internal("default.fnt"); // Assuming your font is in the "fonts" folder
         font = new BitmapFont(fontFile);
 
+
+        persona = new Texture(Gdx.files.internal("persona.jpg"));
+
     }
 
     public static void dispose() {
         imgFondo.dispose();
-        imgCuadrado.dispose();
     }
 }
