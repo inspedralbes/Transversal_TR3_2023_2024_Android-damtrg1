@@ -20,7 +20,7 @@ public class InputHandlerGameScreen implements InputProcessor {
 
         // Obtenim tots els elements necessaris
         this.screen = screen;
-        jugador = screen.getJugador();
+        jugador = screen.jugadors.get(0);
 
     }
 
@@ -41,7 +41,7 @@ public class InputHandlerGameScreen implements InputProcessor {
                 break;
             case Input.Keys.D:
                 // Mover hacia la derecha
-                jugador.move(1, 0);
+                jugador.move(10, 0);
                 break;
         }
         return true; // Devuelve true para indicar que la tecla ha sido procesada

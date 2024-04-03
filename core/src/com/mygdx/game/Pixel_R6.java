@@ -30,6 +30,7 @@ public class Pixel_R6 extends Game {
             setScreen(new Login(this)); // Si no está logueado, va a la pantalla de login
         }
 
+		Gdx.graphics.setResizable(false);  // Deshabilitar la capacidad de redimensionar
 
 	}
 

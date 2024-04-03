@@ -48,20 +48,20 @@ public class RegisterScreen implements Screen {
         AssetManager.load();
 
         // Creem la càmera de les dimensions del joc
-        camera = new OrthographicCamera(Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
+        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Settings.GAME_HEIGHT);
 
         // Posant el paràmetre a true configurem la càmera perquè
         // faci servir el sistema de coordenades Y-Down
         camera.setToOrtho(false);
 
         // Creem el viewport amb les mateixes dimensions que la càmera
-        StretchViewport viewport = new StretchViewport(Settings.GAME_WIDTH, Settings.GAME_HEIGHT, camera);
+        StretchViewport viewport = new StretchViewport(Gdx.graphics.getWidth(), Settings.GAME_HEIGHT, camera);
 
         // Creem l'stage i assginem el viewport
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
 
-        bg = new Background(0, 0, Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
+        bg = new Background(0, 0, Gdx.graphics.getWidth(), Settings.GAME_HEIGHT);
 
         //AÑADIMOS EL FONDO AL STAGE
         stage.addActor(bg);
@@ -92,7 +92,7 @@ public class RegisterScreen implements Screen {
 
 
         // Calcula la posición X centrada en la pantalla
-        float posX = (Settings.GAME_WIDTH - titleLabel.getWidth()) / 2;
+        float posX = (Gdx.graphics.getWidth() - titleLabel.getWidth()) / 2;
 
         // Calcula la posición Y en la parte superior de la pantalla
         float posY = Settings.GAME_HEIGHT - titleLabel.getHeight(); // Margen de 20 píxeles
@@ -212,7 +212,7 @@ public class RegisterScreen implements Screen {
         window.getTitleLabel().setAlignment(Align.center);
 
         // Obtén las dimensiones de la ventana del juego desde la clase Settings
-        int gameWidth = Settings.GAME_WIDTH;
+        int gameWidth = Gdx.graphics.getWidth();
         int gameHeight = Settings.GAME_HEIGHT;
 
         // Calcula las coordenadas X e Y para colocar la ventana en el centro de la pantalla
@@ -318,7 +318,7 @@ public class RegisterScreen implements Screen {
                                     windowerror.getTitleLabel().setAlignment(Align.center);
 
                                     // Calcula las coordenadas X e Y para colocar la ventana en el centro de la pantalla
-                                    float windowErrorX = ((Settings.GAME_WIDTH * 0.93f) - windowerror.getWidth()) / 2;
+                                    float windowErrorX = ((Gdx.graphics.getWidth() * 0.93f) - windowerror.getWidth()) / 2;
                                     float windowErrorY = (Settings.GAME_HEIGHT - windowerror.getHeight()) / 2;
 
                                     // Establece la posición de la ventana en el centro de la pantalla
