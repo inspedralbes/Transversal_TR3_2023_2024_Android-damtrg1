@@ -32,20 +32,20 @@ public class GameSceen implements Screen {
         AssetManager.load();
 
         // Creem la càmera de les dimensions del joc
-        camera = new OrthographicCamera(Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
+        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Settings.GAME_HEIGHT);
 
         // Posant el paràmetre a true configurem la càmera perquè
         // faci servir el sistema de coordenades Y-Down
         camera.setToOrtho(false);
 
         // Creem el viewport amb les mateixes dimensions que la càmera
-        StretchViewport viewport = new StretchViewport(Settings.GAME_WIDTH, Settings.GAME_HEIGHT, camera);
+        StretchViewport viewport = new StretchViewport(Gdx.graphics.getWidth(), Settings.GAME_HEIGHT, camera);
 
         // Creem l'stage i assginem el viewport
         stage = new Stage(viewport);
 
         //CONFIGURACION DEL FONDO
-        bg = new Background(0, 0, Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
+        bg = new Background(0, 0, Gdx.graphics.getWidth(), Settings.GAME_HEIGHT);
 
         stage.addActor(bg);
 
@@ -74,7 +74,7 @@ public class GameSceen implements Screen {
 
 
         // Calcula la posición X centrada en la pantalla
-        float posX = (Settings.GAME_WIDTH - titleLabel.getWidth()) / 2;
+        float posX = (Gdx.graphics.getWidth() - titleLabel.getWidth()) / 2;
 
         // Calcula la posición Y en la parte superior de la pantalla
         float posY = Settings.GAME_HEIGHT - titleLabel.getHeight(); // Margen de 20 píxeles

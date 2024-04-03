@@ -85,8 +85,7 @@ public class Jugador extends Actor {
                 bounds.setPosition(position);
                 COLISIO_DRETA = true;
             }
-            Disparo disparo = new Disparo(previousX, previousY, previousX+deltaX*10, previousY+deltaY*10, deltaX*10, deltaY*10);
-            MapaPrueba.stage.addActor(disparo);
+
         }
 
         else if (deltaX < 0) {
@@ -98,8 +97,7 @@ public class Jugador extends Actor {
                 bounds.setPosition(position);
                 COLISIO_ESQUERRA = true;
             }
-            Disparo disparo = new Disparo(previousX, previousY, previousX+deltaX*10, previousY+deltaY*10, deltaX*10, deltaY*10);
-            MapaPrueba.stage.addActor(disparo);
+
         }
 
         if (deltaY > 0) {

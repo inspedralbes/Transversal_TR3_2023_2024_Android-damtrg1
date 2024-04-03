@@ -27,6 +27,7 @@ import java.util.TimerTask;
 
 import Utils.Sala;
 import Utils.Settings;
+import helpers.InputHandlerGameScreen;
 import helpers.JsonLoader;
 import objects.Background;
 import objects.Jugador;
@@ -41,11 +42,6 @@ public class MapaPrueba implements Screen {
     Background bg;
     int numJugador;
 
-    Jugador jugador;
-
-    public Jugador getJugador() {
-        return jugador;
-    }
 
     public static Stage stage;
 
@@ -67,7 +63,7 @@ public class MapaPrueba implements Screen {
     Touchpad touchpad;
 
     Button disparo;
-    ArrayList<Jugador> jugadors = new ArrayList<>();
+    public static ArrayList<Jugador> jugadors = new ArrayList<>();
 
     float knobXAnterior = 0;
     float knobYAnterior = 0;
@@ -91,20 +87,20 @@ public class MapaPrueba implements Screen {
         mSocket.connect();
 
         // Creem la càmera de les dimensions del joc
-        camera = new OrthographicCamera(Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
+        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         // Posant el paràmetre a true configurem la càmera perquè
         // faci servir el sistema de coordenades Y-Down
         camera.setToOrtho(false);
 
         // Creem el viewport amb les mateixes dimensions que la càmera
-        StretchViewport viewport = new StretchViewport(Settings.GAME_WIDTH, Settings.GAME_HEIGHT, camera);
+        StretchViewport viewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
 
         // Creem l'stage i assginem el viewport
         stage = new Stage(viewport);
 
         //CONFIGURACION DEL FONDO
-        //bg = new Background(0, 0, Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
+        //bg = new Background(0, 0, Gdx.graphics.getWidth(), Settings.GAME_HEIGHT);
 
         JsonLoader jsonLoader = new JsonLoader();
         JSONObject jsonPosicions = jsonLoader.loadJson("posicions.json");
@@ -307,7 +303,11 @@ public class MapaPrueba implements Screen {
                     e.printStackTrace();
                 }
             }});
+
+        Gdx.input.setInputProcessor(new InputHandlerGameScreen(this));
     }
+
+
     @Override
     public void show() {
 // Create a timer task to emit socket events every 2 seconds
@@ -332,6 +332,7 @@ public class MapaPrueba implements Screen {
         // Actualizar la posición de la cámara para que siga al jugador
         camera.position.set(jugadors.get(numJugador).getPosition().x, jugadors.get(numJugador).getPosition().y, 0);
 
+        /*
         // Limitar la posición de la cámara para que no se salga del mapa
         float halfWidth = camera.viewportWidth * camera.zoom / 2;
         float halfHeight = camera.viewportHeight * camera.zoom / 2;
@@ -339,47 +340,62 @@ public class MapaPrueba implements Screen {
         float minY = halfHeight;
         float maxX = AssetManager.tiledMazmorra.getProperties().get("width", Integer.class) * AssetManager.tiledMazmorra.getProperties().get("tilewidth", Integer.class) - halfWidth;
         float maxY = AssetManager.tiledMazmorra.getProperties().get("height", Integer.class) * AssetManager.tiledMazmorra.getProperties().get("tileheight", Integer.class) - halfHeight;
+        */
 
-        camera.position.x = MathUtils.clamp(camera.position.x, minX, maxX);
-        camera.position.y = MathUtils.clamp(camera.position.y, minY, maxY);
+        camera.position.x = MathUtils.clamp(camera.position.x, 350, Gdx.graphics.getWidth()-120);
+        camera.position.y = MathUtils.clamp(camera.position.y, 220, Gdx.graphics.getHeight()+530);
+
 
         // Actualizar la cámara
         camera.update();
 
+
         // Actualizar la posición del Touchpad en relación con la cámara
-        float touchpadX = camera.position.x - camera.viewportWidth / 2 + 10; // Ajustar la posición del Touchpad en X
-        float touchpadY = camera.position.y - camera.viewportHeight / 2 + 10; // Ajustar la posición del Touchpad en Y
+        float touchpadX = 30; // Ajustar la posición del Touchpad en X
+        float touchpadY = 225; // Ajustar la posición del Touchpad en Y
+
+        touchpadX = camera.position.x - 320; // Ajustar la posición del Touchpad en X
+        touchpadY = camera.position.y - 200; // Ajustar la posición del Touchpad en Y
 
 
         // Establecer límites para el Touchpad
-        touchpadX = MathUtils.clamp(touchpadX, camera.position.x - minX, Gdx.graphics.getWidth() - touchpad.getWidth());
-        touchpadY = MathUtils.clamp(touchpadY, camera.position.y - 200, Gdx.graphics.getHeight() - touchpad.getHeight());
+
+        touchpadX = MathUtils.clamp(touchpadX, camera.position.x - 500, Gdx.graphics.getWidth() - touchpad.getWidth());
+        touchpadY = MathUtils.clamp(touchpadY, camera.position.y - 500, Gdx.graphics.getHeight() - touchpad.getHeight() + 420);
 
         touchpad.setPosition(touchpadX, touchpadY);
+
+
 
         // Actualizar la posición del ProgressBar para que esté encima del jugador
         progressBar.setPosition(jugadors.get(numJugador).getPosition().x,  jugadors.get(numJugador).getPosition().y +  jugadors.get(numJugador).getHeight() + 20);
 
 
         // Definir la posición del botón de disparo
-        /*
-        float buttonX = camera.position.x + camera.viewportWidth / 2 + 10; // Ajustar la posición del botón en X
-        float buttonY = camera.position.y - camera.viewportHeight / 2 + 10; // Ajustar la posición del botón en Y
+
+        float buttonX = 150; // Ajustar la posición del Touchpad en X
+        float buttonY = 225; // Ajustar la posición del Touchpad en Y
+
+        buttonX = camera.position.x - 170; // Ajustar la posición del Touchpad en X
+        buttonY = camera.position.y - 200; // Ajustar la posición del Touchpad en Y
 
 
-         */
-
-        float buttonX = 50; // Ajustar la posición del botón en X
-        float buttonY = 50; // Ajustar la posición del botón en Y
-        /*
         // Establecer límites para el botón de disparo
-        buttonX = MathUtils.clamp(buttonX, camera.position.x - minX, Gdx.graphics.getWidth() - touchpad.getWidth());
-        buttonY = MathUtils.clamp(buttonY, 0, Gdx.graphics.getHeight() - disparo.getHeight());
 
 
-         */
+        buttonX = MathUtils.clamp(buttonX, camera.position.x - 500, Gdx.graphics.getWidth() - touchpad.getWidth());
+        buttonY = MathUtils.clamp(buttonY, camera.position.y - 500, Gdx.graphics.getHeight() - touchpad.getHeight() + 420);
+
+
+
+
+
+
+
         // Actualizar la posición del botón de disparo
         disparo.setPosition(buttonX, buttonY);
+
+
 
         // Dibujar el mapa
         renderer.setView(camera);
