@@ -8,7 +8,10 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -18,7 +21,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+
+import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -58,10 +64,46 @@ public class PantallaPrincipal implements Screen {
         // Creem el viewport amb les mateixes dimensions que la càmera
         StretchViewport viewport = new StretchViewport(Gdx.graphics.getWidth(), Settings.GAME_HEIGHT, camera);
 
+
         // Creem l'stage i assginem el viewport
         stage = new Stage(viewport);
 
-        //CONFIGURACION DEL FONDO
+
+        // Create a GET request to fetch the image
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
+        httpRequest.setUrl("http://r6pixel.dam.inspedralbes.cat:3169/getMonedes/" + preferences.getString("username"));
+        httpRequest.setHeader("Content-Type", "application/json");
+
+        // Send the request
+        Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                HttpStatus status = httpResponse.getStatus();
+                if (status.getStatusCode() == 200) {
+                    // If the request was successful (status code 200)
+                    String responseData = httpResponse.getResultAsString();
+                    JSONObject json = new JSONObject(responseData.substring(1, responseData.length() - 1));
+                    System.out.println(json);
+                    preferences.putString("monedas", String.valueOf(json.get("monedas")));
+                }
+
+            }
+
+            @Override
+            public void failed(Throwable t) {
+
+            }
+
+            @Override
+            public void cancelled() {
+
+            }
+        });
+
+
+
+
+                //CONFIGURACION DEL FONDO
         bg = new Background(0, 0, Gdx.graphics.getWidth(), Settings.GAME_HEIGHT);
 
         //AÑADIMOS EL FONDO AL STAGE

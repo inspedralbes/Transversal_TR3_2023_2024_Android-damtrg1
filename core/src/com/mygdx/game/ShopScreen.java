@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -31,6 +32,9 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 import Utils.Settings;
 import objects.Background;
@@ -52,18 +56,23 @@ public class ShopScreen implements Screen {
     Preferences preferences;
 
     JSONArray skins;
-    boolean carregat, imageLoaded = false;
 
-    Label[] labels = new Label[4];
-    ImageButton[] imatges = new ImageButton[4];
+    ArrayList<Drawable> imatgesBaixades = new ArrayList<>(10);
 
-    Drawable[] imatgesBaixades = new Drawable[4];
+    Label labelNom, descripcioLabel, labelBtn, labelNumMonedas;
+    ImageButton.ImageButtonStyle imgStyle;
+    Button btnEsquerra, btnDreta;
+    TextButton btnComprar;
 
-    ImageButton.ImageButtonStyle[] imageStyle = new ImageButton.ImageButtonStyle[4];
+    String[] inventariJugador;
+    Window popupWindow;
+
+    private int currentIndex = 0;
     public ShopScreen(Pixel_R6 game) {
         this.game = game;
 
         AssetManager.load();
+        preferences = Gdx.app.getPreferences("Pref");
 
         // Creem la càmera de les dimensions del joc
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Settings.GAME_HEIGHT);
@@ -122,8 +131,11 @@ public class ShopScreen implements Screen {
         // Añade el título al stage
         stage.addActor(titleLabel);
 
+        Label.LabelStyle labelStyleNumMonedas = skin.get("title", Label.LabelStyle.class);
+        labelNumMonedas = new Label(preferences.getString("monedas"), labelStyleNumMonedas);
+        labelNumMonedas.setPosition(Settings.GAME_WIDTH - labelNumMonedas.getWidth(), Settings.GAME_HEIGHT - labelNumMonedas.getHeight());
 
-
+        stage.addActor(labelNumMonedas);
         //VENTANA
         Window.WindowStyle windowStyle = skin.get(Window.WindowStyle.class);
 
@@ -134,7 +146,7 @@ public class ShopScreen implements Screen {
         // Obtén las dimensiones de la ventana del juego desde la clase Settings
         int gameWidth = Gdx.graphics.getWidth();
         int gameHeight = Settings.GAME_HEIGHT;
-        window.setSize(1200,600); // Establece el tamaño como desees
+        window.setSize(1200, 600); // Establece el tamaño como desees
 
         // Calcula las coordenadas X e Y para colocar la ventana en el centro de la pantalla
         float windowX = gameWidth - window.getWidth() * 1.1f;
@@ -142,8 +154,6 @@ public class ShopScreen implements Screen {
 
         // Establece la posición de la ventana en el centro de la pantalla
         window.setPosition(windowX, windowY);
-
-
 
 
         stage.addActor(window);
@@ -160,8 +170,6 @@ public class ShopScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new PantallaPrincipal(game));
-
-
             }
         });
 
@@ -192,10 +200,13 @@ public class ShopScreen implements Screen {
                     // Handle the response data here
                     JSONObject json = new JSONObject(responseData);
                     skins = json.getJSONArray("skins");
-
-                    for(int i = 0; i < skins.length(); i++){
+                    System.out.println(skins.length());
+                    imatgesBaixades = new ArrayList<>(Collections.nCopies(skins.length(), null));
+                    System.out.println(imatgesBaixades.size());
+                    for (int i = 0; i < skins.length(); i++) {
                         JSONObject item = skins.getJSONObject(i);
-                        fetchAndSetImage(item.getString("pngSkin"),i);
+                        System.out.println(item);
+                        fetchAndSetImage(item.getString("pngSkin"), i);
                     }
 
                 } else {
@@ -216,48 +227,172 @@ public class ShopScreen implements Screen {
             }
         });
 
+        // Create an HTTP request
+        Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
 
+        // Construct the URL with query parameters
+        String url2 = "http://r6pixel.dam.inspedralbes.cat:3169/getInventari/" + preferences.getString("username");
+        httpRequest2.setUrl(url2);
+        httpRequest2.setHeader("Content-Type", "application/json");
+
+        // Send the HTTP request
+        Gdx.net.sendHttpRequest(httpRequest2, new Net.HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                HttpStatus status = httpResponse.getStatus();
+                if (status.getStatusCode() == 200) {
+                    // If the request was successful (status code 200)
+                    String responseData = httpResponse.getResultAsString();
+                    String jsonArrayString = responseData.substring(1, responseData.length() - 1);
+                    // Handle the response data here
+                    JSONObject json = new JSONObject(jsonArrayString);
+                    System.out.println(json);
+                    JSONArray arrayResultat = (JSONArray) json.get("skins");
+                    // Convert JSONArray to String[]
+                    inventariJugador = new String[arrayResultat.length()];
+                    for (int i = 0; i < arrayResultat.length(); i++) {
+                        inventariJugador[i] = arrayResultat.getString(i);
+                    }
+                    System.out.println(json.get("skins"));
+                } else {
+                    // If the request failed, handle the error
+                    System.out.println("HTTP request failed with status code: " + status.getStatusCode());
+                }
+            }
+
+            @Override
+            public void failed(Throwable t) {
+                // Handle the case where the HTTP request failed
+                t.printStackTrace();
+            }
+
+            @Override
+            public void cancelled() {
+                // Handle the case where the HTTP request was cancelled
+            }
+        });
 
         //LABELS
         // Obtener el estilo del Label del Skin
         Label.LabelStyle labelStyle = skin.get("title", Label.LabelStyle.class);
+        labelNom = new Label("ITEM ", labelStyle);
+        labelNom.setPosition(100, 100);
 
-        for (int i = 0; i < labels.length; i++){
-            labels[i] = new Label("ITEM " + i, labelStyle);
-            labels[i].setPosition(i * 100, 100);
-        }
+        //IMatge de item
+        imgStyle = new ImageButton.ImageButtonStyle();
+        TextureRegion textureRegion = new TextureRegion(AssetManager.persona, 0, 0, 1600, 1600);
+        TextureRegionDrawable drawable = new TextureRegionDrawable(textureRegion);
+        imgStyle.imageUp = drawable;
+        ImageButton imatge = new ImageButton(imgStyle);
+        imatge.setSize(250, 200);
+        imatge.getImageCell().size(imatge.getWidth(), imatge.getHeight()).expand().fill();
+
+        //Boto de esquerra
+        Button.ButtonStyle btnStyleEsquerra = skin.get("left", Button.ButtonStyle.class);
+        btnEsquerra = new Button(btnStyleEsquerra);
+        btnEsquerra.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if(currentIndex == 0){
+                    currentIndex = skins.length()-1;
+                }else{
+                    currentIndex--;
+                }
+            }
+        });
+
+        //Boto a la dreta
+        Button.ButtonStyle btnStyleDreta = skin.get("right", Button.ButtonStyle.class);
+        btnDreta = new Button(btnStyleDreta);
+        btnDreta.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (currentIndex == skins.length()-1){
+                    currentIndex = 0;
+                }else{
+                    currentIndex++;
+                }
+            }
+        });
 
 
-        for(int i = 0; i < imatges.length; i++){
-            imageStyle[i] = new ImageButton.ImageButtonStyle();
 
-            TextureRegion textureRegion = new TextureRegion(AssetManager.persona, 0, 0, 1600, 1600);
-//            textureRegion.setRegionWidth(1600);
-//            textureRegion.setRegionHeight(1600);
-            TextureRegionDrawable drawable = new TextureRegionDrawable(textureRegion);
-            imageStyle[i].imageUp = drawable;
-            imatges[i] = new ImageButton(imageStyle[i]);
-            imatges[i].setSize(250,200);
-            imatges[i].getImageCell().size(imatges[i].getWidth(), imatges[i].getHeight()).expand().fill();
-        }
 
+
+
+
+// Create a pop-up window
+        popupWindow = new Window("Confirmacio", skin);
+        popupWindow.getTitleLabel().setAlignment(Align.center);
+
+        popupWindow.setSize(250, 250);
+        popupWindow.setPosition((Gdx.graphics.getWidth() - popupWindow.getWidth()) / 2, (Gdx.graphics.getHeight() - popupWindow.getHeight()) / 2);
+        popupWindow.setMovable(false); // Make the window non-movable
+        popupWindow.setModal(true); // Make the window modal (blocks input to other actors)
+
+        //DEscripcio del producte
+        Label.LabelStyle labelDescripcioStyle = skin.get(Label.LabelStyle.class);
+        descripcioLabel = new Label("", labelDescripcioStyle);
+        descripcioLabel.setWrap(true); // Enable text wrapping for the label
+        descripcioLabel.setAlignment(Align.center);
+
+
+
+        Label missatge = new Label("", labelDescripcioStyle);
+        missatge.setWrap(true);
+        missatge.setAlignment(Align.center);
+        // Add content to the pop-up window
+        TextButton closeButton = new TextButton("Cancelar", skin);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                popupWindow.remove(); // Remove the window when the close button is clicked}
+            }});
+        TextButton acceptButton = new TextButton("Acceptar", skin);
+        acceptButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                JSONObject item = (JSONObject) skins.get(currentIndex);
+                comprarItem(item);
+                popupWindow.remove(); // Remove the window when the close button is clicked}
+            }});
+        popupWindow.add(missatge).expandX().fillX().pad(10).colspan(2).row();
+        popupWindow.add(acceptButton).pad(10);
+        popupWindow.add(closeButton).pad(10).row();
+
+
+
+        //Boto de compra
+        TextButton.TextButtonStyle btnCompraStyle = skin.get("round", TextButton.TextButtonStyle.class);
+        btnComprar = new TextButton("-", textButtonStyle);
+        btnComprar.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                stage.addActor(popupWindow);
+                JSONObject item = (JSONObject) skins.get(currentIndex);
+                missatge.setText("Confimes la compra de " + item.getString("nombre") + " pel valor de " + item.get("valorMonedas") + " monedes?");
+            }
+        });
 
 
 
         //AFEGIR COSES A WINDOW
         window.row();
-        window.add(labels[0]);
-        window.add(labels[1]);
+        window.add();
+        window.add(labelNom);
         window.row();
-        window.add(imatges[0]);
-        window.add(imatges[1]);
+        window.add(btnEsquerra);
+        window.add(imatge).expandX().fillX().pad(10);
+        window.add(btnDreta);
         window.row();
-        window.add(labels[2]);
-        window.add(labels[3]);
-        window.row();
-        window.add(imatges[2]);
-        window.add(imatges[3]);
+        window.add();
+        window.add(descripcioLabel).expandX().fillX().pad(10).row();
+        window.add();
+        window.add(btnComprar).center();
         // Crear una instancia de Label con el texto "Username" y el estilo definido
+
+
+
 
 
 
@@ -274,20 +409,25 @@ public class ShopScreen implements Screen {
         stage.draw();
         stage.act(delta);
 
-        if(skins != null && !carregat){
-            for(int i = 0; i < labels.length; i++){
-                JSONObject item = skins.getJSONObject(i);
-                labels[i].setText(item.get("nombre").toString());
-            }
-            carregat = true;
-        }
-            for (int i = 0; i < imatgesBaixades.length; i++) {
-                if (imatgesBaixades[i] != null) {
-                    System.out.println(i);
-                    imageStyle[i].imageUp = imatgesBaixades[i];
-                    //imatges[i].getImage().setDrawable(imatgesBaixades[i]);
-                }
 
+        if(skins != null){
+            JSONObject item = (JSONObject) skins.get(currentIndex);
+            labelNom.setText(item.getString("nombre"));
+            descripcioLabel.setText(item.getString("descripcion"));
+            if(imatgesBaixades.size() > 0) {
+                imgStyle.imageUp = imatgesBaixades.get(currentIndex);
+            }
+            btnComprar.setText(String.valueOf(item.getInt("valorMonedas")));
+            btnComprar.setTouchable(Touchable.enabled);
+            if(inventariJugador != null) {
+                for (String id : inventariJugador) {
+                    if (id.equals(item.getString("_id"))) {
+                        btnComprar.setText("OBTINGUT");
+                        btnComprar.setTouchable(Touchable.disabled);
+
+                    }
+                }
+            }
         }
     }
 
@@ -315,7 +455,7 @@ public class ShopScreen implements Screen {
     public void dispose() {
 
     }
-    public void fetchAndSetImage(String imageUrl, int index) {
+    public void fetchAndSetImage(String imageUrl, int num) {
         // Create a GET request to fetch the image
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
         httpRequest.setUrl("http://r6pixel.dam.inspedralbes.cat:3169/getImg/" + imageUrl);
@@ -328,8 +468,6 @@ public class ShopScreen implements Screen {
                 byte[] imageData = httpResponse.getResult();
                 // Load the image data into a Pixmap
                 Pixmap pixmap = new Pixmap(imageData, 0, imageData.length);
-
-
 
                 Gdx.app.postRunnable(new Runnable() {
                     @Override
@@ -345,8 +483,9 @@ public class ShopScreen implements Screen {
 
                         // Create a TextureRegionDrawable from the TextureRegion
                         TextureRegionDrawable drawable = new TextureRegionDrawable(textureRegion);
-                        System.out.println(index);
-                        imatgesBaixades[index] = drawable;
+
+
+                        imatgesBaixades.add(num, drawable);
 
                     }
                 });
@@ -365,6 +504,19 @@ public class ShopScreen implements Screen {
                 Gdx.app.log("ImageFetch", "Image fetch request cancelled");
             }
         });
+    }
+
+    public void comprarItem(JSONObject item){
+        //Canviar monedes
+        int totalActualMonedes = Integer.parseInt(String.valueOf(labelNumMonedas.getText())) -  Integer.parseInt(item.getString("valorMonedas"));
+        labelNumMonedas.setText(totalActualMonedes);
+        //Gaurdar en prefs
+        preferences.putString("monedas", String.valueOf(totalActualMonedes));
+        //Editar sql
+        //FER HTTP REQUEST
+        //Editar mongo inventari
+
+        //canviar boto a OBTINGUT
     }
 
 }
