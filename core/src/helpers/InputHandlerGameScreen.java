@@ -20,7 +20,7 @@ public class InputHandlerGameScreen implements InputProcessor {
 
         // Obtenim tots els elements necessaris
         this.screen = screen;
-        jugador = screen.jugadors.get(0);
+        //jugador = screen.jugadors.get(0);
 
     }
 
