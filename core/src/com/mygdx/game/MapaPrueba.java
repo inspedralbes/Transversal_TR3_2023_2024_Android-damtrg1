@@ -32,6 +32,7 @@ import Utils.Sala;
 import Utils.Settings;
 import helpers.JsonLoader;
 import objects.Background;
+import objects.Disparo;
 import objects.Jugador;
 
 import io.socket.client.IO;
@@ -75,6 +76,9 @@ public class MapaPrueba implements Screen {
     float knobXAnterior = 0;
     float knobYAnterior = 0;
     Sala sala;
+
+    float knobX;
+    float knobY;
 
     public MapaPrueba(Pixel_R6 game, Sala sala) {
         preferences = Gdx.app.getPreferences("Pref");
@@ -189,6 +193,9 @@ public class MapaPrueba implements Screen {
                 System.out.println("DISPARO");
                 progressBar.setValue(progressBar.getValue()-10);
                 System.out.println("BARRA: " + progressBar.getValue());
+                Disparo disparo_visual = new Disparo(jugadors.get(numJugador).getPosition().x,jugadors.get(numJugador).getPosition().y,jugadors.get(numJugador).getPosition().x+knobX*100
+                        ,jugadors.get(numJugador).getPosition().y+knobY*100,knobX*100,knobY*100, jugadors.get(numJugador));
+                stage.addActor(disparo_visual);
             }
         });
 
@@ -228,16 +235,16 @@ public class MapaPrueba implements Screen {
 
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                float knobX = touchpad.getKnobPercentX();
-                float knobY = touchpad.getKnobPercentY();
+                knobX = touchpad.getKnobPercentX();
+                knobY = touchpad.getKnobPercentY();
 
 
                 //if(knobX - knobXAnterior >= 0.1f || knobY - knobYAnterior >= 0.1f ||knobX - knobXAnterior <= -0.1f ||  knobY - knobYAnterior <= -0.1){
                     knobXAnterior = knobX;
                     knobYAnterior = knobY;
                     JSONObject movement = new JSONObject();
-                    movement.put("knobX", knobX);
-                    movement.put("knobY", knobY);
+                    movement.put("knobX", String.valueOf(knobX));
+                    movement.put("knobY", String.valueOf(knobY));
                     movement.put("sala", sala.getId());
                     movement.put("user", jugadors.get(numJugador).getNomUsuari());
                     mSocket.emit("touchDragged", movement);
@@ -329,8 +336,8 @@ public class MapaPrueba implements Screen {
                 JSONObject jsonEnviar = new JSONObject();
                 jsonEnviar.put("user", jugadors.get(numJugador).getNomUsuari());
                 jsonEnviar.put("sala", sala.getId());
-                jsonEnviar.put("x", jugadors.get(numJugador).getPosition().x);
-                jsonEnviar.put("y", jugadors.get(numJugador).getPosition().y);
+                jsonEnviar.put("x", String.valueOf(jugadors.get(numJugador).getPosition().x));
+                jsonEnviar.put("y", String.valueOf(jugadors.get(numJugador).getPosition().y));
                 mSocket.emit("posicioCorrecio", jsonEnviar);
                 System.out.println("CORRECIO ENVIADA");
             }
@@ -352,13 +359,12 @@ public class MapaPrueba implements Screen {
         float maxY = AssetManager.tiledMazmorra.getProperties().get("height", Integer.class) * AssetManager.tiledMazmorra.getProperties().get("tileheight", Integer.class) - halfHeight;
         */
 
-        camera.position.x = MathUtils.clamp(camera.position.x, 350, Gdx.graphics.getWidth()-120);
-        camera.position.y = MathUtils.clamp(camera.position.y, 220, Gdx.graphics.getHeight()+530);
+        camera.position.x = MathUtils.clamp(camera.position.x, (float) 0.25*Gdx.graphics.getWidth(), (float) 0.65*Gdx.graphics.getWidth());
+        camera.position.y = MathUtils.clamp(camera.position.y, (float) 0.27*Gdx.graphics.getHeight(), (float) 1.70*Gdx.graphics.getHeight());
 
 
         // Actualizar la cámara
         camera.update();
-
 
         // Actualizar la posición del Touchpad en relación con la cámara
         float touchpadX = 30; // Ajustar la posición del Touchpad en X
@@ -376,7 +382,7 @@ public class MapaPrueba implements Screen {
         touchpad.setPosition(touchpadX, touchpadY);
 
 
-
+        /*
         // Actualizar la posición del ProgressBar para que esté encima del jugador
         progressBar.setPosition(jugadors.get(numJugador).getPosition().x,  jugadors.get(numJugador).getPosition().y +  jugadors.get(numJugador).getHeight() + 20);
 
@@ -413,6 +419,7 @@ public class MapaPrueba implements Screen {
         // Actualizar la posición del botón de disparo
         disparo.setPosition(buttonX, buttonY);
 
+        */
 
 
         // Dibujar el mapa

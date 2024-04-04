@@ -22,6 +22,7 @@ public class Jugador extends Actor {
     private int direction;
     private String nomUsuari;
     private Sprite spriteJugador;
+    private String orientacio_jugador;
 
     public static boolean COLISIO_DRETA = false;
     public static boolean COLISIO_ABAIX = false;
@@ -58,6 +59,11 @@ public class Jugador extends Actor {
         this.bounds = new Rectangle(x, y, width/2, height);
 
         this.spriteJugador = AssetManager.jugadorSprite_dreta;
+        this.orientacio_jugador = "dreta";
+    }
+
+    public String getOrientacio_jugador() {
+        return orientacio_jugador;
     }
 
     public void move(float deltaX, float deltaY) {
@@ -125,17 +131,21 @@ public class Jugador extends Actor {
         if (Math.abs(deltaX) > Math.abs(deltaY)) {
             if (deltaX > 0) {
                 this.spriteJugador = AssetManager.jugadorSprite_dreta;
+                this.orientacio_jugador = "dreta";
             }
             else if (deltaX < 0){
                 this.spriteJugador = AssetManager.jugadorSprite_esquerra;
+                this.orientacio_jugador = "esquerra";
             }
         }
         else {
             if (deltaY > 0) {
                 this.spriteJugador = AssetManager.jugadorSprite_amunt;
+                this.orientacio_jugador = "amunt";
             }
             else if (deltaY < 0){
                 this.spriteJugador = AssetManager.jugadorSprite_avall;
+                this.orientacio_jugador = "avall";
             }
         }
 
