@@ -52,7 +52,7 @@ public class CreacionPartidaScreen implements Screen {
     OrthographicCamera camera;
 
     // Añade un Skin
-    Skin skin, skin_inputs;
+    Skin skin, skin_inputs, skin_btns;
     ArrayList<String> usuarisSala = new ArrayList<>();
     ArrayList<Label> labelsUsuaris = new ArrayList<>();
     Label salaLabel, seleccioMapa;
@@ -70,6 +70,8 @@ public class CreacionPartidaScreen implements Screen {
     Sala salaNova;
 
     String mapaSelecionado;
+
+    Table table;
 
     public CreacionPartidaScreen(Pixel_R6 game) {
         this.game = game;
@@ -188,6 +190,7 @@ public class CreacionPartidaScreen implements Screen {
         //TITULO
         // Carga el Skin
         skin = new Skin(Gdx.files.internal("skin_txt/arcade-ui.json"));
+        skin_btns = new Skin(Gdx.files.internal("skin_vida2/tubular-ui.json"));
 
         // Registro del color blanco en el Skin
         Color blanco = Color.WHITE;
@@ -251,54 +254,12 @@ public class CreacionPartidaScreen implements Screen {
 
         // Calcula las coordenadas X e Y para colocar la ventana en el centro de la pantalla
         float windowX = ((gameWidth / 2) - window.getWidth() * 3.3f);
-        float windowY = ((gameHeight / 2) - window.getHeight() * 1.7f);
+        float windowY = ((gameHeight / 2) - window.getHeight() * 2.3f);
 
         // Establece la posición de la ventana en el centro de la pantalla
         window.setPosition(windowX, windowY);
 
-        window.setSize(1000, 500); // Establece el tamaño como desees
-
-        Table table = new Table();
-        table.setFillParent(false); // La tabla ocupará todo el espacio del padre, que es la ventana en este caso
-
-        Label labelPlayer1 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer1);
-        Label labelPlayer2 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer2);
-        Label labelPlayer3 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer3);
-        Label labelPlayer4 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer4);
-        Label labelPlayer5 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer5);
-        Label labelPlayer6 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer6);
-        Label labelPlayer7 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer7);
-        Label labelPlayer8 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer8);
-        Label labelPlayer9 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer9);
-        Label labelPlayer10 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer10);
-
-
-        table.add(salaLabel);
-        table.getCell(salaLabel).center();
-        table.row();
-        table.add(labelPlayer1);
-        table.add(labelPlayer2);
-        table.add(labelPlayer3);
-        table.add(labelPlayer4);
-        table.add(labelPlayer5);
-        table.row();
-        table.add(labelPlayer6);
-        table.add(labelPlayer7);
-        table.add(labelPlayer8);
-        table.add(labelPlayer9);
-        table.add(labelPlayer10);
-        table.row();
-
+        window.setSize(1000, 600); // Establece el tamaño como desees
 
         Label.LabelStyle labelStyle2 = skin_inputs.get("subtitle", Label.LabelStyle.class);
 
@@ -319,7 +280,7 @@ public class CreacionPartidaScreen implements Screen {
 
         Table tableInfo = new Table();
         tableInfo.add(botoEsquerra).prefSize(40, 40).pad(20);
-        tableInfo.add(seleccioMapa).prefSize(150, 40).pad(20);
+        tableInfo.add(seleccioMapa).prefSize(90, 30).pad(10);
         tableInfo.add(botoDreta).prefSize(40, 40).pad(20).row();
 
         Table tableImg = new Table();
@@ -340,17 +301,13 @@ public class CreacionPartidaScreen implements Screen {
         });
 
 
-        window.add(table).row(); // Agregar la tabla a la ventana
-        window.add(tableInfo).row();
-        window.add(tableImg);
-
         // Agregar la ventana al Stage
         stage.addActor(window);
         // Ajustar la posición de los botones debajo de la ventana
         float btnY = windowY - 100; // Espacio vertical entre la ventana y los botones
 
         // Establecer la posición de los botones
-        botonListo.setPosition(windowX + 350, btnY); // Posición del botón "Inicio Sesión"
+        botonListo.setPosition(windowX + 350, btnY + 30); // Posición del botón "Inicio Sesión"
         botonListo.setSize(300, 70);
 
         // Agregar los botones al Stage
@@ -380,8 +337,7 @@ public class CreacionPartidaScreen implements Screen {
                     if (sala.equals(salaId)) {
                         if (!user.equals(preferences.getString("username"))) {
                             int contador = 0;
-                            for (String usuari : usuarisSala
-                            ) {
+                            for (String usuari : usuarisSala) {
                                 if (!usuari.equals("NO PLAYER")) {
                                     contador++;
                                 }
@@ -423,6 +379,78 @@ public class CreacionPartidaScreen implements Screen {
                 mSocket.emit("startGame", jsonEnviar.toString());
             }
         });
+
+        Table tbBTN = new Table();
+        tbBTN.setFillParent(false);
+
+        TextButton btnAtacante = new TextButton("ATACANTES", skin_inputs.get("default", TextButton.TextButtonStyle.class));
+        Label jugadores = new Label("JUGADORES", skin_inputs.get("subtitle", Label.LabelStyle.class));
+        TextButton btnDefensor = new TextButton("DEFENSORES", skin_inputs.get("default", TextButton.TextButtonStyle.class));
+
+        btnAtacante.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("ATACANTES");
+            }
+        });
+
+        btnDefensor.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("DEFENSORES");
+            }
+        });
+
+        tbBTN.add(btnAtacante).padRight(90);
+        tbBTN.add(jugadores).prefSize(50, 30);
+        tbBTN.add(btnDefensor).padLeft(90);
+
+        table = new Table();
+        table.setFillParent(false); // Para que la tabla ocupe todo el espacio del padre, en este caso, el Stage
+
+        // Columna de aliados
+        Table tableAliados = new Table();
+        tableAliados.top().left(); // Alinea la tabla en la parte superior izquierda
+
+        // Agrega los labels de los aliados a la columna de aliados
+        for (int i = 0; i < 5; i++) {
+            Label aliadoLabel = new Label("Atacante " + (i + 1), skin_inputs);
+            tableAliados.add(aliadoLabel).pad(10).row(); // Agrega un padding y pasa a la siguiente fila
+
+        }
+
+        // Columna de jugadores conectados a la sala
+        Table tableJugadores = new Table();
+        tableJugadores.top().center(); // Alinea la tabla en la parte superior centrada
+
+        // Agrega los labels de los jugadores conectados a la sala a la columna de jugadores
+        for (int i = 0; i < usuarisSala.size(); i++) {
+            Label jugadorLabel = new Label(usuarisSala.get(i), skin_inputs);
+            tableJugadores.add(jugadorLabel).pad(3).row(); // Agrega un padding y pasa a la siguiente fila
+        }
+
+        // Columna de equipo enemigo
+        Table tableEnemigos = new Table();
+        tableEnemigos.top().right(); // Alinea la tabla en la parte superior derecha
+
+        // Agrega los labels de los enemigos a la columna de enemigos
+        for (int i = 5; i < usuarisSala.size(); i++) {
+            Label enemigoLabel = new Label("Defensor " + (i - 4), skin_inputs);
+            tableEnemigos.add(enemigoLabel).pad(10).row(); // Agrega un padding y pasa a la siguiente fila
+        }
+
+
+// Agrega las columnas a la tabla principal
+        table.add(tableAliados).expandY().padRight(100); // Expande la columna de aliados en el eje Y y agrega un espaciado a la derecha
+        table.add(tableJugadores).expandY().padRight(100); // Expande la columna de jugadores en el eje Y y agrega un espaciado a la derecha
+        table.add(tableEnemigos).expandY(); // Expande la columna de enemigos en el eje Y
+
+        window.add(tbBTN).row();
+        window.add(table).row(); // Agregar la tabla a la ventana
+        //window.add(tableEnemigo);
+        window.add(tableInfo).row();
+        window.add(tableImg);
+
     }
 
 
@@ -442,7 +470,7 @@ public class CreacionPartidaScreen implements Screen {
                 break;
             case -1:
                 if (numMapa == 0) {
-                    numMapa  = mapes.length - 1;
+                    numMapa = mapes.length - 1;
                 } else {
                     numMapa--;
                 }
@@ -461,9 +489,9 @@ public class CreacionPartidaScreen implements Screen {
         seleccioMapa.setText(mapes[numMapa]);
 
 
-        if(seleccioMapa.getText().toString().equals("castillo")){
+        if (seleccioMapa.getText().toString().equals("castillo")) {
             IMGMapas.setDrawable(castillo);
-        }else{
+        } else {
             IMGMapas.setDrawable(mazmorra);
         }
 
