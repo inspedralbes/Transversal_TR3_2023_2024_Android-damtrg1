@@ -193,9 +193,18 @@ public class MapaPrueba implements Screen {
                 System.out.println("DISPARO");
                 progressBar.setValue(progressBar.getValue()-10);
                 System.out.println("BARRA: " + progressBar.getValue());
-                Disparo disparo_visual = new Disparo(jugadors.get(numJugador).getPosition().x,jugadors.get(numJugador).getPosition().y,jugadors.get(numJugador).getPosition().x+knobX*100
-                        ,jugadors.get(numJugador).getPosition().y+knobY*100,knobX*100,knobY*100, jugadors.get(numJugador));
-                stage.addActor(disparo_visual);
+                if (touchpad.isTouched()) {
+                    Disparo disparo_visual = new Disparo(jugadors.get(numJugador).getPosition().x,jugadors.get(numJugador).getPosition().y,jugadors.get(numJugador).getPosition().x+knobX*100
+                            ,jugadors.get(numJugador).getPosition().y+knobY*100,knobX*100,knobY*100, jugadors.get(numJugador));
+                    stage.addActor(disparo_visual);
+                }
+                else {
+                    Disparo disparo_visual = new Disparo(jugadors.get(numJugador).getPosition().x,jugadors.get(numJugador).getPosition().y,0
+                            ,0,0,0, jugadors.get(numJugador));
+                    stage.addActor(disparo_visual);
+                }
+
+
             }
         });
 
@@ -370,19 +379,19 @@ public class MapaPrueba implements Screen {
         float touchpadX = 30; // Ajustar la posición del Touchpad en X
         float touchpadY = 225; // Ajustar la posición del Touchpad en Y
 
-        touchpadX = camera.position.x - 320; // Ajustar la posición del Touchpad en X
-        touchpadY = camera.position.y - 200; // Ajustar la posición del Touchpad en Y
+        touchpadX = camera.position.x - (float) 0.25*Gdx.graphics.getWidth(); // Ajustar la posición del Touchpad en X
+        touchpadY = camera.position.y - (float) 0.20*Gdx.graphics.getHeight(); // Ajustar la posición del Touchpad en Y
 
 
         // Establecer límites para el Touchpad
 
-        touchpadX = MathUtils.clamp(touchpadX, camera.position.x - 500, Gdx.graphics.getWidth() - touchpad.getWidth());
-        touchpadY = MathUtils.clamp(touchpadY, camera.position.y - 500, Gdx.graphics.getHeight() - touchpad.getHeight() + 420);
+        touchpadX = MathUtils.clamp(touchpadX, camera.position.x - (float) 0.50*Gdx.graphics.getWidth(), Gdx.graphics.getWidth() - touchpad.getWidth());
+        touchpadY = MathUtils.clamp(touchpadY, camera.position.y - (float) 0.50*Gdx.graphics.getHeight(), (float) 2 * Gdx.graphics.getHeight() - touchpad.getHeight());
 
         touchpad.setPosition(touchpadX, touchpadY);
 
 
-        /*
+
         // Actualizar la posición del ProgressBar para que esté encima del jugador
         progressBar.setPosition(jugadors.get(numJugador).getPosition().x,  jugadors.get(numJugador).getPosition().y +  jugadors.get(numJugador).getHeight() + 20);
 
@@ -400,15 +409,15 @@ public class MapaPrueba implements Screen {
         float buttonX = 150; // Ajustar la posición del Touchpad en X
         float buttonY = 225; // Ajustar la posición del Touchpad en Y
 
-        buttonX = camera.position.x - 170; // Ajustar la posición del Touchpad en X
-        buttonY = camera.position.y - 200; // Ajustar la posición del Touchpad en Y
+        buttonX = camera.position.x + (float) 0.15*Gdx.graphics.getWidth(); // Ajustar la posición del Touchpad en X
+        buttonY = camera.position.y - (float) 0.20*Gdx.graphics.getHeight(); // Ajustar la posición del Touchpad en Y
 
 
         // Establecer límites para el botón de disparo
 
 
-        buttonX = MathUtils.clamp(buttonX, camera.position.x - 500, Gdx.graphics.getWidth() - touchpad.getWidth());
-        buttonY = MathUtils.clamp(buttonY, camera.position.y - 500, Gdx.graphics.getHeight() - touchpad.getHeight() + 420);
+        buttonX = MathUtils.clamp(buttonX, camera.position.x - (float) 0.50*Gdx.graphics.getWidth(), Gdx.graphics.getWidth() - touchpad.getWidth());
+        buttonY = MathUtils.clamp(buttonY, camera.position.y - (float) 0.50*Gdx.graphics.getHeight(), (float) 2 * Gdx.graphics.getHeight() - touchpad.getHeight());
 
 
 
@@ -419,7 +428,7 @@ public class MapaPrueba implements Screen {
         // Actualizar la posición del botón de disparo
         disparo.setPosition(buttonX, buttonY);
 
-        */
+
 
 
         // Dibujar el mapa

@@ -34,34 +34,31 @@ public class Disparo extends Actor {
             if (this.jugador_associat.getOrientacio_jugador().equals("dreta")) {
                 this.x2 = this.x1 + 1*100;
                 this.y2 = this.y1;
-                this.x_vector_direccio = this.x2*100;
-                this.y_vector_direccio = this.y2*100;
+                this.x_vector_direccio = 1*100;
+                this.y_vector_direccio = 0;
             }
             else if (this.jugador_associat.getOrientacio_jugador().equals("esquerra")) {
                 this.x2 = this.x1 - 1*100;
                 this.y2 = this.y1;
-                this.x_vector_direccio = this.x2*100;
-                this.y_vector_direccio = this.y2*100;
+                this.x_vector_direccio = -1*100;
+                this.y_vector_direccio = 0;
             }
             else if (this.jugador_associat.getOrientacio_jugador().equals("amunt")) {
                 this.x2 = this.x1;
                 this.y2 = this.y1 + 1*100;
-                this.x_vector_direccio = this.x2*100;
-                this.y_vector_direccio = this.y2*100;
+                this.x_vector_direccio = 0;
+                this.y_vector_direccio = 1*100;
             }
             else {
                 this.x2 = this.x1;
                 this.y2 = this.y1 - 1*100;
-                this.x_vector_direccio = this.x2*100;
-                this.y_vector_direccio = this.y2*100;
+                this.x_vector_direccio = 0;
+                this.y_vector_direccio = -1*100;
             }
         }
 
 
-        this.x1 = this.x1 + this.x_vector_direccio;
-        this.y1 = this.y1 + this.y_vector_direccio;
-        this.x2 = this.x2 + this.x_vector_direccio;
-        this.y2 = this.y2 + this.y_vector_direccio;
+
 
 
 
@@ -71,6 +68,11 @@ public class Disparo extends Actor {
         drawThickLine(shapeRenderer, x1, y1, x2, y2, 50); // Dibuja una línea roja gruesa con grosor de 5 píxeles
 
         shapeRenderer.end();
+
+        this.x1 = this.x1 + this.x_vector_direccio;
+        this.y1 = this.y1 + this.y_vector_direccio;
+        this.x2 = this.x2 + this.x_vector_direccio;
+        this.y2 = this.y2 + this.y_vector_direccio;
     }
 
     private static void drawThickLine(ShapeRenderer shapeRenderer, float x1, float y1, float x2, float y2, float lineWidth) {
