@@ -324,8 +324,8 @@ public class MapaPrueba implements Screen {
                                     break; // No need to continue searching
                                 }
                             }
-                            float x = data.getFloat("x");
-                            float y = data.getFloat("y");
+                            float x = Float.valueOf(data.getString("x"));
+                            float y = Float.valueOf(data.getString("y"));
                             System.out.println("CORRECIO DE " + jugadors.get(index).getNomUsuari() + "X / Y: " + x + "/" + y);
                             jugadors.get(index).setPosition(x, y);                 }
                     }
