@@ -169,10 +169,8 @@ public class Jugador extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
-
         batch.draw(spriteJugador, position.x, position.y, width, height);
         // Draw the player hitbox (for debugging purposes)
-        batch.end();
 
     }
 
