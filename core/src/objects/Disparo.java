@@ -135,7 +135,8 @@ public class Disparo extends Actor {
         }
         shapeRenderer.end();
 
-        if (collidesWithWalls(tiledMap, this.bounds)) {
+        boolean colision = collidesWithWalls(tiledMap, this.bounds);
+        if (colision) {
             System.out.println("aaaaaaaaaaaaa");
             this.remove();
 
