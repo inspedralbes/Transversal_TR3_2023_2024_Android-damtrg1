@@ -37,13 +37,13 @@ public class Jugador extends Actor {
         return spriteJugador;
     }
 
-    private Rectangle bounds; // Área de colisión del jugador
+    private static Rectangle bounds; // Área de colisión del jugador
 
     public Vector2 getPosition() {
         return position;
     }
 
-    TiledMap tiledMap;
+    public static TiledMap tiledMap;
 
     //ShapeRenderer shapeRenderer = new ShapeRenderer();
     public Jugador(float x, float y, int width, int height, String nomUsuari, TiledMap tiledMap) {
@@ -85,7 +85,7 @@ public class Jugador extends Actor {
         if (deltaX > 0) {
             position.x += deltaX * Settings.JUGADOR_VELOCITY;
             bounds.setPosition(position);
-            if (collidesWithWalls(tiledMap)) {
+            if (collidesWithWalls(tiledMap, bounds)) {
                 collisionX = true;
                 position.x = previousX;
                 bounds.setPosition(position);
@@ -97,7 +97,7 @@ public class Jugador extends Actor {
         else if (deltaX < 0) {
             position.x += deltaX * Settings.JUGADOR_VELOCITY;
             bounds.setPosition(position);
-            if (collidesWithWalls(tiledMap)) {
+            if (collidesWithWalls(tiledMap, bounds)) {
                 collisionX = true;
                 position.x = previousX;
                 bounds.setPosition(position);
@@ -109,7 +109,7 @@ public class Jugador extends Actor {
         if (deltaY > 0) {
             position.y += deltaY * Settings.JUGADOR_VELOCITY;
             bounds.setPosition(position);
-            if (collidesWithWalls(tiledMap)) {
+            if (collidesWithWalls(tiledMap, bounds)) {
                 collisionY = true;
                 position.y = previousY;
                 bounds.setPosition(position);
@@ -120,7 +120,7 @@ public class Jugador extends Actor {
         else if (deltaY < 0) {
             position.y += deltaY * Settings.JUGADOR_VELOCITY;
             bounds.setPosition(position);
-            if (collidesWithWalls(tiledMap)) {
+            if (collidesWithWalls(tiledMap, bounds)) {
                 collisionY = true;
                 position.y = previousY;
                 bounds.setPosition(position);
@@ -150,6 +150,8 @@ public class Jugador extends Actor {
         }
 
 
+
+
     }
 
     public void setPosition(float x, float y) {
@@ -176,7 +178,7 @@ public class Jugador extends Actor {
     }
 
     // Método para verificar colisiones con las paredes del mapa
-    public boolean collidesWithWalls(TiledMap map) {
+    public boolean collidesWithWalls(TiledMap map, Rectangle bounds) {
         // Obtener la capa de objetos del mapa
         MapLayer objectLayer = map.getLayers().get("colision");
         // Iterar sobre los objetos de la capa de objetos
@@ -184,15 +186,15 @@ public class Jugador extends Actor {
             if (object instanceof RectangleMapObject) {
                 RectangleMapObject rectObject = (RectangleMapObject) object;
                 Rectangle rect = rectObject.getRectangle();
-
+                //System.out.println("hola");
                 // Verificar si el área de colisión del jugador se superpone con este objeto de rectángulo
                 if (bounds.overlaps(rect)) {
-                    System.out.println("true");
+                    //System.out.println("true");
                     return true; // Hay colisión
                 }
             }
         }
-        System.out.println("false");
+        //System.out.println("false");
 
         // No hay colisión
         return false;
