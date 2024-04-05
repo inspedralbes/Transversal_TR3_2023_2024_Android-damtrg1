@@ -293,8 +293,8 @@ public class MapaPrueba implements Screen {
                                     break; // No need to continue searching
                                 }
                             }
-                            float knobX = data.getFloat("knobX");
-                            float knobY = data.getFloat("knobY");
+                            float knobX = Float.valueOf(data.getString("knobX"));
+                            float knobY = Float.valueOf(data.getString("knobY"));
                             jugadors.get(index).move(knobX, knobY);
                         }
                     }
