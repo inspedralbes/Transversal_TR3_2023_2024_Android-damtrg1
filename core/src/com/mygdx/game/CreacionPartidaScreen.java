@@ -55,7 +55,13 @@ public class CreacionPartidaScreen implements Screen {
     Skin skin, skin_inputs, skin_btns;
     ArrayList<String> usuarisSala = new ArrayList<>();
     ArrayList<Label> labelsUsuaris = new ArrayList<>();
-    Label salaLabel, seleccioMapa;
+
+    ArrayList<String> usuarisAtacantes = new ArrayList<>();
+    ArrayList<Label> labelsAtacantes = new ArrayList<>();
+
+    ArrayList<String> usuarisDefensores = new ArrayList<>();
+    ArrayList<Label> labelDefensores = new ArrayList<>();
+    Label salaLabel, seleccioMapa, aliadoLabel, jugadorLabel, enemigoLabel;
 
     String[] mapes = {""};
     int numMapa = 0;
@@ -235,11 +241,15 @@ public class CreacionPartidaScreen implements Screen {
 
         //LABELS
         // Obtener el estilo del Label del Skin
-        Label.LabelStyle labelStyle = skin_inputs.get("title", Label.LabelStyle.class);
+        Label.LabelStyle labelStyle = skin_inputs.get("title-plain", Label.LabelStyle.class);
 
         // Crear una instancia de Label con el texto "Username" y el estilo definido
         salaLabel = new Label("Sala: " + salaId, labelStyle);
 
+        Table tbSalaId = new Table();
+        tbSalaId.setFillParent(false);
+
+        tbSalaId.add(salaLabel);
 
         //VENTANA
         Window.WindowStyle windowStyle = skin_inputs.get(Window.WindowStyle.class);
@@ -387,12 +397,81 @@ public class CreacionPartidaScreen implements Screen {
         Label jugadores = new Label("JUGADORES", skin_inputs.get("subtitle", Label.LabelStyle.class));
         TextButton btnDefensor = new TextButton("DEFENSORES", skin_inputs.get("default", TextButton.TextButtonStyle.class));
 
+        table = new Table();
+        table.setFillParent(false); // Para que la tabla ocupe todo el espacio del padre, en este caso, el Stage
+
+        // Columna de aliados
+        Table tableAliados = new Table();
+        tableAliados.top().left(); // Alinea la tabla en la parte superior izquierda
+
+        // Agrega los labels de los aliados a la columna de aliados
+        for (int i = 0; i < 5; i++) {
+            aliadoLabel = new Label("Atacante " + (i + 1), skin_inputs);
+            labelsAtacantes.add(aliadoLabel);
+            tableAliados.add(aliadoLabel).pad(10).row(); // Agrega un padding y pasa a la siguiente fila
+
+        }
+
+        // Columna de jugadores conectados a la sala
+        Table tableJugadores = new Table();
+        tableJugadores.top().center(); // Alinea la tabla en la parte superior centrada
+
+        // Agrega los labels de los jugadores conectados a la sala a la columna de jugadores
+        for (int i = 0; i < usuarisSala.size(); i++) {
+            jugadorLabel = new Label(usuarisSala.get(i), skin_inputs);
+            labelsUsuaris.add(jugadorLabel);
+            tableJugadores.add(jugadorLabel).pad(3).row(); // Agrega un padding y pasa a la siguiente fila
+        }
+
+        // Columna de equipo enemigo
+        Table tableEnemigos = new Table();
+        tableEnemigos.top().right(); // Alinea la tabla en la parte superior derecha
+
+        // Agrega los labels de los enemigos a la columna de enemigos
+        for (int i = 5; i < usuarisSala.size(); i++) {
+            enemigoLabel = new Label("Defensor " + (i - 4), skin_inputs);
+            labelDefensores.add(enemigoLabel);
+            tableEnemigos.add(enemigoLabel).pad(10).row(); // Agrega un padding y pasa a la siguiente fila
+        }
+
+
         btnAtacante.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("ATACANTES");
+                // Obtener el nombre del usuario que hizo clic en el botón
+                String usuarioClic = preferences.getString("username");
+                // Imprimir el nombre del usuario
+                System.out.println("Usuario seleccionado como atacante: " + usuarioClic);
+
+                for (int i = 0; i < labelsAtacantes.size(); i++) {
+                    System.out.println("num: " + labelsAtacantes.get(i).getText());
+                    if(labelsAtacantes.get(i).equals(usuarioClic)){
+                        System.out.println("No se puede");
+                    }else{
+                        usuarisAtacantes.add(usuarioClic);
+                    }
+
+                }
+
+
+                System.out.println("USERS: " + usuarisAtacantes);
+
+                if (usuarisAtacantes.size() <= 5) {
+                    for (int i = 0; i < usuarisAtacantes.size(); i++) {
+                        System.out.println("USERS: " + usuarisAtacantes.get(i));
+                        for (String noms : usuarisAtacantes) {
+                            aliadoLabel.setText(noms);
+                        }
+                    }
+                }
+
+
+                System.out.println("AAA: " + labelsAtacantes.size());
+
             }
         });
+
 
         btnDefensor.addListener(new ClickListener() {
             @Override
@@ -405,52 +484,47 @@ public class CreacionPartidaScreen implements Screen {
         tbBTN.add(jugadores).prefSize(50, 30);
         tbBTN.add(btnDefensor).padLeft(90);
 
-        table = new Table();
-        table.setFillParent(false); // Para que la tabla ocupe todo el espacio del padre, en este caso, el Stage
-
-        // Columna de aliados
-        Table tableAliados = new Table();
-        tableAliados.top().left(); // Alinea la tabla en la parte superior izquierda
-
-        // Agrega los labels de los aliados a la columna de aliados
-        for (int i = 0; i < 5; i++) {
-            Label aliadoLabel = new Label("Atacante " + (i + 1), skin_inputs);
-            tableAliados.add(aliadoLabel).pad(10).row(); // Agrega un padding y pasa a la siguiente fila
-
-        }
-
-        // Columna de jugadores conectados a la sala
-        Table tableJugadores = new Table();
-        tableJugadores.top().center(); // Alinea la tabla en la parte superior centrada
-
-        // Agrega los labels de los jugadores conectados a la sala a la columna de jugadores
-        for (int i = 0; i < usuarisSala.size(); i++) {
-            Label jugadorLabel = new Label(usuarisSala.get(i), skin_inputs);
-            tableJugadores.add(jugadorLabel).pad(3).row(); // Agrega un padding y pasa a la siguiente fila
-        }
-
-        // Columna de equipo enemigo
-        Table tableEnemigos = new Table();
-        tableEnemigos.top().right(); // Alinea la tabla en la parte superior derecha
-
-        // Agrega los labels de los enemigos a la columna de enemigos
-        for (int i = 5; i < usuarisSala.size(); i++) {
-            Label enemigoLabel = new Label("Defensor " + (i - 4), skin_inputs);
-            tableEnemigos.add(enemigoLabel).pad(10).row(); // Agrega un padding y pasa a la siguiente fila
-        }
-
 
 // Agrega las columnas a la tabla principal
         table.add(tableAliados).expandY().padRight(100); // Expande la columna de aliados en el eje Y y agrega un espaciado a la derecha
         table.add(tableJugadores).expandY().padRight(100); // Expande la columna de jugadores en el eje Y y agrega un espaciado a la derecha
         table.add(tableEnemigos).expandY(); // Expande la columna de enemigos en el eje Y
 
+        window.add(tbSalaId).pad(10).row();
         window.add(tbBTN).row();
         window.add(table).row(); // Agregar la tabla a la ventana
         //window.add(tableEnemigo);
         window.add(tableInfo).row();
         window.add(tableImg);
 
+    }
+
+    // Método para actualizar los labels de los atacantes
+    private void updateAtacantesLabels() {
+        // Limpiar la lista de labels de atacantes
+        labelsAtacantes.clear();
+        // Agregar los nombres de los atacantes a los labels
+        for (String atacante : usuarisAtacantes) {
+            Label atacanteLabel = new Label(atacante, skin_inputs);
+            labelsAtacantes.add(atacanteLabel);
+        }
+        // Actualizar la interfaz gráfica
+        stage.act();
+    }
+
+    // Método para actualizar los labels de los usuarios en la sala
+    private void actualizarLabelsUsuarios() {
+        // Limpiar la lista de labels de usuarios
+        labelsUsuaris.clear();
+
+        // Agregar los nombres de los usuarios a los labels
+        for (String usuario : usuarisSala) {
+            Label usuarioLabel = new Label(usuario, skin_inputs);
+            labelsUsuaris.add(usuarioLabel);
+        }
+
+        // Actualizar la interfaz gráfica
+        stage.act();
     }
 
 
