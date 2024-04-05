@@ -73,6 +73,8 @@ public class MapaPrueba implements Screen {
 
     ArrayList<ProgressBar> progressBars = new ArrayList<>();
 
+    ArrayList<Label> labelsNoms = new ArrayList<>();
+
     float knobXAnterior = 0;
     float knobYAnterior = 0;
     Sala sala;
@@ -191,7 +193,8 @@ public class MapaPrueba implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("DISPARO");
-                progressBar.setValue(progressBar.getValue()-10);
+                progressBars.get(numJugador).setValue(progressBar.getValue()-10);
+//                progressBar.setValue(progressBar.getValue()-10);
                 System.out.println("BARRA: " + progressBar.getValue());
                 if (touchpad.isTouched()) {
                     Disparo disparo_visual = new Disparo(jugadors.get(numJugador).getPosition().x,jugadors.get(numJugador).getPosition().y,jugadors.get(numJugador).getPosition().x+knobX*100
@@ -218,9 +221,11 @@ public class MapaPrueba implements Screen {
         //NOMBRES DE JUGADORES EN PANTALLA
         for(int i = 0; i < jugadors.size(); i++){
             Label.LabelStyle labelStyle = skin_vida.get("default", Label.LabelStyle.class);
-            LabelNomJugador = new Label(jugadors.get(i).getNomUsuari(), labelStyle);
-            LabelNomJugador.setPosition(jugadors.get(i).getPosition().x, jugadors.get(i).getPosition().y + jugadors.get(i).getHeight() + 30);
-            stage.addActor(LabelNomJugador);
+            Label LabelNomJugador = new Label(jugadors.get(i).getNomUsuari(), labelStyle);
+            labelsNoms.add(LabelNomJugador);
+
+            labelsNoms.get(i).setPosition(jugadors.get(i).getPosition().x, jugadors.get(i).getPosition().y + jugadors.get(i).getHeight() + 30);
+            stage.addActor(labelsNoms.get(i));
         }
 
 
@@ -393,7 +398,7 @@ public class MapaPrueba implements Screen {
 
 
         // Actualizar la posición del ProgressBar para que esté encima del jugador
-        progressBar.setPosition(jugadors.get(numJugador).getPosition().x,  jugadors.get(numJugador).getPosition().y +  jugadors.get(numJugador).getHeight() + 20);
+        //progressBar.setPosition(jugadors.get(numJugador).getPosition().x,  jugadors.get(numJugador).getPosition().y +  jugadors.get(numJugador).getHeight() + 20);
 
         // Actualizar la posición de las ProgressBar para que estén encima de cada jugador
         for (int i = 0; i < jugadors.size(); i++) {
@@ -401,7 +406,7 @@ public class MapaPrueba implements Screen {
         }
 
         for (int i= 0; i < jugadors.size(); i++){
-            LabelNomJugador.setPosition(jugadors.get(i).getPosition().x, jugadors.get(i).getPosition().y + jugadors.get(i).getHeight() + 30);
+            labelsNoms.get(i).setPosition(jugadors.get(i).getPosition().x, jugadors.get(i).getPosition().y + jugadors.get(i).getHeight() + 30);
         }
 
         // Definir la posición del botón de disparo
