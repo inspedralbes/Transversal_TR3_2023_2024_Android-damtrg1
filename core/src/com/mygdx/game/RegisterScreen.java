@@ -309,7 +309,7 @@ public class RegisterScreen implements Screen {
                                     game.setLoggedIn(true, Username.getText().toString());
                                     // Redirige a la pantalla principal
                                     Gdx.app.postRunnable(() -> {
-                                        game.setScreen(new PantallaPrincipal(game));
+                                        game.setScreen(new PantallaPrincipal(game, true));
                                     });
                                 } else {
                                     Window.WindowStyle windowStyle = skin_windows.get(Window.WindowStyle.class);

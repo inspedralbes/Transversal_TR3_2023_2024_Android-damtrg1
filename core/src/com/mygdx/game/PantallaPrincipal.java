@@ -26,10 +26,14 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.json.JSONObject;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
 
 import Utils.Settings;
-import objects.Background;
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import objects.Background;import io.socket.client.IO;
+import io.socket.client.Socket;
 
 public class PantallaPrincipal implements Screen {
 
@@ -45,9 +49,10 @@ public class PantallaPrincipal implements Screen {
 
     Preferences preferences;
 
+    Socket mSocket;
 
-    public PantallaPrincipal(Pixel_R6 game) {
 
+    public PantallaPrincipal(Pixel_R6 game, boolean nou) {
         this.game = game;
 
         AssetManager.load();
@@ -68,14 +73,59 @@ public class PantallaPrincipal implements Screen {
         // Creem l'stage i assginem el viewport
         stage = new Stage(viewport);
 
+        if(nou) {
+            // Create a GET request to fetch the image
+            Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
+            httpRequest.setUrl("http://r6pixel.dam.inspedralbes.cat:3169/logged/" + preferences.getString("username"));
+            httpRequest.setHeader("Content-Type", "application/json");
+
+            // Send the request
+            Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
+                @Override
+                public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                    HttpStatus status = httpResponse.getStatus();
+                    if (status.getStatusCode() == 200) {
+                        // If the request was successful (status code 200)
+                        String responseData = httpResponse.getResultAsString();
+                        JSONObject json = new JSONObject(responseData);
+                        if (json.getBoolean("auth")) {
+                            Gdx.app.postRunnable(() -> {
+                                game.setScreen(new Login(game));
+                            });
+                        }
+                    }
+
+                }
+
+                @Override
+                public void failed(Throwable t) {
+
+                }
+
+                @Override
+                public void cancelled() {
+
+                }
+            });
+
+            try {
+                mSocket = IO.socket("http://r6pixel.dam.inspedralbes.cat:3169");
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+            mSocket.connect();
+            JSONObject jsonSocket = new JSONObject();
+            jsonSocket.put("user", preferences.getString("username"));
+            mSocket.emit("loggedIn", jsonSocket.toString());
+        }
 
         // Create a GET request to fetch the image
-        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
-        httpRequest.setUrl("http://r6pixel.dam.inspedralbes.cat:3169/getMonedes/" + preferences.getString("username"));
-        httpRequest.setHeader("Content-Type", "application/json");
+        Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
+        httpRequest2.setUrl("http://r6pixel.dam.inspedralbes.cat:3169/getMonedes/" + preferences.getString("username"));
+        httpRequest2.setHeader("Content-Type", "application/json");
 
         // Send the request
-        Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
+        Gdx.net.sendHttpRequest(httpRequest2, new Net.HttpResponseListener() {
             @Override
             public void handleHttpResponse(Net.HttpResponse httpResponse) {
                 HttpStatus status = httpResponse.getStatus();
@@ -83,8 +133,8 @@ public class PantallaPrincipal implements Screen {
                     // If the request was successful (status code 200)
                     String responseData = httpResponse.getResultAsString();
                     JSONObject json = new JSONObject(responseData.substring(1, responseData.length() - 1));
-                    System.out.println(json);
-                    preferences.putString("monedas", String.valueOf(json.get("monedas")));
+                    preferences.putString("monedas", "" +json.get("monedas"));
+                    preferences.flush();
                 }
 
             }

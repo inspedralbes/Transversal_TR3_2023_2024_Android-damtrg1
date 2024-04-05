@@ -64,7 +64,7 @@ public class ShopScreen implements Screen {
     Button btnEsquerra, btnDreta;
     TextButton btnComprar;
 
-    String[] inventariJugador;
+    ArrayList<String> inventariJugador;
     Window popupWindow;
 
     private int currentIndex = 0;
@@ -133,9 +133,11 @@ public class ShopScreen implements Screen {
 
         Label.LabelStyle labelStyleNumMonedas = skin.get("title", Label.LabelStyle.class);
         labelNumMonedas = new Label(preferences.getString("monedas"), labelStyleNumMonedas);
-        labelNumMonedas.setPosition(Settings.GAME_WIDTH - labelNumMonedas.getWidth(), Settings.GAME_HEIGHT - labelNumMonedas.getHeight());
-
+        float posx = Settings.GAME_WIDTH - labelNumMonedas.getWidth();
+        float posy = Settings.GAME_HEIGHT - labelNumMonedas.getHeight();
+        labelNumMonedas.setPosition(posx, posy);
         stage.addActor(labelNumMonedas);
+
         //VENTANA
         Window.WindowStyle windowStyle = skin.get(Window.WindowStyle.class);
 
@@ -144,13 +146,13 @@ public class ShopScreen implements Screen {
         window.getTitleLabel().setAlignment(Align.center);
 
         // Obtén las dimensiones de la ventana del juego desde la clase Settings
-        int gameWidth = Gdx.graphics.getWidth();
+        int gameWidth = Settings.GAME_WIDTH;
         int gameHeight = Settings.GAME_HEIGHT;
-        window.setSize(1200, 600); // Establece el tamaño como desees
+        window.setSize((gameWidth * 0.5f), gameHeight * 0.75f); // Establece el tamaño como desees
 
         // Calcula las coordenadas X e Y para colocar la ventana en el centro de la pantalla
-        float windowX = gameWidth - window.getWidth() * 1.1f;
-        float windowY = gameHeight - window.getHeight() * 1.2f;
+        float windowX = (gameWidth - window.getWidth()) /2;
+        float windowY = (gameHeight - window.getHeight()) /2;
 
         // Establece la posición de la ventana en el centro de la pantalla
         window.setPosition(windowX, windowY);
@@ -169,7 +171,9 @@ public class ShopScreen implements Screen {
         btn_volver.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new PantallaPrincipal(game));
+                Gdx.app.postRunnable(() -> {
+                    game.setScreen(new PantallaPrincipal(game, false));
+                });
             }
         });
 
@@ -200,9 +204,9 @@ public class ShopScreen implements Screen {
                     // Handle the response data here
                     JSONObject json = new JSONObject(responseData);
                     skins = json.getJSONArray("skins");
-                    System.out.println(skins.length());
+//                    System.out.println(skins.length());
                     imatgesBaixades = new ArrayList<>(Collections.nCopies(skins.length(), null));
-                    System.out.println(imatgesBaixades.size());
+//                    System.out.println(imatgesBaixades.size());
                     for (int i = 0; i < skins.length(); i++) {
                         JSONObject item = skins.getJSONObject(i);
                         System.out.println(item);
@@ -246,14 +250,14 @@ public class ShopScreen implements Screen {
                     String jsonArrayString = responseData.substring(1, responseData.length() - 1);
                     // Handle the response data here
                     JSONObject json = new JSONObject(jsonArrayString);
-                    System.out.println(json);
+//                    System.out.println(json);
                     JSONArray arrayResultat = (JSONArray) json.get("skins");
                     // Convert JSONArray to String[]
-                    inventariJugador = new String[arrayResultat.length()];
+                    inventariJugador = new ArrayList<>();
                     for (int i = 0; i < arrayResultat.length(); i++) {
-                        inventariJugador[i] = arrayResultat.getString(i);
+                        inventariJugador.add(arrayResultat.getString(i));
                     }
-                    System.out.println(json.get("skins"));
+//                    System.out.println(json.get("skins"));
                 } else {
                     // If the request failed, handle the error
                     System.out.println("HTTP request failed with status code: " + status.getStatusCode());
@@ -508,15 +512,62 @@ public class ShopScreen implements Screen {
 
     public void comprarItem(JSONObject item){
         //Canviar monedes
-        int totalActualMonedes = Integer.parseInt(String.valueOf(labelNumMonedas.getText())) -  Integer.parseInt(item.getString("valorMonedas"));
+        String monedes = preferences.getString("monedas");
+        System.out.println("MONEDES: " + monedes);
+
+        int totalActualMonedes = Integer.parseInt(monedes) - item.getInt("valorMonedas");
         labelNumMonedas.setText(totalActualMonedes);
         //Gaurdar en prefs
         preferences.putString("monedas", String.valueOf(totalActualMonedes));
         //Editar sql
-        //FER HTTP REQUEST
+        // Create an HTTP request
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
+
+        // Construct the URL with query parameters
+        String url = "http://r6pixel.dam.inspedralbes.cat:3169/comprarProducte";
+        httpRequest.setUrl(url);
+        httpRequest.setHeader("Content-Type", "application/json");
+        JSONObject jsonEnviar = new JSONObject();
+        jsonEnviar.put("user", preferences.getString("username"));
+        jsonEnviar.put("idProducto", item.getString("_id"));
+        jsonEnviar.put("monedes", totalActualMonedes);
+        String jsonString = jsonEnviar.toString();
+        httpRequest.setContent(jsonString);
+
+        // Send the HTTP request
+        Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                HttpStatus status = httpResponse.getStatus();
+                if (status.getStatusCode() == 200) {
+                    System.out.println("OK EDITAR MONEDES");
+
+                } else {
+                    // If the request failed, handle the error
+                    System.out.println("HTTP request failed with status code: " + status.getStatusCode());
+                }
+            }
+
+            @Override
+            public void failed(Throwable t) {
+                // Handle the case where the HTTP request failed
+                t.printStackTrace();
+            }
+
+            @Override
+            public void cancelled() {
+                // Handle the case where the HTTP request was cancelled
+            }
+        });
+
+
         //Editar mongo inventari
 
+
+
         //canviar boto a OBTINGUT
+
+        inventariJugador.add(item.getString("_id"));
     }
 
 }

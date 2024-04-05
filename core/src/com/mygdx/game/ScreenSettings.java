@@ -249,7 +249,7 @@ public class ScreenSettings implements Screen {
         btn_volver.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new PantallaPrincipal(game));
+                game.setScreen(new PantallaPrincipal(game, false));
 
                 // Guardar el estado de los botones en las preferencias
                 preferences.putBoolean("estado_volumen", btn_volumen.isChecked());

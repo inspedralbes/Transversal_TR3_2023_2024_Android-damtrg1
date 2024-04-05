@@ -2,9 +2,19 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.net.HttpStatus;
+
+import org.json.JSONObject;
+
+import java.net.URISyntaxException;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
+
 
 public class Pixel_R6 extends Game {
 
@@ -12,7 +22,6 @@ public class Pixel_R6 extends Game {
 	private BitmapFont bitmapFont;
 
     Preferences preferences;
-
 
 	@Override
 	public void create() {
@@ -25,7 +34,8 @@ public class Pixel_R6 extends Game {
 
         // Comprobamos si el usuario está logueado
         if (preferences.getBoolean("logged")) {
-            setScreen(new PantallaPrincipal(this)); // Si está logueado, va a la pantalla principal
+
+				setScreen(new PantallaPrincipal(this, true));
         } else {
             setScreen(new Login(this)); // Si no está logueado, va a la pantalla de login
         }

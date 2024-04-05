@@ -186,7 +186,7 @@ public class Login implements Screen {
                                     game.setLoggedIn(true, nombreUsuario);
                                     // Redirige a la pantalla principal
                                     Gdx.app.postRunnable(() -> {
-                                        game.setScreen(new PantallaPrincipal(game));
+                                        game.setScreen(new PantallaPrincipal(game, true));
                                     });
 
                                 } else {
