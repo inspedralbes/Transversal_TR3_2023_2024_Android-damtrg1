@@ -85,7 +85,8 @@ public class Jugador extends Actor {
         if (deltaX > 0) {
             position.x += deltaX * Settings.JUGADOR_VELOCITY;
             bounds.setPosition(position);
-            if (collidesWithWalls(tiledMap, bounds)) {
+            boolean colision = collidesWithWalls(tiledMap, bounds);
+            if (colision) {
                 collisionX = true;
                 position.x = previousX;
                 bounds.setPosition(position);
@@ -97,7 +98,8 @@ public class Jugador extends Actor {
         else if (deltaX < 0) {
             position.x += deltaX * Settings.JUGADOR_VELOCITY;
             bounds.setPosition(position);
-            if (collidesWithWalls(tiledMap, bounds)) {
+            boolean colision = collidesWithWalls(tiledMap, bounds);
+            if (colision) {
                 collisionX = true;
                 position.x = previousX;
                 bounds.setPosition(position);
@@ -109,7 +111,8 @@ public class Jugador extends Actor {
         if (deltaY > 0) {
             position.y += deltaY * Settings.JUGADOR_VELOCITY;
             bounds.setPosition(position);
-            if (collidesWithWalls(tiledMap, bounds)) {
+            boolean colision = collidesWithWalls(tiledMap, bounds);
+            if (colision) {
                 collisionY = true;
                 position.y = previousY;
                 bounds.setPosition(position);
@@ -120,7 +123,8 @@ public class Jugador extends Actor {
         else if (deltaY < 0) {
             position.y += deltaY * Settings.JUGADOR_VELOCITY;
             bounds.setPosition(position);
-            if (collidesWithWalls(tiledMap, bounds)) {
+            boolean colision = collidesWithWalls(tiledMap, bounds);
+            if (colision) {
                 collisionY = true;
                 position.y = previousY;
                 bounds.setPosition(position);
