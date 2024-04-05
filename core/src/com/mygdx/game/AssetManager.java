@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import objects.Jugador;
 
@@ -43,6 +45,7 @@ public class AssetManager {
 
     public static Drawable prova;
 
+
     public static void load() {
         imgFondo = new Texture(Gdx.files.internal("fondo2.jpg"));
         imgFondo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
@@ -52,6 +55,8 @@ public class AssetManager {
         //MAPAS
         mapaCastillo = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapacastillo.jpg"));
         mapaMazmorra = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapamazmorra.jpg"));
+
+        //fetchAndSetImage("mapas/mapes/IMGmapas/mapacastillo.jpg");
 
 
         grisTransparente = new Color(115/255f,115/255f,115/255f, 150/255f);
@@ -92,6 +97,50 @@ public class AssetManager {
 
         persona = new Texture(Gdx.files.internal("persona.jpg"));
 
+    }
+
+    public static void fetchAndSetImage(String imageUrl) {
+        // Create a GET request to fetch the image
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
+        httpRequest.setUrl("http://r6pixel.dam.inspedralbes.cat:3169/getImg/" + imageUrl);
+        httpRequest.setHeader("Content-Type", "application/json");
+
+        // Send the request
+        Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                byte[] imageData = httpResponse.getResult();
+                // Load the image data into a Pixmap
+                Pixmap pixmap = new Pixmap(imageData, 0, imageData.length);
+
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run () {
+                        // Create a Texture from the Pixmap
+                        Texture texture = new Texture(pixmap);
+
+                        // Dispose the Pixmap to release its resources
+                        pixmap.dispose();
+
+                        mapaCastillo = texture;
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void failed(Throwable t) {
+                // Handle the failure of the HTTP request
+                Gdx.app.error("ImageFetch", "Failed to fetch image: " + t.getMessage());
+            }
+
+            @Override
+            public void cancelled() {
+                // Handle the cancellation of the HTTP request
+                Gdx.app.log("ImageFetch", "Image fetch request cancelled");
+            }
+        });
     }
 
     public static void dispose() {
