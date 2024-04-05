@@ -173,7 +173,6 @@ public class Jugador extends Actor {
         batch.draw(spriteJugador, position.x, position.y, width, height);
         // Draw the player hitbox (for debugging purposes)
         batch.end();
-        batch.begin();
 
     }
 
