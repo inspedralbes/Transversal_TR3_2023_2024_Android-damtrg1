@@ -295,7 +295,7 @@ public class MapaPrueba implements Screen {
                             }
                             float knobX = Float.valueOf(data.getString("knobX"));
                             float knobY = Float.valueOf(data.getString("knobY"));
-                            jugadors.get(index).move(knobX, knobY);
+                            jugadors.get(index).moveRival(knobX, knobY);
                         }
                     }
                 } catch (JSONException e) {
@@ -355,6 +355,7 @@ public class MapaPrueba implements Screen {
 
     @Override
     public void render(float delta) {
+
         // Actualizar la posición de la cámara para que siga al jugador
         camera.position.set(jugadors.get(numJugador).getPosition().x, jugadors.get(numJugador).getPosition().y, 0);
 

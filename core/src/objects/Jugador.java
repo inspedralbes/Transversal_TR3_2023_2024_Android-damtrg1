@@ -158,6 +158,74 @@ public class Jugador extends Actor {
 
     }
 
+    public void moveRival(float deltaX, float deltaY) {
+        // Guardar la posición anterior del jugador
+        float previousX = position.x;
+        float previousY = position.y;
+
+        System.out.println(deltaX);
+        System.out.println(deltaY);
+
+        // Mover el jugador basado en la lógica del juego
+        // Por ejemplo:
+        // position.add(velocidadX * delta, velocidadY * delta);
+
+        // Verificar colisiones con las paredes del mapa
+        boolean collisionX = false;
+        boolean collisionY = false;
+
+        if (deltaX > 0) {
+            position.x += deltaX * Settings.JUGADOR_VELOCITY;
+            bounds.setPosition(position);
+
+
+        }
+
+        else if (deltaX < 0) {
+            position.x += deltaX * Settings.JUGADOR_VELOCITY;
+            bounds.setPosition(position);
+
+
+        }
+
+        if (deltaY > 0) {
+            position.y += deltaY * Settings.JUGADOR_VELOCITY;
+            bounds.setPosition(position);
+
+        }
+
+        else if (deltaY < 0) {
+            position.y += deltaY * Settings.JUGADOR_VELOCITY;
+            bounds.setPosition(position);
+
+        }
+
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            if (deltaX > 0) {
+                this.spriteJugador = AssetManager.jugadorSprite_dreta;
+                this.orientacio_jugador = "dreta";
+            }
+            else if (deltaX < 0){
+                this.spriteJugador = AssetManager.jugadorSprite_esquerra;
+                this.orientacio_jugador = "esquerra";
+            }
+        }
+        else {
+            if (deltaY > 0) {
+                this.spriteJugador = AssetManager.jugadorSprite_amunt;
+                this.orientacio_jugador = "amunt";
+            }
+            else if (deltaY < 0){
+                this.spriteJugador = AssetManager.jugadorSprite_avall;
+                this.orientacio_jugador = "avall";
+            }
+        }
+
+
+
+
+    }
+
     public void setPosition(float x, float y) {
         this.position.x = x;
         this.position.y = y;
