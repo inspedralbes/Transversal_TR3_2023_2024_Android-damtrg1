@@ -227,6 +227,7 @@ public class PantallaPrincipal implements Screen {
         btn_log_out.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                mSocket.emit("sesionCerrada");
                 game.setScreen(new Login(game));
                 game.setLoggedIn(false, "");
             }
