@@ -70,7 +70,7 @@ public class AssetManager {
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url = "http://r6pixel.dam.inspedralbes.cat:3169/getAssets";
+        String url = "http://r6pixel.duckdns.org:3169/getAssets";
         httpRequest.setUrl(url);
         httpRequest.setHeader("Content-Type", "application/json");
 
@@ -170,7 +170,7 @@ public class AssetManager {
 
         // Create a POST request to fetch the image
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-        httpRequest.setUrl("http://r6pixel.dam.inspedralbes.cat:3169/getImg_post/");
+        httpRequest.setUrl("http://r6pixel.duckdns.org:3169/getImg_post/");
         httpRequest.setHeader("Content-Type", "application/json");
 
         // Set the body data if needed

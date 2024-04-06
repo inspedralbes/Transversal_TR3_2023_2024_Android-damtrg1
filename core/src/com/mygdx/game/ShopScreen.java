@@ -189,7 +189,7 @@ public class ShopScreen implements Screen {
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url = "http://r6pixel.dam.inspedralbes.cat:3169/getAssets";
+        String url = "http://r6pixel.duckdns.org:3169/getAssets";
         httpRequest.setUrl(url);
         httpRequest.setHeader("Content-Type", "application/json");
 
@@ -236,7 +236,7 @@ public class ShopScreen implements Screen {
         Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url2 = "http://r6pixel.dam.inspedralbes.cat:3169/getInventari/" + preferences.getString("username");
+        String url2 = "http://r6pixel.duckdns.org:3169/getInventari/" + preferences.getString("username");
         httpRequest2.setUrl(url2);
         httpRequest2.setHeader("Content-Type", "application/json");
 
@@ -463,7 +463,7 @@ public class ShopScreen implements Screen {
     public void fetchAndSetImage(String imageUrl, int num) {
         // Create a GET request to fetch the image
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
-        httpRequest.setUrl("http://r6pixel.dam.inspedralbes.cat:3169/getImg/" + imageUrl);
+        httpRequest.setUrl("http://r6pixel.duckdns.org:3169/getImg/" + imageUrl);
         httpRequest.setHeader("Content-Type", "application/json");
 
         // Send the request
@@ -525,7 +525,7 @@ public class ShopScreen implements Screen {
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url = "http://r6pixel.dam.inspedralbes.cat:3169/comprarProducte";
+        String url = "http://r6pixel.duckdns.org:3169/comprarProducte";
         httpRequest.setUrl(url);
         httpRequest.setHeader("Content-Type", "application/json");
         JSONObject jsonEnviar = new JSONObject();

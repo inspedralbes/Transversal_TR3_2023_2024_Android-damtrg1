@@ -64,7 +64,7 @@ public class UnidoSalaScreen implements Screen {
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url = "http://r6pixel.dam.inspedralbes.cat:3169/getSala?idSala=" + idSala;
+        String url = "http://r6pixel.duckdns.org:3169/getSala?idSala=" + idSala;
         String username = preferences.getString("username");
 
         httpRequest.setUrl(url);
@@ -249,7 +249,7 @@ public class UnidoSalaScreen implements Screen {
 
 
         try {
-            mSocket = IO.socket("http://r6pixel.dam.inspedralbes.cat:3169");
+            mSocket = IO.socket("http://r6pixel.duckdns.org:3169");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

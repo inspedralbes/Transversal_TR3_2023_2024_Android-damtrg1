@@ -90,7 +90,7 @@ public class CreacionPartidaScreen implements Screen {
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url = "http://r6pixel.dam.inspedralbes.cat:3169/crearSala";
+        String url = "http://r6pixel.duckdns.org:3169/crearSala";
         String username = preferences.getString("username");
         url += "?user=" + username;
 
@@ -137,7 +137,7 @@ public class CreacionPartidaScreen implements Screen {
 
         Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
 
-        httpRequest2.setUrl("http://r6pixel.dam.inspedralbes.cat:3169/getMapes");
+        httpRequest2.setUrl("http://r6pixel.duckdns.org:3169/getMapes");
         httpRequest2.setHeader("Content-Type", "application/json");
 
         // Send the HTTP request
@@ -328,7 +328,7 @@ public class CreacionPartidaScreen implements Screen {
 
 
         try {
-            mSocket = IO.socket("http://r6pixel.dam.inspedralbes.cat:3169");
+            mSocket = IO.socket("http://r6pixel.duckdns.org:3169");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

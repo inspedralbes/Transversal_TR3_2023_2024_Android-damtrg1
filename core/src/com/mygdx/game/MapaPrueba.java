@@ -93,7 +93,7 @@ public class MapaPrueba implements Screen {
 
         AssetManager.load();
         try {
-            mSocket = IO.socket("http://r6pixel.dam.inspedralbes.cat:3169");
+            mSocket = IO.socket("http://r6pixel.duckdns.org:3169");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
