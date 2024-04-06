@@ -12,7 +12,7 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
 		config.setTitle("R6_Pixel");
-		config.setWindowedMode(Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
+		config.setWindowedMode(800, 650);
 		new Lwjgl3Application(new Pixel_R6(), config);
 
 

@@ -1,13 +1,10 @@
 package com.mygdx.game;
 
-import static com.mygdx.game.AssetManager.font;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -69,9 +66,9 @@ public class MapaPrueba implements Screen {
     Label LabelNomJugador;
 
     Button disparo;
-    ArrayList<Jugador> jugadors = new ArrayList<>();
+    public static ArrayList<Jugador> jugadors = new ArrayList<>();
 
-    ArrayList<ProgressBar> progressBars = new ArrayList<>();
+    public static ArrayList<ProgressBar> progressBars = new ArrayList<>();
 
     ArrayList<Label> labelsNoms = new ArrayList<>();
 
@@ -81,6 +78,9 @@ public class MapaPrueba implements Screen {
 
     float knobX;
     float knobY;
+
+    public static ArrayList<Jugador> array_jugadors_equip1;
+    public static ArrayList<Jugador> array_jugadors_equip2;
 
     public MapaPrueba(Pixel_R6 game, Sala sala) {
         preferences = Gdx.app.getPreferences("Pref");
@@ -115,6 +115,9 @@ public class MapaPrueba implements Screen {
         //CONFIGURACION DEL FONDO
         //bg = new Background(0, 0, Gdx.graphics.getWidth(), Settings.GAME_HEIGHT);
 
+        array_jugadors_equip1 = new ArrayList<Jugador>();
+        array_jugadors_equip2 = new ArrayList<Jugador>();
+
         JsonLoader jsonLoader = new JsonLoader();
         JSONObject jsonPosicions = jsonLoader.loadJson("posicions.json");
         jsonPosicions = jsonPosicions.getJSONObject("Mazmorra");
@@ -131,6 +134,13 @@ public class MapaPrueba implements Screen {
                 jugadors.add(player);
                 stage.addActor(player);
 
+                //PROVA, AFEGIR UN JUGADOR A EQUIP1 Y L'ALTRE A EQUIP2
+                if (contador==0){
+                    array_jugadors_equip1.add(player);
+                }
+                else {
+                    array_jugadors_equip2.add(player);
+                }
                 //BARRA DE VIDA
                 ProgressBar.ProgressBarStyle progressBarStyle = skin_vida.get("default-horizontal", ProgressBar.ProgressBarStyle.class);
 
@@ -193,7 +203,7 @@ public class MapaPrueba implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("DISPARO");
-                progressBars.get(numJugador).setValue(progressBar.getValue()-10);
+                //progressBars.get(numJugador).setValue(progressBar.getValue()-10);
 //                progressBar.setValue(progressBar.getValue()-10);
                 System.out.println("BARRA: " + progressBar.getValue());
                 if (touchpad.isTouched()) {

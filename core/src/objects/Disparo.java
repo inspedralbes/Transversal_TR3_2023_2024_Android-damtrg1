@@ -14,12 +14,17 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.mygdx.game.MapaPrueba;
+
+import java.util.ArrayList;
 
 public class Disparo extends Actor {
     private ShapeRenderer shapeRenderer;
     private float x1, y1, x2, y2, x_vector_direccio, y_vector_direccio;
     private Jugador jugador_associat;
     private Polygon bounds; // Área de colisión del disparo
+    private ArrayList<Jugador> array_jugadors_rivals;
+    private Jugador jugador_colisionat;
 
     public Disparo(float x1, float y1, float x2, float y2, float x_vector_direccio, float y_vector_direccio, Jugador jugador_associat) {
         this.x1 = x1;
@@ -34,6 +39,24 @@ public class Disparo extends Actor {
 
 
         this.jugador_associat = jugador_associat;
+
+
+
+        boolean pertany_equip1 = false;
+
+        for (Jugador jugador : MapaPrueba.array_jugadors_equip1) {
+
+
+
+            if (jugador == this.jugador_associat) {
+                pertany_equip1 = true;
+                this.array_jugadors_rivals = MapaPrueba.array_jugadors_equip2;
+            }
+        }
+
+        if (!pertany_equip1) {
+            this.array_jugadors_rivals = MapaPrueba.array_jugadors_equip1;
+        }
 
     }
 
@@ -135,8 +158,20 @@ public class Disparo extends Actor {
         }
         shapeRenderer.end();
 
-        boolean colision = collidesWithWalls(tiledMap, this.bounds);
-        if (colision) {
+
+
+        boolean colision_player = collidesWithPlayer(this.array_jugadors_rivals);
+        if (colision_player) {
+            this.remove();
+            for (Jugador jugador : MapaPrueba.jugadors) {
+                if (jugador == this.jugador_colisionat) {
+                    MapaPrueba.progressBars.get(jugador.getZIndex()).setValue(MapaPrueba.progressBars.get(jugador.getZIndex()).getValue()-10);
+                }
+            }
+        }
+
+        boolean colision_walls = collidesWithWalls(tiledMap, this.bounds);
+        if (colision_walls) {
             System.out.println("aaaaaaaaaaaaa");
             this.remove();
 
@@ -162,6 +197,20 @@ public class Disparo extends Actor {
             }
         }
         return false; // No hay colisión
+    }
+
+    public boolean collidesWithPlayer(ArrayList <Jugador> array_equip_rival) {
+
+
+        for (Jugador jugador : array_equip_rival) {
+            // Verificar si los límites se intersectan
+            if (jugador.getBounds().overlaps(this.bounds.getBoundingRectangle())) {
+                this.jugador_colisionat = jugador;
+                return true;
+            }
+        }
+
+        return true;
     }
 
     // Función para convertir un rectángulo a un polígono

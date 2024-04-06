@@ -32,6 +32,8 @@ public class Pixel_R6 extends Game {
         // Cargamos las preferencias
         preferences = Gdx.app.getPreferences("Pref");
 
+
+
         // Comprobamos si el usuario está logueado
         if (preferences.getBoolean("logged")) {
 

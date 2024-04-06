@@ -211,6 +211,7 @@ public class ShopScreen implements Screen {
                         JSONObject item = skins.getJSONObject(i);
                         System.out.println(item);
                         fetchAndSetImage(item.getString("pngSkin"), i);
+                        System.out.println("------" + item.getString("pngSkin"));
                     }
 
                 } else {

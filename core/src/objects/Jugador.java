@@ -37,6 +37,10 @@ public class Jugador extends Actor {
         return spriteJugador;
     }
 
+    public static Rectangle getBounds() {
+        return bounds;
+    }
+
     private static Rectangle bounds; // Área de colisión del jugador
 
     public Vector2 getPosition() {
