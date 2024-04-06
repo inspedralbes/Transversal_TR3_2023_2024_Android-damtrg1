@@ -6,6 +6,7 @@ import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.net.HttpStatus;
 
 import org.json.JSONObject;
@@ -23,6 +24,8 @@ public class Pixel_R6 extends Game {
 
     Preferences preferences;
 
+	public static ShapeRenderer shapeRenderer;
+
 	@Override
 	public void create() {
 
@@ -32,7 +35,7 @@ public class Pixel_R6 extends Game {
         // Cargamos las preferencias
         preferences = Gdx.app.getPreferences("Pref");
 
-
+		shapeRenderer = new ShapeRenderer();
 
         // Comprobamos si el usuario está logueado
         if (preferences.getBoolean("logged")) {

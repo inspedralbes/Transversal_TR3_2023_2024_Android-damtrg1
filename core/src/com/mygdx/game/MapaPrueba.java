@@ -53,7 +53,7 @@ public class MapaPrueba implements Screen {
 
     OrthogonalTiledMapRenderer renderer;
 
-    Socket mSocket;
+    public static Socket mSocket;
 
     Preferences preferences;
 
@@ -207,15 +207,49 @@ public class MapaPrueba implements Screen {
 //                progressBar.setValue(progressBar.getValue()-10);
                 System.out.println("BARRA: " + progressBar.getValue());
                 if (touchpad.isTouched()) {
-                    Disparo disparo_visual = new Disparo(jugadors.get(numJugador).getPosition().x,jugadors.get(numJugador).getPosition().y,jugadors.get(numJugador).getPosition().x+knobX*100
-                            ,jugadors.get(numJugador).getPosition().y+knobY*100,knobX*100,knobY*100, jugadors.get(numJugador));
+                    float x1 = jugadors.get(numJugador).getPosition().x;
+                    float y1 = jugadors.get(numJugador).getPosition().y;
+                    float x2 = jugadors.get(numJugador).getPosition().x+knobX*100;
+                    float y2 = jugadors.get(numJugador).getPosition().y+knobY*100;
+                    float x_vector_direccio = knobX*100;
+                    float y_vector_direccio = knobY*100;
+                    Disparo disparo_visual = new Disparo(x1,y1,x2,y2,x_vector_direccio,y_vector_direccio, jugadors.get(numJugador));
                     stage.addActor(disparo_visual);
+
+                    JSONObject disparo = new JSONObject();
+                    disparo.put("x1", String.valueOf(x1));
+                    disparo.put("y1", String.valueOf(y1));
+                    disparo.put("x2", String.valueOf(x2));
+                    disparo.put("y2", String.valueOf(y2));
+                    disparo.put("x_vector_direccio", String.valueOf(x_vector_direccio));
+                    disparo.put("y_vector_direccio", String.valueOf(y_vector_direccio));
+                    disparo.put("sala", sala.getId());
+                    disparo.put("user", jugadors.get(numJugador).getNomUsuari());
+                    mSocket.emit("disparo", disparo);
                 }
                 else {
-                    Disparo disparo_visual = new Disparo(jugadors.get(numJugador).getPosition().x,jugadors.get(numJugador).getPosition().y,0
-                            ,0,0,0, jugadors.get(numJugador));
+                    float x1 = jugadors.get(numJugador).getPosition().x;
+                    float y1 = jugadors.get(numJugador).getPosition().y;
+                    float x2 = 0;
+                    float y2 = 0;
+                    float x_vector_direccio = 0;
+                    float y_vector_direccio = 0;
+
+                    Disparo disparo_visual = new Disparo(x1,y1,0,0,0,0, jugadors.get(numJugador));
                     stage.addActor(disparo_visual);
+
+                    JSONObject disparo = new JSONObject();
+                    disparo.put("x1", String.valueOf(x1));
+                    disparo.put("y1", String.valueOf(y1));
+                    disparo.put("x2", String.valueOf(x2));
+                    disparo.put("y2", String.valueOf(y2));
+                    disparo.put("x_vector_direccio", String.valueOf(x_vector_direccio));
+                    disparo.put("y_vector_direccio", String.valueOf(y_vector_direccio));
+                    disparo.put("sala", sala.getId());
+                    disparo.put("user", jugadors.get(numJugador).getNomUsuari());
+                    mSocket.emit("disparo", disparo);
                 }
+
 
 
             }
@@ -225,6 +259,42 @@ public class MapaPrueba implements Screen {
 
         // Agrega el ImageButton al Stage para que se pueda dibujar y recibir eventos de entrada
         stage.addActor(disparo);
+
+        mSocket.on("disparo", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                JSONObject data = (JSONObject) args[0];
+                try {
+                    //JSONObject data = new JSONObject(jsonString);
+                    String salaDisparo = data.getString("sala");
+                    if(salaDisparo.equals(sala.getId())) {
+                        if(!data.getString("user").equals(jugadors.get(numJugador).getNomUsuari())){
+                            String usernameToFind = data.getString("user");
+                            // Loop through the list of Jugadors
+                            int index = -1; // Initialize index to -1 (not found)
+                            for (int i = 0; i < jugadors.size(); i++) {
+                                Jugador jugador = jugadors.get(i);
+                                if (jugador.getNomUsuari().equals(usernameToFind)) {
+                                    // Found the Jugador with the specified username
+                                    index = i;
+                                    break; // No need to continue searching
+                                }
+                            }
+                            float x1 = Float.valueOf(data.getString("x1"));
+                            float y1 = Float.valueOf(data.getString("y1"));
+                            float x2 = Float.valueOf(data.getString("x2"));
+                            float y2 = Float.valueOf(data.getString("y2"));
+                            float x_vector_direccio = Float.valueOf(data.getString("x_vector_direccio"));
+                            float y_vector_direccio = Float.valueOf(data.getString("y_vector_direccio"));
+                            Disparo disparo = new Disparo(x1,y1,x2,y2,x_vector_direccio,y_vector_direccio,jugadors.get(index));
+                            stage.addActor(disparo);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
 
 

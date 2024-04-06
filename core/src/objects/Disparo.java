@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.mygdx.game.MapaPrueba;
+import com.mygdx.game.Pixel_R6;
 
 import java.util.ArrayList;
 
@@ -34,7 +35,7 @@ public class Disparo extends Actor {
 
         this.x_vector_direccio = x_vector_direccio;
         this.y_vector_direccio = y_vector_direccio;
-        shapeRenderer = new ShapeRenderer();
+        shapeRenderer = Pixel_R6.shapeRenderer;
         shapeRenderer.setAutoShapeType(true);
 
 
@@ -162,12 +163,20 @@ public class Disparo extends Actor {
 
         boolean colision_player = collidesWithPlayer(this.array_jugadors_rivals);
         if (colision_player) {
-            this.remove();
-            for (Jugador jugador : MapaPrueba.jugadors) {
-                if (jugador == this.jugador_colisionat) {
-                    MapaPrueba.progressBars.get(jugador.getZIndex()).setValue(MapaPrueba.progressBars.get(jugador.getZIndex()).getValue()-10);
+
+            for (int i=0;i<MapaPrueba.jugadors.size();i++) {
+                //System.out.println(jugador);
+                if (MapaPrueba.jugadors.get(i) == this.jugador_colisionat) {
+                    MapaPrueba.progressBars.get(i).setValue(MapaPrueba.progressBars.get(i).getValue()-10);
+                    /*
+                    if (MapaPrueba.progressBars.get(jugador.getZIndex()).getValue() == 0) {
+                        jugador.remove();
+                    }
+
+                     */
                 }
             }
+            this.remove();
         }
 
         boolean colision_walls = collidesWithWalls(tiledMap, this.bounds);
@@ -176,6 +185,8 @@ public class Disparo extends Actor {
             this.remove();
 
         }
+
+
     }
 
     public boolean collidesWithWalls(TiledMap map, Polygon polygon) {
