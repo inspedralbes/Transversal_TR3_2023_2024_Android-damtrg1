@@ -168,12 +168,29 @@ public class Disparo extends Actor {
                 //System.out.println(jugador);
                 if (MapaPrueba.jugadors.get(i) == this.jugador_colisionat) {
                     MapaPrueba.progressBars.get(i).setValue(MapaPrueba.progressBars.get(i).getValue()-10);
-                    /*
-                    if (MapaPrueba.progressBars.get(jugador.getZIndex()).getValue() == 0) {
-                        jugador.remove();
+
+                    if (MapaPrueba.progressBars.get(i).getValue() == 0) {
+
+                        for (int j=0;j<MapaPrueba.array_jugadors_equip1.size();j++) {
+                            if (MapaPrueba.array_jugadors_equip1.get(j) == this.jugador_colisionat) {
+                                MapaPrueba.array_jugadors_equip1.get(j).remove();
+                            }
+
+                        }
+
+                        for (int j=0;j<MapaPrueba.array_jugadors_equip2.size();j++) {
+                            if (MapaPrueba.array_jugadors_equip2.get(j) == this.jugador_colisionat) {
+                                MapaPrueba.array_jugadors_equip2.get(j).remove();
+                            }
+
+                        }
+
+                        MapaPrueba.jugadors.get(i).remove();
+                        MapaPrueba.progressBars.get(i).remove();
+                        MapaPrueba.labelsNoms.get(i).remove();
                     }
 
-                     */
+
                 }
             }
             this.remove();

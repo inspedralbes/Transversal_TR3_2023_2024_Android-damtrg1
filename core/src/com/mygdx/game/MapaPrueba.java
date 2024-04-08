@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -65,12 +67,16 @@ public class MapaPrueba implements Screen {
 
     Label LabelNomJugador;
 
+    Label label_num_jugadors_Equip1;
+
+    Label label_num_jugadors_Equip2;
+
     Button disparo;
     public static ArrayList<Jugador> jugadors = new ArrayList<>();
 
     public static ArrayList<ProgressBar> progressBars = new ArrayList<>();
 
-    ArrayList<Label> labelsNoms = new ArrayList<>();
+    public static ArrayList<Label> labelsNoms = new ArrayList<>();
 
     float knobXAnterior = 0;
     float knobYAnterior = 0;
@@ -81,6 +87,9 @@ public class MapaPrueba implements Screen {
 
     public static ArrayList<Jugador> array_jugadors_equip1;
     public static ArrayList<Jugador> array_jugadors_equip2;
+
+    TextButton textButtonEquip1;
+    TextButton textButtonEquip2;
 
     public MapaPrueba(Pixel_R6 game, Sala sala) {
         preferences = Gdx.app.getPreferences("Pref");
@@ -297,10 +306,48 @@ public class MapaPrueba implements Screen {
         });
 
 
+        // Obtener dos estilos diferentes de botón de texto
+        TextButton.TextButtonStyle textButtonStyle1 = skin.get("round", TextButton.TextButtonStyle.class);
+        TextButton.TextButtonStyle textButtonStyle2 = skin.get("round", TextButton.TextButtonStyle.class);
+
+        // Establecer el color de la fuente para el primer estilo
+        textButtonStyle1.fontColor = Color.BLUE;
+
+        // Crear el primer botón de texto con el primer estilo
+        textButtonEquip1 = new TextButton("EQUIP 1: " + array_jugadors_equip1.size() + " JUGADOR(S) VIUS", textButtonStyle1);
+
+
+        // Establecer el color de la fuente para el segundo estilo
+        textButtonStyle2.fontColor = Color.YELLOW;
+
+        // Crear el segundo botón de texto con el segundo estilo
+        textButtonEquip2 = new TextButton("EQUIP 2: " + array_jugadors_equip2.size() + " JUGADOR(S) VIUS", textButtonStyle2);
+
+        stage.addActor(textButtonEquip1);
+        stage.addActor(textButtonEquip2);
+
+
+
+
 
         //NOMBRES DE JUGADORES EN PANTALLA
-        for(int i = 0; i < jugadors.size(); i++){
+        for(int i = 0; i < jugadors.size(); i++) {
             Label.LabelStyle labelStyle = skin_vida.get("default", Label.LabelStyle.class);
+            for (int j = 0; j < array_jugadors_equip1.size(); j++) {
+                if (array_jugadors_equip1.get(j) == jugadors.get(i)) {
+                    // Cambia el color del estilo
+                    labelStyle.fontColor = Color.BLUE; // Por ejemplo, establece el color rojo
+                }
+            }
+            for (int j = 0; j < array_jugadors_equip2.size(); j++) {
+                if (array_jugadors_equip2.get(j) == jugadors.get(i)) {
+                    // Cambia el color del estilo
+                    labelStyle.fontColor = Color.YELLOW; // Por ejemplo, establece el color rojo
+                }
+            }
+
+
+
             Label LabelNomJugador = new Label(jugadors.get(i).getNomUsuari(), labelStyle);
             labelsNoms.add(LabelNomJugador);
 
@@ -476,6 +523,13 @@ public class MapaPrueba implements Screen {
 
         touchpad.setPosition(touchpadX, touchpadY);
 
+        textButtonEquip1.setPosition(camera.position.x - (float) 0.25*Gdx.graphics.getWidth(), camera.position.y + (float) 0.20*Gdx.graphics.getHeight());
+        textButtonEquip1.setText("EQUIP 1: " + array_jugadors_equip1.size() + " JUGADOR(S) VIUS");
+        System.out.printf("equip 1:" + array_jugadors_equip1.size());
+
+        textButtonEquip2.setPosition(camera.position.x + (float) 0.05*Gdx.graphics.getWidth(), camera.position.y + (float) 0.20*Gdx.graphics.getHeight());
+        textButtonEquip2.setText("EQUIP 2: " + array_jugadors_equip2.size() + " JUGADOR(S) VIUS");
+        System.out.printf("equip 2:" + array_jugadors_equip2.size());
 
 
         // Actualizar la posición del ProgressBar para que esté encima del jugador
