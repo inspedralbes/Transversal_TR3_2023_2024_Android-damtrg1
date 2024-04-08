@@ -97,6 +97,9 @@ public class MapaPrueba implements Screen {
         skin_vida = new Skin(Gdx.files.internal("skin_vida2/tubular-ui.json"));
 
         AssetManager.load();
+
+        AssetManager.music.stop();
+
         try {
             mSocket = IO.socket("http://r6pixel.duckdns.org:3169");
         } catch (URISyntaxException e) {

@@ -57,6 +57,7 @@ public class PantallaPrincipal implements Screen {
 
         AssetManager.load();
 
+
         preferences = Gdx.app.getPreferences("Pref");
 
         // Creem la càmera de les dimensions del joc

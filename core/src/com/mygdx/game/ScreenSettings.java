@@ -163,6 +163,8 @@ public class ScreenSettings implements Screen {
                     System.out.println("FALSE");
                     // Guardar el valor actual del Slider
                     valorSliderVolumen = slider_volumen.getValue();
+
+                    AssetManager.music.setVolume(valorSliderMusic / 100f);
                     // Establecer el valor del Slider a 0
                     slider_volumen.setValue(0);
                 }

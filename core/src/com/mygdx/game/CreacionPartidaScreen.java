@@ -370,9 +370,14 @@ public class CreacionPartidaScreen implements Screen {
                     String sala = data.getString("sala");
                     if (sala.equals(salaId)) {
                         salaNova = new Sala(sala, mapaSelecionado, usuarisAtacantes, usuarisDefensores);
-                        Gdx.app.postRunnable(() -> {
-                            game.setScreen(new MapaPrueba(game, salaNova));
-                        });
+                        if(usuarisAtacantes.isEmpty() && usuarisDefensores.isEmpty()){
+                            System.out.println("No puedes jugar sin elegir equipo");
+                        }else{
+                            Gdx.app.postRunnable(() -> {
+                                AssetManager.music.stop();
+                                game.setScreen(new MapaPrueba(game, salaNova));
+                            });
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
