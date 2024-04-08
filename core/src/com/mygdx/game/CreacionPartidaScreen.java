@@ -438,7 +438,6 @@ public class CreacionPartidaScreen implements Screen {
         btnAtacante.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.postRunnable(() -> {
                     // Actualiza los componentes de la interfaz de usuario aquí
 
                     System.out.println("ATACANTES");
@@ -486,7 +485,7 @@ public class CreacionPartidaScreen implements Screen {
 
 
                     System.out.println("AAA: " + labelsAtacantes.size());
-                });
+
             }
         });
 
@@ -494,7 +493,6 @@ public class CreacionPartidaScreen implements Screen {
         btnDefensor.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.postRunnable(() -> {
                     // Actualiza los componentes de la interfaz de usuario aquí
 
                     // Actualiza los componentes de la interfaz de usuario aquí
@@ -536,7 +534,6 @@ public class CreacionPartidaScreen implements Screen {
                             }
                         }
                     }
-                });
             }
         });
 
