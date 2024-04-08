@@ -62,7 +62,7 @@ public class UnidoSalaScreen implements Screen {
 
     Table table;
 
-    public UnidoSalaScreen(Pixel_R6 game, String idSala){
+    public UnidoSalaScreen(Pixel_R6 game, String idSala) {
         this.game = game;
 
         preferences = Gdx.app.getPreferences("Pref");
@@ -203,7 +203,7 @@ public class UnidoSalaScreen implements Screen {
 
         // Calcula las coordenadas X e Y para colocar la ventana en el centro de la pantalla
         float windowX = ((gameWidth / 2) - window.getWidth() * 3.3f);
-        float windowY = ((gameHeight / 2) - window.getHeight() *1.7f);
+        float windowY = ((gameHeight / 2) - window.getHeight() * 1.7f);
 
         // Establece la posición de la ventana en el centro de la pantalla
         window.setPosition(windowX, windowY);
@@ -218,7 +218,6 @@ public class UnidoSalaScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
 
 
-
         try {
             mSocket = IO.socket("http://r6pixel.duckdns.org:3169");
         } catch (URISyntaxException e) {
@@ -228,7 +227,7 @@ public class UnidoSalaScreen implements Screen {
         JSONObject jsonUser = new JSONObject();
         jsonUser.put("user", preferences.getString("username"));
 
-        mSocket.on("userNuevo",  new Emitter.Listener() {
+        mSocket.on("userNuevo", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 String jsonString = (String) args[0];
@@ -236,7 +235,7 @@ public class UnidoSalaScreen implements Screen {
                     JSONObject data = new JSONObject(jsonString);
                     String user = data.getString("user");
                     String sala = data.getString("sala");
-                    if(sala.equals(idSala)) {
+                    if (sala.equals(idSala)) {
                         if (!user.equals(preferences.getString("username"))) {
                             int contador = 0;
                             for (String usuari : usuarisSala
@@ -263,16 +262,17 @@ public class UnidoSalaScreen implements Screen {
                     JSONObject data = new JSONObject(jsonString);
                     String sala = data.getString("sala");
                     String mapaSelecionado = data.getString("mapaSelecionado");
-                    if(sala.equals(salaId)) {
+                    if (sala.equals(salaId)) {
                         Sala salaNova = new Sala(sala, mapaSelecionado, usuarisAtacantes, usuarisDefensores);
                         Gdx.app.postRunnable(() -> {
                             game.setScreen(new MapaPrueba(game, salaNova));
-                        });                    }
+                        });
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-        } );
+        });
 
         Table tbBTN = new Table();
         tbBTN.setFillParent(false);
@@ -322,9 +322,8 @@ public class UnidoSalaScreen implements Screen {
         btnAtacante.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.postRunnable(() -> {
 
-                    System.out.println("ATACANTES");
+                System.out.println("ATACANTES");
                 // Obtener el nombre del usuario que hizo clic en el botón
                 String usuarioClic = preferences.getString("username");
                 // Imprimir el nombre del usuario
@@ -352,9 +351,10 @@ public class UnidoSalaScreen implements Screen {
                 if (usuarisDefensores.contains(usuarioClic)) {
                     usuarisDefensores.remove(usuarioClic);
                     labelDefensores.remove(usuarioClic);
-                    System.out.println("N: "+ labelDefensores.size());
-                    for (int i=0; i <= labelDefensores.size();i++){
-                        enemigoLabel.setText("Defensor "+i);
+                    System.out.println("N: " + labelDefensores.size());
+                    for (int i = 0; i <= labelDefensores.size(); i++) {
+                        //enemigoLabel.setText("Defensor "+i);
+                        labelDefensores.get(i).setText("Defensores: " + i);
                     }
                 }
 
@@ -362,14 +362,14 @@ public class UnidoSalaScreen implements Screen {
                     for (int i = 0; i < usuarisAtacantes.size(); i++) {
                         System.out.println("USERS: " + usuarisAtacantes.get(i));
                         for (String noms : usuarisAtacantes) {
-                            aliadoLabel.setText(noms);
+                            labelDefensores.get(i).setText(noms);
                         }
                     }
                 }
 
 
                 System.out.println("AAA: " + labelsAtacantes.size());
-                });
+
             }
         });
 
@@ -377,9 +377,7 @@ public class UnidoSalaScreen implements Screen {
         btnDefensor.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.postRunnable(() -> {
-
-                    System.out.println("DEFENSORES");
+                System.out.println("DEFENSORES");
 
                 String usuarioClic = preferences.getString("username");
 
@@ -388,6 +386,7 @@ public class UnidoSalaScreen implements Screen {
                     System.out.println("El usuario ya está en la lista de defensores.");
                     return; // Sal de la función sin hacer nada más
                 } else {
+
                     System.out.println("DEFENSOR: " + usuarioClic);
 
                     usuarisDefensores.add(usuarioClic);
@@ -396,15 +395,14 @@ public class UnidoSalaScreen implements Screen {
                         usuarisSala.remove(usuarioClic);
                         usuarisSala.add("NO PLAYER");
                     }
-
                 }
 
                 if (usuarisAtacantes.contains(usuarioClic)) {
                     usuarisAtacantes.remove(usuarioClic);
                     labelsAtacantes.remove(usuarioClic);
-                    System.out.println("N: "+ labelsAtacantes.size());
-                    for (int i=0; i <= labelsAtacantes.size();i++){
-                        aliadoLabel.setText("Atacante "+i);
+                    System.out.println("N: " + labelsAtacantes.size());
+                    for (int i = 0; i <= labelsAtacantes.size(); i++) {
+                        labelsAtacantes.get(i).setText("Atacante " + i);
                     }
                 }
 
@@ -412,13 +410,11 @@ public class UnidoSalaScreen implements Screen {
                     for (int i = 0; i < usuarisDefensores.size(); i++) {
                         System.out.println("USERS DEFENSORES: " + usuarisDefensores.get(i));
                         for (String def : usuarisDefensores) {
-                            enemigoLabel.setText(def);
+                            labelDefensores.get(i).setText(def);
                         }
                     }
                 }
-                });
             }
-
         });
 
         tbBTN.add(btnAtacante).padRight(90);
@@ -446,8 +442,8 @@ public class UnidoSalaScreen implements Screen {
     public void render(float delta) {
         stage.draw();
         stage.act(delta);
-        salaLabel.setText("Sala: " + salaId );
-        for(int i = 0; i < labelsUsuaris.size(); i++){
+        salaLabel.setText("Sala: " + salaId);
+        for (int i = 0; i < labelsUsuaris.size(); i++) {
             labelsUsuaris.get(i).setText(usuarisSala.get(i));
         }
 
