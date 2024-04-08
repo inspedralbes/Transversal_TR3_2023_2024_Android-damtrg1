@@ -6,17 +6,23 @@ public class Sala {
     String id;
     ArrayList<String> users;
 
+    ArrayList<String> usuarisAtacantes;
+
+    ArrayList<String> usuarisDefensores;
+
     String nombreMapa;
 
-    public Sala(String id, ArrayList<String> users, String nombreMapa) {
+    public Sala(String id, String nombreMapa, ArrayList<String> atacantes, ArrayList<String> defensores) {
         this.id = id;
-        this.users = users;
         this.nombreMapa = nombreMapa;
+        this.usuarisAtacantes = atacantes;
+        this.usuarisDefensores = defensores;
     }
 
-    public Sala(String id, ArrayList<String> users) {
+    public Sala(String id,  ArrayList<String> atacantes, ArrayList<String> defensores) {
         this.id = id;
-        this.users = users;
+        this.usuarisAtacantes = atacantes;
+        this.usuarisDefensores = defensores;
     }
 
     public String getId() {
@@ -41,5 +47,13 @@ public class Sala {
 
     public void setNombreMapa(String nombreMapa) {
         this.nombreMapa = nombreMapa;
+    }
+
+    public ArrayList<String> getUsuarisAtacantes() {
+        return usuarisAtacantes;
+    }
+
+    public ArrayList<String> getUsuarisDefensores() {
+        return usuarisDefensores;
     }
 }

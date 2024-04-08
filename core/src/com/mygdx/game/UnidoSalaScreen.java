@@ -9,12 +9,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.net.HttpStatus;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
@@ -47,12 +49,20 @@ public class UnidoSalaScreen implements Screen {
     Skin skin, skin_inputs;
     ArrayList<String> usuarisSala = new ArrayList<>();
     ArrayList<Label> labelsUsuaris = new ArrayList<>();
-    Label salaLabel;
+
+    ArrayList<String> usuarisAtacantes = new ArrayList<>();
+    ArrayList<Label> labelsAtacantes = new ArrayList<>();
+
+    ArrayList<String> usuarisDefensores = new ArrayList<>();
+    ArrayList<Label> labelDefensores = new ArrayList<>();
+    Label salaLabel, aliadoLabel, jugadorLabel, enemigoLabel;
 
     String salaId;
     Preferences preferences;
 
-    public UnidoSalaScreen(Pixel_R6 game, String idSala){
+    Table table;
+
+    public UnidoSalaScreen(Pixel_R6 game, String idSala) {
         this.game = game;
 
         preferences = Gdx.app.getPreferences("Pref");
@@ -174,6 +184,11 @@ public class UnidoSalaScreen implements Screen {
         // Crear una instancia de Label con el texto "Username" y el estilo definido
         salaLabel = new Label("Sala: " + salaId, labelStyle);
 
+        Table tbSalaId = new Table();
+        tbSalaId.setFillParent(false);
+
+        tbSalaId.add(salaLabel);
+
 
         //VENTANA
         Window.WindowStyle windowStyle = skin_inputs.get(Window.WindowStyle.class);
@@ -188,56 +203,12 @@ public class UnidoSalaScreen implements Screen {
 
         // Calcula las coordenadas X e Y para colocar la ventana en el centro de la pantalla
         float windowX = ((gameWidth / 2) - window.getWidth() * 3.3f);
-        float windowY = ((gameHeight / 2) - window.getHeight() *1.7f);
+        float windowY = ((gameHeight / 2) - window.getHeight() * 1.7f);
 
         // Establece la posición de la ventana en el centro de la pantalla
         window.setPosition(windowX, windowY);
 
         window.setSize(1000, 500); // Establece el tamaño como desees
-
-        Table table = new Table();
-        table.setFillParent(false); // La tabla ocupará todo el espacio del padre, que es la ventana en este caso
-
-        Label labelPlayer1 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer1);
-        Label labelPlayer2 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer2);
-        Label labelPlayer3 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer3);
-        Label labelPlayer4 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer4);
-        Label labelPlayer5 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer5);
-        Label labelPlayer6 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer6);
-        Label labelPlayer7 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer7);
-        Label labelPlayer8 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer8);
-        Label labelPlayer9 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer9);
-        Label labelPlayer10 = new Label("PLAYER NULL", labelStyle);
-        labelsUsuaris.add(labelPlayer10);
-
-
-        table.add(salaLabel);
-        table.getCell(salaLabel).center();
-        table.row();
-        table.add(labelPlayer1);
-        table.add(labelPlayer2);
-        table.add(labelPlayer3);
-        table.add(labelPlayer4);
-        table.add(labelPlayer5);
-        table.row();
-        table.add(labelPlayer6);
-        table.add(labelPlayer7);
-        table.add(labelPlayer8);
-        table.add(labelPlayer9);
-        table.add(labelPlayer10);
-
-
-
-        window.add(table); // Agregar la tabla a la ventana
 
         // Agregar la ventana al Stage
         stage.addActor(window);
@@ -245,7 +216,6 @@ public class UnidoSalaScreen implements Screen {
 
         //PARA INTRODUCIR DATOS
         Gdx.input.setInputProcessor(stage);
-
 
 
         try {
@@ -257,7 +227,7 @@ public class UnidoSalaScreen implements Screen {
         JSONObject jsonUser = new JSONObject();
         jsonUser.put("user", preferences.getString("username"));
 
-        mSocket.on("userNuevo",  new Emitter.Listener() {
+        mSocket.on("userNuevo", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 String jsonString = (String) args[0];
@@ -265,7 +235,7 @@ public class UnidoSalaScreen implements Screen {
                     JSONObject data = new JSONObject(jsonString);
                     String user = data.getString("user");
                     String sala = data.getString("sala");
-                    if(sala.equals(idSala)) {
+                    if (sala.equals(idSala)) {
                         if (!user.equals(preferences.getString("username"))) {
                             int contador = 0;
                             for (String usuari : usuarisSala
@@ -292,16 +262,174 @@ public class UnidoSalaScreen implements Screen {
                     JSONObject data = new JSONObject(jsonString);
                     String sala = data.getString("sala");
                     String mapaSelecionado = data.getString("mapaSelecionado");
-                    if(sala.equals(salaId)) {
-                        Sala salaNova = new Sala(sala, usuarisSala, mapaSelecionado);
+                    if (sala.equals(salaId)) {
+                        Sala salaNova = new Sala(sala, mapaSelecionado, usuarisAtacantes, usuarisDefensores);
                         Gdx.app.postRunnable(() -> {
                             game.setScreen(new MapaPrueba(game, salaNova));
-                        });                    }
+                        });
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-        } );
+        });
+
+        Table tbBTN = new Table();
+        tbBTN.setFillParent(false);
+
+        TextButton btnAtacante = new TextButton("ATACANTES", skin_inputs.get("default", TextButton.TextButtonStyle.class));
+        Label jugadores = new Label("JUGADORES", skin_inputs.get("subtitle", Label.LabelStyle.class));
+        TextButton btnDefensor = new TextButton("DEFENSORES", skin_inputs.get("default", TextButton.TextButtonStyle.class));
+
+        table = new Table();
+        table.setFillParent(false); // Para que la tabla ocupe todo el espacio del padre, en este caso, el Stage
+
+        // Columna de aliados
+        Table tableAliados = new Table();
+        tableAliados.top().left(); // Alinea la tabla en la parte superior izquierda
+
+        // Agrega los labels de los aliados a la columna de aliados
+        for (int i = 0; i < 5; i++) {
+            aliadoLabel = new Label("Atacante " + (i + 1), skin_inputs);
+            labelsAtacantes.add(aliadoLabel);
+            tableAliados.add(aliadoLabel).pad(10).row(); // Agrega un padding y pasa a la siguiente fila
+
+        }
+
+        // Columna de jugadores conectados a la sala
+        Table tableJugadores = new Table();
+        tableJugadores.top().center(); // Alinea la tabla en la parte superior centrada
+
+        // Agrega los labels de los jugadores conectados a la sala a la columna de jugadores
+        for (int i = 0; i < usuarisSala.size(); i++) {
+            jugadorLabel = new Label(usuarisSala.get(i), skin_inputs);
+            labelsUsuaris.add(jugadorLabel);
+            tableJugadores.add(jugadorLabel).pad(3).row(); // Agrega un padding y pasa a la siguiente fila
+        }
+
+        // Columna de equipo enemigo
+        Table tableEnemigos = new Table();
+        tableEnemigos.top().right(); // Alinea la tabla en la parte superior derecha
+
+        // Agrega los labels de los enemigos a la columna de enemigos
+        for (int i = 5; i < usuarisSala.size(); i++) {
+            enemigoLabel = new Label("Defensor " + (i - 4), skin_inputs);
+            labelDefensores.add(enemigoLabel);
+            tableEnemigos.add(enemigoLabel).pad(10).row(); // Agrega un padding y pasa a la siguiente fila
+        }
+
+
+        btnAtacante.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
+                System.out.println("ATACANTES");
+                // Obtener el nombre del usuario que hizo clic en el botón
+                String usuarioClic = preferences.getString("username");
+                // Imprimir el nombre del usuario
+                System.out.println("Usuario seleccionado como atacante: " + usuarioClic);
+
+                // Verifica si el usuario ya está en la lista de atacantes
+                if (usuarisAtacantes.contains(usuarioClic)) {
+                    System.out.println("El usuario ya está en la lista de atacantes.");
+                    return; // Sal de la función sin hacer nada más
+                } else {
+                    System.out.println("ATANCANTE: " + usuarioClic);
+
+                    usuarisAtacantes.add(usuarioClic);
+
+                    if (usuarisSala.contains(usuarioClic)) {
+                        usuarisSala.remove(usuarioClic);
+                        usuarisSala.add("NO PLAYER");
+                        for (String la : usuarisSala) {
+                            System.out.println("MEDIO: " + la);
+                        }
+                    }
+
+                }
+
+                if (usuarisDefensores.contains(usuarioClic)) {
+                    usuarisDefensores.remove(usuarioClic);
+                    labelDefensores.remove(usuarioClic);
+                    System.out.println("N: " + labelDefensores.size());
+                    for (int i = 0; i <= labelDefensores.size(); i++) {
+                        //enemigoLabel.setText("Defensor "+i);
+                        labelDefensores.get(i).setText("Defensores: " + i);
+                    }
+                }
+
+                if (usuarisAtacantes.size() <= 5) {
+                    for (int i = 0; i < usuarisAtacantes.size(); i++) {
+                        System.out.println("USERS: " + usuarisAtacantes.get(i));
+                        for (String noms : usuarisAtacantes) {
+                            labelDefensores.get(i).setText(noms);
+                        }
+                    }
+                }
+
+
+                System.out.println("AAA: " + labelsAtacantes.size());
+
+            }
+        });
+
+
+        btnDefensor.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("DEFENSORES");
+
+                String usuarioClic = preferences.getString("username");
+
+                // Verifica si el usuario ya está en la lista de defensores
+                if (usuarisDefensores.contains(usuarioClic)) {
+                    System.out.println("El usuario ya está en la lista de defensores.");
+                    return; // Sal de la función sin hacer nada más
+                } else {
+
+                    System.out.println("DEFENSOR: " + usuarioClic);
+
+                    usuarisDefensores.add(usuarioClic);
+
+                    if (usuarisSala.contains(usuarioClic)) {
+                        usuarisSala.remove(usuarioClic);
+                        usuarisSala.add("NO PLAYER");
+                    }
+                }
+
+                if (usuarisAtacantes.contains(usuarioClic)) {
+                    usuarisAtacantes.remove(usuarioClic);
+                    labelsAtacantes.remove(usuarioClic);
+                    System.out.println("N: " + labelsAtacantes.size());
+                    for (int i = 0; i <= labelsAtacantes.size(); i++) {
+                        labelsAtacantes.get(i).setText("Atacante " + i);
+                    }
+                }
+
+                if (usuarisDefensores.size() <= 5) {
+                    for (int i = 0; i < usuarisDefensores.size(); i++) {
+                        System.out.println("USERS DEFENSORES: " + usuarisDefensores.get(i));
+                        for (String def : usuarisDefensores) {
+                            labelDefensores.get(i).setText(def);
+                        }
+                    }
+                }
+            }
+        });
+
+        tbBTN.add(btnAtacante).padRight(90);
+        tbBTN.add(jugadores).prefSize(50, 30);
+        tbBTN.add(btnDefensor).padLeft(90);
+
+
+// Agrega las columnas a la tabla principal
+        table.add(tableAliados).expandY().padRight(100); // Expande la columna de aliados en el eje Y y agrega un espaciado a la derecha
+        table.add(tableJugadores).expandY().padRight(100); // Expande la columna de jugadores en el eje Y y agrega un espaciado a la derecha
+        table.add(tableEnemigos).expandY(); // Expande la columna de enemigos en el eje Y
+
+        window.add(tbSalaId).pad(10).row();
+        window.add(tbBTN).row();
+        window.add(table).row(); // Agregar la tabla a la ventana
     }
 
 
@@ -314,8 +442,8 @@ public class UnidoSalaScreen implements Screen {
     public void render(float delta) {
         stage.draw();
         stage.act(delta);
-        salaLabel.setText("Sala: " + salaId );
-        for(int i = 0; i < labelsUsuaris.size(); i++){
+        salaLabel.setText("Sala: " + salaId);
+        for (int i = 0; i < labelsUsuaris.size(); i++) {
             labelsUsuaris.get(i).setText(usuarisSala.get(i));
         }
 
