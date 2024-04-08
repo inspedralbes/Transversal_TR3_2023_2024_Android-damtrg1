@@ -322,7 +322,9 @@ public class UnidoSalaScreen implements Screen {
         btnAtacante.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("ATACANTES");
+                Gdx.app.postRunnable(() -> {
+
+                    System.out.println("ATACANTES");
                 // Obtener el nombre del usuario que hizo clic en el botón
                 String usuarioClic = preferences.getString("username");
                 // Imprimir el nombre del usuario
@@ -367,7 +369,7 @@ public class UnidoSalaScreen implements Screen {
 
 
                 System.out.println("AAA: " + labelsAtacantes.size());
-
+                });
             }
         });
 
@@ -375,7 +377,9 @@ public class UnidoSalaScreen implements Screen {
         btnDefensor.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("DEFENSORES");
+                Gdx.app.postRunnable(() -> {
+
+                    System.out.println("DEFENSORES");
 
                 String usuarioClic = preferences.getString("username");
 
@@ -412,7 +416,9 @@ public class UnidoSalaScreen implements Screen {
                         }
                     }
                 }
+                });
             }
+
         });
 
         tbBTN.add(btnAtacante).padRight(90);
