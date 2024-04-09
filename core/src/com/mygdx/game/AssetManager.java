@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -61,6 +62,8 @@ public class AssetManager {
     public static Sprite jugadorSprite_amunt;
 
     public static Map<String, Texture> imatges_mapes;
+
+    public static Music music;
 
 
 
@@ -160,6 +163,10 @@ public class AssetManager {
 
         persona = new Texture(Gdx.files.internal("persona.jpg"));
 
+        /******************************* MUSICA *************************************/
+        music = Gdx.audio.newMusic(Gdx.files.internal("musica_ambiente2.mp3"));
+        music.setLooping(true);
+        music.setVolume(2.9f);
 
     }
 
