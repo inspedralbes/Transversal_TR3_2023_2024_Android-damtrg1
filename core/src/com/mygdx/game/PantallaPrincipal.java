@@ -81,7 +81,7 @@ public class PantallaPrincipal implements Screen {
     public PantallaPrincipal(Pixel_R6 game, boolean nou) {
         this.game = game;
 
-        AssetManager.load();
+        //AssetManager.load();
 
 
         preferences = Gdx.app.getPreferences("Pref");

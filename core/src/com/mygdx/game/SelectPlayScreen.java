@@ -37,7 +37,7 @@ public class SelectPlayScreen implements Screen {
 
         this.game = game;
 
-        AssetManager.load();
+        //AssetManager.load();
 
         preferences = Gdx.app.getPreferences("Pref");
 

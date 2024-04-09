@@ -191,13 +191,13 @@ public class CodigoSalaScreen implements Screen {
         TextField.TextFieldStyle textFieldStyle = skin_inputs.get("default", TextField.TextFieldStyle.class);
 
         // Crear una instancia de TextField con el estilo obtenido
-        codigo = new TextField("Ingrese código", textFieldStyle);
+        codigo = new TextField("Ingrese codigo", textFieldStyle);
 
         // Configurar el controlador de eventos para el TextField
         codigo.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                if (codigo.getText().equals("Ingrese código")) {
+                if (codigo.getText().equals("Ingrese codigo")) {
                     // Si lo es, borrar el texto
                     codigo.setText("");
                 } else {
