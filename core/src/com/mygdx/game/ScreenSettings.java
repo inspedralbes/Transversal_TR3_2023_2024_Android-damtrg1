@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -38,11 +40,17 @@ public class ScreenSettings implements Screen {
 
     Preferences preferences;
 
+    Slider slider_musica, slider_volumen;
+
+    Slider.SliderStyle horizontalSliderStyle;
+
 
     public ScreenSettings(Pixel_R6 game) {
         this.game = game;
 
         AssetManager.load();
+
+
 
         preferences = Gdx.app.getPreferences("Settings");
 
@@ -118,7 +126,7 @@ public class ScreenSettings implements Screen {
         Slider.SliderStyle sliderStyle = skin.get("default-horizontal", Slider.SliderStyle.class);
 
         // Crear un nuevo estilo para el Slider en dirección horizontal
-        Slider.SliderStyle horizontalSliderStyle = new Slider.SliderStyle(sliderStyle);
+        horizontalSliderStyle = new Slider.SliderStyle(sliderStyle);
 
         // Asignar el nuevo background y knob antes al estilo horizontal del Slider
         horizontalSliderStyle.background = skin.getDrawable("slider-bar");
@@ -126,17 +134,14 @@ public class ScreenSettings implements Screen {
         horizontalSliderStyle.knobBefore = skin.getDrawable("slider-bar-fill");
 
         // Crear una instancia del Slider con el estilo horizontal
-        Slider slider_volumen = new Slider(0, 100, 1, false, horizontalSliderStyle);
+        slider_volumen = new Slider(0f, 1f, 0.1f, false, horizontalSliderStyle);
 
-        Slider slider_musica = new Slider(0, 100, 1, false, horizontalSliderStyle);
 
         //ESTABLECER QUE LAS BARRAS DE SONIDO ESTEN LLENAS
         float volumenGuardado = preferences.getFloat("volumen", 100); // 100 es el valor predeterminado si no se encuentra ningún valor guardado
-        float musicaGuardada = preferences.getFloat("musica", 100); // 100 es el valor predeterminado si no se encuentra ningún valor guardado
 
         // Establece los valores de los sliders a los valores guardados
         slider_volumen.setValue(volumenGuardado);
-        slider_musica.setValue(musicaGuardada);
 
 
         //BOTON DE MUTE
@@ -164,9 +169,8 @@ public class ScreenSettings implements Screen {
                     // Guardar el valor actual del Slider
                     valorSliderVolumen = slider_volumen.getValue();
 
-                    AssetManager.music.setVolume(valorSliderMusic / 100f);
                     // Establecer el valor del Slider a 0
-                    slider_volumen.setValue(0);
+                    AssetManager.music.setVolume(0f);
                 }
             }
         });
@@ -180,13 +184,17 @@ public class ScreenSettings implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if (btn_musica.isChecked()) {
                     System.out.println("TRUE");
-                    slider_musica.setValue(valorSliderMusic);
+                    AssetManager.volumen = valorSliderMusic;
+                    AssetManager.music.setVolume(AssetManager.volumen);
+                    slider_musica.setValue(AssetManager.volumen);
                 } else {
                     System.out.println("FALSE");
                     // Guardar el valor actual del Slider
                     valorSliderMusic = slider_musica.getValue();
                     // Establecer el valor del Slider a 0
-                    slider_musica.setValue(0);
+                    //slider_musica.setValue(0);
+                    AssetManager.volumen = 0f;
+                    slider_musica.setValue(0f);
                 }
             }
         });
@@ -195,15 +203,41 @@ public class ScreenSettings implements Screen {
         if (volumenGuardado != 0) {
             btn_volumen.setChecked(true);
         }
-        if (musicaGuardada != 0) {
+
+        if (AssetManager.volumen != 0f) {
             btn_musica.setChecked(true);
         }
-        if (slider_musica.getValue() == 0) {
+
+        if (AssetManager.volumen == 0f) {
             btn_musica.setChecked(false);
         }
         if (slider_volumen.getValue() == 0) {
             btn_volumen.setChecked(false);
         }
+
+        slider_volumen.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                AssetManager.volumen = slider_musica.getValue();
+                AssetManager.music.setVolume(AssetManager.volumen);
+            }
+        });
+
+        slider_musica = new Slider(0f, 1f, 0.1f, false, horizontalSliderStyle);
+
+
+        slider_musica.setValue(AssetManager.volumen);
+
+        slider_musica.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // Guardar el valor actual del Slider en las preferencias
+                System.out.println("MUSICA Slider: "+slider_musica.getValue());
+                AssetManager.volumen = slider_musica.getValue();
+                //System.out.println("MUSICA Slider: "+va);
+                AssetManager.music.setVolume(AssetManager.volumen);
+            }
+        });
 
 
         //VENTANA
@@ -270,18 +304,27 @@ public class ScreenSettings implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
+        AssetManager.music.play();
 
     }
 
     @Override
     public void show() {
 
+
+
+
+
+
+        //stage.addActor(slider_musica);
     }
 
     @Override
     public void render(float delta) {
         stage.draw();
         stage.act(delta);
+        AssetManager.music.setVolume(AssetManager.volumen);
+
     }
 
     @Override
