@@ -249,55 +249,63 @@ public class UnidoSalaScreen implements Screen {
                             if (equip.equals("EQUIP 1")) {
                                 usuarisAtacantes.add(user);
                                 if (usuarisSala.contains(user)) {
-                                    System.out.println("audeu");
-                                    usuarisSala.remove(user);
-                                    usuarisSala.add("NO PLAYER");
+                                    int id = usuarisSala.indexOf(user);
+                                    System.out.println("ANTES NOM: "+user);
+                                    System.out.println("SALA: "+ id);
+                                    usuarisSala.remove(id);
+                                    System.out.println("DESPUES NOM: "+user);
+                                    usuarisSala.add(id,"NO PLAYER");
+                                    labelsUsuaris.get(id).setText("NO PLAYER");
                                     for (String la : usuarisSala) {
                                         System.out.println("MEDIO: " + la);
                                     }
                                 }
                                 if (usuarisDefensores.contains(user)) {
-                                    usuarisDefensores.remove(user);
-                                    labelDefensores.remove(user);
+                                    int id = usuarisDefensores.indexOf(user);
+                                    usuarisDefensores.remove(id);
+                                    //labelDefensores.remove(user);
                                     System.out.println("N: " + labelDefensores.size());
-                                    for (int i = 0; i < labelDefensores.size(); i++) {
-                                        labelDefensores.get(i).setText("Defensor " + i);
-                                    }
+                                    labelDefensores.get(id).setText("Defensores");
+                                    System.out.println("GOÑLA SOCKCERT");
+
                                 }
 
                                 if (usuarisAtacantes.size() <= 5) {
                                     for (int i = 0; i < usuarisAtacantes.size(); i++) {
                                         System.out.println("USERS: " + usuarisAtacantes.get(i));
-                                        for (String noms : usuarisAtacantes) {
-                                            labelsAtacantes.get(i).setText(noms);
-                                        }
+                                        labelsAtacantes.get(i).setText(usuarisAtacantes.get(i));
+
                                     }
                                 }
-                            }
-                            else if (equip.equals("EQUIP 2")) {
+                            } else if (equip.equals("EQUIP 2")) {
                                 usuarisDefensores.add(user);
                                 if (usuarisSala.contains(user)) {
-                                    usuarisSala.remove(user);
-                                    usuarisSala.add("NO PLAYER");
+                                    int id = usuarisSala.indexOf(user);
+                                    System.out.println("ANTES NOM: "+user);
+                                    System.out.println("SALA: "+ id);
+                                    usuarisSala.remove(id);
+                                    System.out.println("DESPUES NOM: "+user);
+                                    usuarisSala.add(id,"NO PLAYER");
+                                    labelsUsuaris.get(id).setText("NO PLAYER");
                                     for (String la : usuarisSala) {
                                         System.out.println("MEDIO: " + la);
                                     }
                                 }
                                 if (usuarisAtacantes.contains(user)) {
-                                    usuarisAtacantes.remove(user);
-                                    labelsAtacantes.remove(user);
+                                    int id = usuarisAtacantes.indexOf(user);
+                                    usuarisAtacantes.remove(id);
+                                    //labelsAtacantes.remove(user);
                                     System.out.println("N: " + labelsAtacantes.size());
-                                    for (int i = 0; i < labelsAtacantes.size(); i++) {
-                                        labelsAtacantes.get(i).setText("Atacante " + i);
-                                    }
+                                    labelsAtacantes.get(id).setText("Atacante");
+                                    System.out.println("GOÑLA SOCKCERT AAAAA");
+
                                 }
 
                                 if (usuarisDefensores.size() <= 5) {
                                     for (int i = 0; i < usuarisDefensores.size(); i++) {
                                         System.out.println("USERS DEFENSORES: " + usuarisDefensores.get(i));
-                                        for (String def : usuarisDefensores) {
-                                            labelDefensores.get(i).setText(def);
-                                        }
+                                        labelDefensores.get(i).setText(usuarisDefensores.get(i));
+
                                     }
                                 }
                             }
@@ -321,7 +329,7 @@ public class UnidoSalaScreen implements Screen {
                     if (sala.equals(salaId)) {
                         Sala salaNova = new Sala(sala, mapaSelecionado, usuarisAtacantes, usuarisDefensores);
                         Gdx.app.postRunnable(() -> {
-                            AssetManager.music.stop();
+                            //AssetManager.music.stop();
                             game.setScreen(new MapaPrueba(game, salaNova));
                         });
                     }
@@ -347,7 +355,7 @@ public class UnidoSalaScreen implements Screen {
 
         // Agrega los labels de los aliados a la columna de aliados
         for (int i = 0; i < 5; i++) {
-            aliadoLabel = new Label("Atacante " + (i + 1), skin_inputs);
+            aliadoLabel = new Label("Atacantes", skin_inputs);
             labelsAtacantes.add(aliadoLabel);
             tableAliados.add(aliadoLabel).pad(10).row(); // Agrega un padding y pasa a la siguiente fila
 
@@ -370,7 +378,7 @@ public class UnidoSalaScreen implements Screen {
 
         // Agrega los labels de los enemigos a la columna de enemigos
         for (int i = 5; i < usuarisSala.size(); i++) {
-            enemigoLabel = new Label("Defensor " + (i - 4), skin_inputs);
+            enemigoLabel = new Label("Defensores", skin_inputs);
             labelDefensores.add(enemigoLabel);
             tableEnemigos.add(enemigoLabel).pad(10).row(); // Agrega un padding y pasa a la siguiente fila
         }
@@ -400,13 +408,17 @@ public class UnidoSalaScreen implements Screen {
                     json_canvi_equip.put("sala", idSala);
                     json_canvi_equip.put("equip", "EQUIP 1");
 
-                    mSocket.emit("userNuevo",json_canvi_equip.toString());
-
+                    mSocket.emit("userNuevo", json_canvi_equip.toString());
 
 
                     if (usuarisSala.contains(usuarioClic)) {
-                        usuarisSala.remove(usuarioClic);
-                        usuarisSala.add("NO PLAYER");
+                        int id = usuarisSala.indexOf(usuarioClic);
+                        System.out.println("ANTES NOM: "+usuarioClic);
+                        System.out.println("SALA: "+ id);
+                        usuarisSala.remove(id);
+                        System.out.println("DESPUES NOM: "+usuarioClic);
+                        usuarisSala.add(id,"NO PLAYER");
+                        labelsUsuaris.get(id).setText("NO PLAYER");
                         for (String la : usuarisSala) {
                             System.out.println("MEDIO: " + la);
                         }
@@ -415,21 +427,20 @@ public class UnidoSalaScreen implements Screen {
                 }
 
                 if (usuarisDefensores.contains(usuarioClic)) {
-                    usuarisDefensores.remove(usuarioClic);
-                    labelDefensores.remove(usuarioClic);
+                    int id = usuarisDefensores.indexOf(usuarioClic);
+                    usuarisDefensores.remove(id);
+                    //labelDefensores.remove(usuarioClic);
                     System.out.println("N: " + labelDefensores.size());
-                    for (int i = 0; i < labelDefensores.size(); i++) {
-                        //enemigoLabel.setText("Defensor "+i);
-                        labelDefensores.get(i).setText("Defensores: " + i);
-                    }
+                    //enemigoLabel.setText("Defensor "+i);
+                    labelDefensores.get(id).setText("Defensores");
+
                 }
 
                 if (usuarisAtacantes.size() <= 5) {
                     for (int i = 0; i < usuarisAtacantes.size(); i++) {
                         System.out.println("USERS: " + usuarisAtacantes.get(i));
-                        for (String noms : usuarisAtacantes) {
-                            labelsAtacantes.get(i).setText(noms);
-                        }
+                        labelsAtacantes.get(i).setText(usuarisAtacantes.get(i));
+
                     }
                 }
 
@@ -463,31 +474,34 @@ public class UnidoSalaScreen implements Screen {
                     json_canvi_equip.put("sala", idSala);
                     json_canvi_equip.put("equip", "EQUIP 2");
 
-                    mSocket.emit("userNuevo",json_canvi_equip.toString());
-
+                    mSocket.emit("userNuevo", json_canvi_equip.toString());
 
 
                     if (usuarisSala.contains(usuarioClic)) {
-                        usuarisSala.remove(usuarioClic);
-                        usuarisSala.add("NO PLAYER");
+                        int id = usuarisSala.indexOf(usuarioClic);
+                        System.out.println("ANTES NOM: "+usuarioClic);
+                        System.out.println("SALA: "+ id);
+                        usuarisSala.remove(id);
+                        System.out.println("DESPUES NOM: "+usuarioClic);
+                        usuarisSala.add(id,"NO PLAYER");
+                        labelsUsuaris.get(id).setText("NO PLAYER");
                     }
                 }
 
                 if (usuarisAtacantes.contains(usuarioClic)) {
-                    usuarisAtacantes.remove(usuarioClic);
-                    labelsAtacantes.remove(usuarioClic);
+                    int id = usuarisAtacantes.indexOf(usuarioClic);
+                    usuarisAtacantes.remove(id);
+                    //labelsAtacantes.remove(usuarioClic);
                     System.out.println("N: " + labelsAtacantes.size());
-                    for (int i = 0; i < labelsAtacantes.size(); i++) {
-                        labelsAtacantes.get(i).setText("Atacante " + i);
-                    }
+                    labelsAtacantes.get(id).setText("Atacantes");
+
                 }
 
                 if (usuarisDefensores.size() <= 5) {
                     for (int i = 0; i < usuarisDefensores.size(); i++) {
                         System.out.println("USERS DEFENSORES: " + usuarisDefensores.get(i));
-                        for (String def : usuarisDefensores) {
-                            labelDefensores.get(i).setText(def);
-                        }
+                        labelDefensores.get(i).setText(usuarisDefensores.get(i));
+
                     }
                 }
             }
