@@ -178,12 +178,14 @@ public class Disparo extends Actor {
 
                         }
 
-                        for (int j=0;j<MapaPrueba.array_jugadors_equip2.size();j++) {
+                        for (int j = 0; j < MapaPrueba.array_jugadors_equip2.size(); j++) {
                             if (MapaPrueba.array_jugadors_equip2.get(j) == this.jugador_colisionat) {
-                                MapaPrueba.array_jugadors_equip2.get(j).remove();
-                                System.out.println();
+                                System.out.println(MapaPrueba.array_jugadors_equip2.size());
+                                MapaPrueba.array_jugadors_equip2.remove(j); // Elimina el elemento en el índice j
+                                System.out.println("eliminat");
+                                System.out.println(MapaPrueba.array_jugadors_equip2.size());
+                                break; // Importante: salir del bucle después de eliminar el elemento
                             }
-
                         }
 
                         MapaPrueba.jugadors.get(i).remove();

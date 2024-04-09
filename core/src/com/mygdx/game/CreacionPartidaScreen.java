@@ -430,7 +430,7 @@ public class CreacionPartidaScreen implements Screen {
                             System.out.println("No puedes jugar sin elegir equipo");
                         } else {
                             Gdx.app.postRunnable(() -> {
-                                AssetManager.music.stop();
+                                //AssetManager.music.stop();
                                 game.setScreen(new MapaPrueba(game, salaNova));
                             });
                         }
