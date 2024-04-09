@@ -445,10 +445,12 @@ public class MapaPrueba implements Screen {
                     if (salaMovement.equals(sala.getId())) {
                         if (!data.getString("user").equals(jugadors.get(numJugador).getNomUsuari())) {
                             String usernameToFind = data.getString("user");
+                            System.out.println("usernametoFind:" + usernameToFind);
                             // Loop through the list of Jugadors
                             int index = -1; // Initialize index to -1 (not found)
                             for (int i = 0; i < jugadors.size(); i++) {
                                 Jugador jugador = jugadors.get(i);
+                                System.out.println(jugador.getNomUsuari());
                                 if (jugador.getNomUsuari().equals(usernameToFind)) {
                                     // Found the Jugador with the specified username
                                     index = i;
@@ -480,6 +482,7 @@ public class MapaPrueba implements Screen {
                             int index = -1; // Initialize index to -1 (not found)
                             for (int i = 0; i < jugadors.size(); i++) {
                                 Jugador jugador = jugadors.get(i);
+                                System.out.println("hola");
                                 if (jugador.getNomUsuari().equals(usernameToFind)) {
                                     // Found the Jugador with the specified username
                                     index = i;
@@ -497,6 +500,8 @@ public class MapaPrueba implements Screen {
                 }
             }
         });
+
+
 
 
     }
@@ -560,11 +565,11 @@ public class MapaPrueba implements Screen {
 
         textButtonEquip1.setPosition(camera.position.x - (float) 0.25*Gdx.graphics.getWidth(), camera.position.y + (float) 0.20*Gdx.graphics.getHeight());
         textButtonEquip1.setText("EQUIP 1: " + array_jugadors_equip1.size() + " JUGADOR(S) VIUS");
-        System.out.printf("equip 1:" + array_jugadors_equip1.size());
+        //System.out.println("equip 1:" + array_jugadors_equip1.size());
 
         textButtonEquip2.setPosition(camera.position.x + (float) 0.05*Gdx.graphics.getWidth(), camera.position.y + (float) 0.20*Gdx.graphics.getHeight());
         textButtonEquip2.setText("EQUIP 2: " + array_jugadors_equip2.size() + " JUGADOR(S) VIUS");
-        System.out.printf("equip 2:" + array_jugadors_equip2.size());
+        //System.out.println("equip 2:" + array_jugadors_equip2.size());
 
 
         // Actualizar la posición del ProgressBar para que esté encima del jugador

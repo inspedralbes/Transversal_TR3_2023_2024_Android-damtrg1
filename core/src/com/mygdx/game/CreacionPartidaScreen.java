@@ -345,7 +345,7 @@ public class CreacionPartidaScreen implements Screen {
                     String user = data.getString("user");
                     String sala = data.getString("sala");
                     String equip = data.getString("equip");
-                    System.out.println("hola: " + data);
+                    System.out.println("hola");
                     if (sala.equals(salaId)) {
 
                         if (!user.equals(preferences.getString("username"))) {
@@ -593,7 +593,7 @@ public class CreacionPartidaScreen implements Screen {
                     json_canvi_equip.put("sala", salaId);
                     json_canvi_equip.put("equip", "EQUIP 2");
 
-                    mSocket.emit("userNuevo", json_canvi_equip);
+                    mSocket.emit("userNuevo",json_canvi_equip.toString());
 
 
                     if (usuarisSala.contains(usuarioClic)) {
