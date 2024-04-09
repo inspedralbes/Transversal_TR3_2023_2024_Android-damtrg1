@@ -34,7 +34,7 @@ public class Pixel_R6 extends Game {
 
 		AssetManager.load();
 
-		AssetManager.music.play();
+		//AssetManager.music.play();
 
         // Cargamos las preferencias
         preferences = Gdx.app.getPreferences("Pref");

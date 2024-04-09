@@ -345,7 +345,7 @@ public class CreacionPartidaScreen implements Screen {
                     String user = data.getString("user");
                     String sala = data.getString("sala");
                     String equip = data.getString("equip");
-                    System.out.println("hola");
+                    System.out.println("hola: " + data);
                     if (sala.equals(salaId)) {
 
                         if (!user.equals(preferences.getString("username"))) {
@@ -379,13 +379,10 @@ public class CreacionPartidaScreen implements Screen {
                                 if (usuarisAtacantes.size() <= 5) {
                                     for (int i = 0; i < usuarisAtacantes.size(); i++) {
                                         System.out.println("USERS: " + usuarisAtacantes.get(i));
-                                        for (String noms : usuarisAtacantes) {
-                                            labelsAtacantes.get(i).setText(noms);
-                                        }
+                                        labelsAtacantes.get(i).setText(usuarisAtacantes.get(i));
                                     }
                                 }
-                            }
-                            else if (equip.equals("EQUIP 2")) {
+                            } else if (equip.equals("EQUIP 2")) {
                                 usuarisDefensores.add(user);
                                 if (usuarisSala.contains(user)) {
                                     usuarisSala.remove(user);
@@ -406,9 +403,8 @@ public class CreacionPartidaScreen implements Screen {
                                 if (usuarisDefensores.size() <= 5) {
                                     for (int i = 0; i < usuarisDefensores.size(); i++) {
                                         System.out.println("USERS DEFENSORES: " + usuarisDefensores.get(i));
-                                        for (String def : usuarisDefensores) {
-                                            labelDefensores.get(i).setText(def);
-                                        }
+                                        labelDefensores.get(i).setText(usuarisDefensores.get(i));
+
                                     }
                                 }
                             }
@@ -430,9 +426,9 @@ public class CreacionPartidaScreen implements Screen {
                     String sala = data.getString("sala");
                     if (sala.equals(salaId)) {
                         salaNova = new Sala(sala, mapaSelecionado, usuarisAtacantes, usuarisDefensores);
-                        if(usuarisAtacantes.isEmpty() && usuarisDefensores.isEmpty()){
+                        if (usuarisAtacantes.isEmpty() && usuarisDefensores.isEmpty()) {
                             System.out.println("No puedes jugar sin elegir equipo");
-                        }else{
+                        } else {
                             Gdx.app.postRunnable(() -> {
                                 AssetManager.music.stop();
                                 game.setScreen(new MapaPrueba(game, salaNova));
@@ -503,66 +499,69 @@ public class CreacionPartidaScreen implements Screen {
         btnAtacante.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                    // Actualiza los componentes de la interfaz de usuario aquí
+                // Actualiza los componentes de la interfaz de usuario aquí
 
-                    System.out.println("ATACANTES");
-                    // Obtener el nombre del usuario que hizo clic en el botón
-                    String usuarioClic = preferences.getString("username");
-                    // Imprimir el nombre del usuario
-                    System.out.println("Usuario seleccionado como atacante: " + usuarioClic);
+                System.out.println("ATACANTES");
+                // Obtener el nombre del usuario que hizo clic en el botón
+                String usuarioClic = preferences.getString("username");
+                // Imprimir el nombre del usuario
+                System.out.println("Usuario seleccionado como atacante: " + usuarioClic);
 
-                    // Verifica si el usuario ya está en la lista de atacantes
-                    if (usuarisAtacantes.contains(usuarioClic)) {
-                        System.out.println("El usuario ya está en la lista de atacantes.");
-                        return; // Sal de la función sin hacer nada más
-                    } else {
-                        System.out.println("ATANCANTE: " + usuarioClic);
+                // Verifica si el usuario ya está en la lista de atacantes
+                if (usuarisAtacantes.contains(usuarioClic)) {
+                    System.out.println("El usuario ya está en la lista de atacantes.");
+                    return; // Sal de la función sin hacer nada más
+                } else {
+                    System.out.println("ATANCANTE: " + usuarioClic);
 
-                        usuarisAtacantes.add(usuarioClic);
-
-
-                        JSONObject json_canvi_equip = new JSONObject();
-                        String username = preferences.getString("username");
-                        json_canvi_equip.put("user", username);
-                        json_canvi_equip.put("sala", salaId);
-                        json_canvi_equip.put("equip", "EQUIP 1");
-
-                        mSocket.emit("userNuevo",json_canvi_equip);
+                    usuarisAtacantes.add(usuarioClic);
 
 
+                    JSONObject json_canvi_equip = new JSONObject();
+                    json_canvi_equip.put("user", usuarioClic);
+                    json_canvi_equip.put("sala", salaId);
+                    json_canvi_equip.put("equip", "EQUIP 1");
+
+                    mSocket.emit("userNuevo", json_canvi_equip.toString());
 
 
-
-                        if (usuarisSala.contains(usuarioClic)) {
-                            usuarisSala.remove(usuarioClic);
-                            usuarisSala.add("NO PLAYER");
-                            for (String la : usuarisSala) {
-                                System.out.println("MEDIO: " + la);
-                            }
-                        }
-
-                    }
-
-                    if (usuarisDefensores.contains(usuarioClic)) {
-                        usuarisDefensores.remove(usuarioClic);
-                        labelDefensores.remove(usuarioClic);
-                        System.out.println("N: " + labelDefensores.size());
-                        for (int i = 0; i <= labelDefensores.size(); i++) {
-                            enemigoLabel.setText("Defensor " + i);
+                    if (usuarisSala.contains(usuarioClic)) {
+                        usuarisSala.remove(usuarioClic);
+                        usuarisSala.add("NO PLAYER");
+                        for (String la : usuarisSala) {
+                            System.out.println("MEDIO: " + la);
                         }
                     }
 
-                    if (usuarisAtacantes.size() <= 5) {
-                        for (int i = 0; i < usuarisAtacantes.size(); i++) {
-                            System.out.println("USERS: " + usuarisAtacantes.get(i));
-                            for (String noms : usuarisAtacantes) {
-                                aliadoLabel.setText(noms);
-                            }
-                        }
-                    }
+                }
+
+                if (usuarisDefensores.contains(usuarioClic)) {
+
+                    int id = usuarisDefensores.indexOf(usuarioClic);
+                    System.out.println("ID: "+id );
+                    System.out.println("ATA SIZE ANTES: "+usuarisDefensores.size());
+
+                    usuarisDefensores.remove(id);
+                    System.out.println("ATA SIZE antes label: "+labelDefensores.size());
+
+                    System.out.println("ATA SIZE DESPUES: "+usuarisDefensores.size());
+                    //labelDefensores.remove(id);
+                    System.out.println("ATA SIZE DESPUES label: "+labelDefensores.size());
+
+                    System.out.println("N: " + labelDefensores.size());
+                    //for (int i = labelDefensores.size(); i <= labelDefensores.size(); i--) {
+                        labelDefensores.get(id).setText("Defensor Eliminado");
+                    //}
+                }
+
+                for (int i = 0; i < usuarisAtacantes.size(); i++) {
+                    System.out.println("USERS: " + usuarisAtacantes.get(i));
+                    labelsAtacantes.get(i).setText(usuarisAtacantes.get(i));
+
+                }
 
 
-                    System.out.println("AAA: " + labelsAtacantes.size());
+                System.out.println("AAA: " + labelsAtacantes.size());
 
             }
         });
@@ -571,57 +570,53 @@ public class CreacionPartidaScreen implements Screen {
         btnDefensor.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                    // Actualiza los componentes de la interfaz de usuario aquí
+                // Actualiza los componentes de la interfaz de usuario aquí
 
-                    // Actualiza los componentes de la interfaz de usuario aquí
+                // Actualiza los componentes de la interfaz de usuario aquí
 
-                    System.out.println("DEFENSORES");
+                System.out.println("DEFENSORES");
 
-                    String usuarioClic = preferences.getString("username");
+                String usuarioClic = preferences.getString("username");
 
-                    // Verifica si el usuario ya está en la lista de defensores
-                    if (usuarisDefensores.contains(usuarioClic)) {
-                        System.out.println("El usuario ya está en la lista de defensores.");
-                        return; // Sal de la función sin hacer nada más
-                    } else {
-                        System.out.println("DEFENSOR: " + usuarioClic);
+                // Verifica si el usuario ya está en la lista de defensores
+                if (usuarisDefensores.contains(usuarioClic)) {
+                    System.out.println("El usuario ya está en la lista de defensores.");
+                    return; // Sal de la función sin hacer nada más
+                } else {
+                    System.out.println("DEFENSOR: " + usuarioClic);
 
-                        usuarisDefensores.add(usuarioClic);
-
-
-                        JSONObject json_canvi_equip = new JSONObject();
-                        json_canvi_equip.put("user", preferences.getString("username"));
-                        json_canvi_equip.put("sala", salaId);
-                        json_canvi_equip.put("equip", "EQUIP 2");
-
-                        mSocket.emit("userNuevo",json_canvi_equip);
+                    usuarisDefensores.add(usuarioClic);
 
 
+                    JSONObject json_canvi_equip = new JSONObject();
+                    json_canvi_equip.put("user", usuarioClic);
+                    json_canvi_equip.put("sala", salaId);
+                    json_canvi_equip.put("equip", "EQUIP 2");
 
-                        if (usuarisSala.contains(usuarioClic)) {
-                            usuarisSala.remove(usuarioClic);
-                            usuarisSala.add("NO PLAYER");
-                        }
+                    mSocket.emit("userNuevo", json_canvi_equip);
 
+
+                    if (usuarisSala.contains(usuarioClic)) {
+                        usuarisSala.remove(usuarioClic);
+                        usuarisSala.add("NO PLAYER");
                     }
 
-                    if (usuarisAtacantes.contains(usuarioClic)) {
-                        usuarisAtacantes.remove(usuarioClic);
-                        labelsAtacantes.remove(usuarioClic);
-                        System.out.println("N: " + labelsAtacantes.size());
-                        for (int i = 0; i <= labelsAtacantes.size(); i++) {
-                            aliadoLabel.setText("Atacante " + i);
-                        }
+                }
+/*
+                if (usuarisAtacantes.contains(usuarioClic)) {
+                    usuarisAtacantes.remove(usuarioClic);
+                    labelsAtacantes.remove(usuarioClic);
+                    System.out.println("N: " + labelsAtacantes.size());
+                    for (int i = 0; i < labelsAtacantes.size(); i++) {
+                        labelsAtacantes.get(i).setText("Atacante " + i);
                     }
+                }*/
 
-                    if (usuarisDefensores.size() <= 5) {
-                        for (int i = 0; i < usuarisDefensores.size(); i++) {
-                            System.out.println("USERS DEFENSORES: " + usuarisDefensores.get(i));
-                            for (String def : usuarisDefensores) {
-                                enemigoLabel.setText(def);
-                            }
-                        }
-                    }
+                for (int i = 0; i < usuarisDefensores.size(); i++) {
+                    System.out.println("USERS DEFENSORES: " + usuarisDefensores.get(i));
+                    labelDefensores.get(i).setText(usuarisDefensores.get(i));
+                }
+
             }
         });
 
