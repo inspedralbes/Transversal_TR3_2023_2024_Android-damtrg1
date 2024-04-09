@@ -360,20 +360,24 @@ public class CreacionPartidaScreen implements Screen {
                             if (equip.equals("EQUIP 1")) {
                                 usuarisAtacantes.add(user);
                                 if (usuarisSala.contains(user)) {
-                                    System.out.println("audeu");
-                                    usuarisSala.remove(user);
-                                    usuarisSala.add("NO PLAYER");
+                                    int id = usuarisSala.indexOf(user);
+                                    System.out.println("ANTES NOM: "+user);
+                                    System.out.println("SALA: "+ id);
+                                    usuarisSala.remove(id);
+                                    System.out.println("DESPUES NOM: "+user);
+                                    usuarisSala.add(id,"NO PLAYER");
+                                    labelsUsuaris.get(id).setText("NO PLAYER");
                                     for (String la : usuarisSala) {
                                         System.out.println("MEDIO: " + la);
                                     }
                                 }
                                 if (usuarisDefensores.contains(user)) {
-                                    usuarisDefensores.remove(user);
-                                    labelDefensores.remove(user);
+                                    int id = usuarisDefensores.indexOf(user);
+                                    usuarisDefensores.remove(id);
+                                    //labelDefensores.remove(user);
                                     System.out.println("N: " + labelDefensores.size());
-                                    for (int i = 0; i < labelDefensores.size(); i++) {
-                                        labelDefensores.get(i).setText("Defensor " + i);
-                                    }
+                                    labelDefensores.get(id).setText("Defensores");
+
                                 }
 
                                 if (usuarisAtacantes.size() <= 5) {
@@ -385,19 +389,23 @@ public class CreacionPartidaScreen implements Screen {
                             } else if (equip.equals("EQUIP 2")) {
                                 usuarisDefensores.add(user);
                                 if (usuarisSala.contains(user)) {
-                                    usuarisSala.remove(user);
-                                    usuarisSala.add("NO PLAYER");
+                                    int id = usuarisSala.indexOf(user);
+                                    System.out.println("ANTES NOM: "+user);
+                                    System.out.println("SALA: "+ id);
+                                    usuarisSala.remove(id);
+                                    System.out.println("DESPUES NOM: "+user);
+                                    labelsUsuaris.get(id).setText("NO PLAYER");
                                     for (String la : usuarisSala) {
                                         System.out.println("MEDIO: " + la);
                                     }
                                 }
                                 if (usuarisAtacantes.contains(user)) {
-                                    usuarisAtacantes.remove(user);
-                                    labelsAtacantes.remove(user);
+                                    int id = usuarisAtacantes.indexOf(user);
+                                    usuarisAtacantes.remove(id);
+                                    //labelsAtacantes.remove(user);
                                     System.out.println("N: " + labelsAtacantes.size());
-                                    for (int i = 0; i < labelsAtacantes.size(); i++) {
-                                        labelsAtacantes.get(i).setText("Atacante " + i);
-                                    }
+                                    labelsAtacantes.get(id).setText("Atacantes");
+
                                 }
 
                                 if (usuarisDefensores.size() <= 5) {
@@ -467,7 +475,7 @@ public class CreacionPartidaScreen implements Screen {
 
         // Agrega los labels de los aliados a la columna de aliados
         for (int i = 0; i < 5; i++) {
-            aliadoLabel = new Label("Atacante " + (i + 1), skin_inputs);
+            aliadoLabel = new Label("Atacantes", skin_inputs);
             labelsAtacantes.add(aliadoLabel);
             tableAliados.add(aliadoLabel).pad(10).row(); // Agrega un padding y pasa a la siguiente fila
 
@@ -490,7 +498,7 @@ public class CreacionPartidaScreen implements Screen {
 
         // Agrega los labels de los enemigos a la columna de enemigos
         for (int i = 5; i < usuarisSala.size(); i++) {
-            enemigoLabel = new Label("Defensor " + (i - 4), skin_inputs);
+            enemigoLabel = new Label("Defensores", skin_inputs);
             labelDefensores.add(enemigoLabel);
             tableEnemigos.add(enemigoLabel).pad(10).row(); // Agrega un padding y pasa a la siguiente fila
         }
@@ -526,8 +534,13 @@ public class CreacionPartidaScreen implements Screen {
 
 
                     if (usuarisSala.contains(usuarioClic)) {
-                        usuarisSala.remove(usuarioClic);
-                        usuarisSala.add("NO PLAYER");
+                        int id = usuarisSala.indexOf(usuarioClic);
+                        System.out.println("ANTES NOM: "+usuarioClic);
+                        System.out.println("SALA: "+ id);
+                        usuarisSala.remove(id);
+                        System.out.println("DESPUES NOM: "+usuarioClic);
+                        usuarisSala.add(id,"NO PLAYER");
+                        labelsUsuaris.get(id).setText("NO PLAYER");
                         for (String la : usuarisSala) {
                             System.out.println("MEDIO: " + la);
                         }
@@ -538,19 +551,19 @@ public class CreacionPartidaScreen implements Screen {
                 if (usuarisDefensores.contains(usuarioClic)) {
 
                     int id = usuarisDefensores.indexOf(usuarioClic);
-                    System.out.println("ID: "+id );
-                    System.out.println("ATA SIZE ANTES: "+usuarisDefensores.size());
+                    System.out.println("ID: " + id);
+                    System.out.println("ATA SIZE ANTES: " + usuarisDefensores.size());
 
                     usuarisDefensores.remove(id);
-                    System.out.println("ATA SIZE antes label: "+labelDefensores.size());
+                    System.out.println("ATA SIZE antes label: " + labelDefensores.size());
 
-                    System.out.println("ATA SIZE DESPUES: "+usuarisDefensores.size());
+                    System.out.println("ATA SIZE DESPUES: " + usuarisDefensores.size());
                     //labelDefensores.remove(id);
-                    System.out.println("ATA SIZE DESPUES label: "+labelDefensores.size());
+                    System.out.println("ATA SIZE DESPUES label: " + labelDefensores.size());
 
                     System.out.println("N: " + labelDefensores.size());
                     //for (int i = labelDefensores.size(); i <= labelDefensores.size(); i--) {
-                        labelDefensores.get(id).setText("Defensor Eliminado");
+                    labelDefensores.get(id).setText("Defensores");
                     //}
                 }
 
@@ -593,24 +606,29 @@ public class CreacionPartidaScreen implements Screen {
                     json_canvi_equip.put("sala", salaId);
                     json_canvi_equip.put("equip", "EQUIP 2");
 
-                    mSocket.emit("userNuevo",json_canvi_equip.toString());
+                    mSocket.emit("userNuevo", json_canvi_equip.toString());
 
 
                     if (usuarisSala.contains(usuarioClic)) {
-                        usuarisSala.remove(usuarioClic);
-                        usuarisSala.add("NO PLAYER");
+                        int id = usuarisSala.indexOf(usuarioClic);
+                        System.out.println("ANTES NOM: "+usuarioClic);
+                        System.out.println("SALA: "+ id);
+                        usuarisSala.remove(id);
+                        System.out.println("DESPUES NOM: "+usuarioClic);
+                        usuarisSala.add(id,"NO PLAYER");
+                        labelsUsuaris.get(id).setText("NO PLAYER");
                     }
 
                 }
-/*
+
                 if (usuarisAtacantes.contains(usuarioClic)) {
-                    usuarisAtacantes.remove(usuarioClic);
-                    labelsAtacantes.remove(usuarioClic);
+                    int id = usuarisAtacantes.indexOf(usuarioClic);
+                    usuarisAtacantes.remove(id);
+                    //labelsAtacantes.remove(usuarioClic);
                     System.out.println("N: " + labelsAtacantes.size());
-                    for (int i = 0; i < labelsAtacantes.size(); i++) {
-                        labelsAtacantes.get(i).setText("Atacante " + i);
-                    }
-                }*/
+                    labelsAtacantes.get(id).setText("Atacantes");
+
+                }
 
                 for (int i = 0; i < usuarisDefensores.size(); i++) {
                     System.out.println("USERS DEFENSORES: " + usuarisDefensores.get(i));
