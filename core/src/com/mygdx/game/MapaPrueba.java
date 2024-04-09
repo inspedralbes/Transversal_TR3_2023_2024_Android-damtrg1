@@ -168,6 +168,7 @@ public class MapaPrueba implements Screen {
                 Jugador player;
                 if (sala.getNombreMapa().equals("castillo")) {
                     player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari, AssetManager.tiledCastillo);
+                    System.out.println("-------------------------------------------");
                 } else {
                     player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari, AssetManager.tiledMazmorra);
                 }
@@ -493,6 +494,8 @@ public class MapaPrueba implements Screen {
                 }
             }
         });
+
+
     }
 
     @Override

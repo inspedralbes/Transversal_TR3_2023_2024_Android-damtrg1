@@ -522,7 +522,7 @@ public class ShopScreen implements Screen {
         preferences.putString("monedas", String.valueOf(totalActualMonedes));
         //Editar sql
         // Create an HTTP request
-        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
 
         // Construct the URL with query parameters
         String url = "http://r6pixel.duckdns.org:3169/comprarProducte";

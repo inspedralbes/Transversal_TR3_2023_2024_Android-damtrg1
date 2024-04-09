@@ -1,7 +1,5 @@
 package com.mygdx.game;
 
-import static com.badlogic.gdx.net.HttpRequestBuilder.json;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
@@ -22,11 +20,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
@@ -35,15 +30,12 @@ import java.util.ArrayList;
 import Utils.Settings;
 import io.socket.client.IO;
 import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
 import objects.Background;
-import objects.Jugador;
-import sun.font.TextLabel;
 
 public class CodigoSalaScreen implements Screen {
 
     Game game;
-    TextField Username;
+    TextField codigo;
 
     Background bg;
 
@@ -148,7 +140,8 @@ public class CodigoSalaScreen implements Screen {
                 httpRequest.setHeader("Content-Type", "application/json");
                 JSONObject json = new JSONObject();
                 json.put("user", username);
-                json.put("sala", Username.getText());
+                json.put("sala", codigo.getText());
+                json.put("equip", "EQUIP NO SELECCIONAT");
 
                 httpRequest.setContent(json.toString());
 
@@ -198,21 +191,21 @@ public class CodigoSalaScreen implements Screen {
         TextField.TextFieldStyle textFieldStyle = skin_inputs.get("default", TextField.TextFieldStyle.class);
 
         // Crear una instancia de TextField con el estilo obtenido
-        Username = new TextField("Ingrese nombre", textFieldStyle);
+        codigo = new TextField("Ingrese código", textFieldStyle);
 
         // Configurar el controlador de eventos para el TextField
-        Username.addListener(new InputListener() {
+        codigo.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                if (Username.getText().equals("Ingrese nombre")) {
+                if (codigo.getText().equals("Ingrese código")) {
                     // Si lo es, borrar el texto
-                    Username.setText("");
+                    codigo.setText("");
                 } else {
                     // Procesa los datos ingresados por el usuario
-                    String userInput = Username.getText();
+                    String userInput = codigo.getText();
                     // Aquí puedes hacer algo con los datos ingresados, como validación o procesamiento.
                     // Limpiar el TextField después de procesar los datos (opcional)
-                    Username.setText(userInput);
+                    codigo.setText(userInput);
                 }
                 return true;
             }
@@ -254,7 +247,7 @@ public class CodigoSalaScreen implements Screen {
         table.add(salaLabel);
         table.getCell(salaLabel).center();
         table.row();
-        table.add(Username).prefSize(250, 50).row();
+        table.add(codigo).prefSize(250, 50).row();
         table.add(btn_acceder);
 
         window.add(table); // Agregar la tabla a la ventana
