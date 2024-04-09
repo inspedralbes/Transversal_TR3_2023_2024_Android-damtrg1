@@ -163,10 +163,10 @@ public class AssetManager {
 
         persona = new Texture(Gdx.files.internal("persona.jpg"));
 
-        /******************************* MUSICA *************************************/
-        music = Gdx.audio.newMusic(Gdx.files.internal("musica_ambiente2.mp3"));
-        music.setLooping(true);
-        music.setVolume(2.9f);
+//        /******************************* MUSICA *************************************/
+//        music = Gdx.audio.newMusic(Gdx.files.internal("musica_ambiente2.mp3"));
+//        music.setLooping(true);
+//        music.setVolume(2.9f);
 
     }
 
