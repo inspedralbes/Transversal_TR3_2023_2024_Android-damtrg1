@@ -248,9 +248,58 @@ public class UnidoSalaScreen implements Screen {
                             usuarisSala.set(contador, user);
                             if (equip.equals("EQUIP 1")) {
                                 usuarisAtacantes.add(user);
+                                if (usuarisSala.contains(user)) {
+                                    System.out.println("audeu");
+                                    usuarisSala.remove(user);
+                                    usuarisSala.add("NO PLAYER");
+                                    for (String la : usuarisSala) {
+                                        System.out.println("MEDIO: " + la);
+                                    }
+                                }
+                                if (usuarisDefensores.contains(user)) {
+                                    usuarisDefensores.remove(user);
+                                    labelDefensores.remove(user);
+                                    System.out.println("N: " + labelDefensores.size());
+                                    for (int i = 0; i < labelDefensores.size(); i++) {
+                                        labelDefensores.get(i).setText("Defensor " + i);
+                                    }
+                                }
+
+                                if (usuarisAtacantes.size() <= 5) {
+                                    for (int i = 0; i < usuarisAtacantes.size(); i++) {
+                                        System.out.println("USERS: " + usuarisAtacantes.get(i));
+                                        for (String noms : usuarisAtacantes) {
+                                            labelsAtacantes.get(i).setText(noms);
+                                        }
+                                    }
+                                }
                             }
                             else if (equip.equals("EQUIP 2")) {
                                 usuarisDefensores.add(user);
+                                if (usuarisSala.contains(user)) {
+                                    usuarisSala.remove(user);
+                                    usuarisSala.add("NO PLAYER");
+                                    for (String la : usuarisSala) {
+                                        System.out.println("MEDIO: " + la);
+                                    }
+                                }
+                                if (usuarisAtacantes.contains(user)) {
+                                    usuarisAtacantes.remove(user);
+                                    labelsAtacantes.remove(user);
+                                    System.out.println("N: " + labelsAtacantes.size());
+                                    for (int i = 0; i < labelsAtacantes.size(); i++) {
+                                        labelsAtacantes.get(i).setText("Atacante " + i);
+                                    }
+                                }
+
+                                if (usuarisDefensores.size() <= 5) {
+                                    for (int i = 0; i < usuarisDefensores.size(); i++) {
+                                        System.out.println("USERS DEFENSORES: " + usuarisDefensores.get(i));
+                                        for (String def : usuarisDefensores) {
+                                            labelDefensores.get(i).setText(def);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

@@ -181,6 +181,7 @@ public class Disparo extends Actor {
                         for (int j=0;j<MapaPrueba.array_jugadors_equip2.size();j++) {
                             if (MapaPrueba.array_jugadors_equip2.get(j) == this.jugador_colisionat) {
                                 MapaPrueba.array_jugadors_equip2.get(j).remove();
+                                System.out.println();
                             }
 
                         }

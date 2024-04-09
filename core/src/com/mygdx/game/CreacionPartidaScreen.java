@@ -527,7 +527,7 @@ public class CreacionPartidaScreen implements Screen {
                         json_canvi_equip.put("sala", salaId);
                         json_canvi_equip.put("equip", "EQUIP 1");
 
-                        mSocket.emit("userNuevo",json_canvi_equip);
+                        mSocket.emit("userNuevo",json_canvi_equip.toString());
 
 
 
@@ -594,7 +594,7 @@ public class CreacionPartidaScreen implements Screen {
                         json_canvi_equip.put("sala", salaId);
                         json_canvi_equip.put("equip", "EQUIP 2");
 
-                        mSocket.emit("userNuevo",json_canvi_equip);
+                        mSocket.emit("userNuevo",json_canvi_equip.toString());
 
 
 
