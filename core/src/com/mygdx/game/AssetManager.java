@@ -88,7 +88,7 @@ public class AssetManager {
                     JSONObject body = new JSONObject();
                     //body.put("path","mapas/mapes/IMGmapas/mapacastillo.jpg");
                     body.put("directory","mapas");
-                    //fetchAndSetImage(body.toString());
+                    fetchAndSetImage(body.toString());
 
                 } else {
                     // If the request failed, handle the error
@@ -116,7 +116,7 @@ public class AssetManager {
 
 
         //MAPAS
-        mapaCastillo = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapacastillo.jpg"));
+        //mapaCastillo = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapacastillo.jpg"));
         mapaMazmorra = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapamazmorra.jpg"));
 
 
@@ -224,7 +224,7 @@ public class AssetManager {
                     System.out.println("Archivos descomprimidos correctamente en la carpeta 'assets'");
                     // Cargar la textura mapaCastillo después de que la descompresión haya terminado
                     Gdx.app.postRunnable(() -> {
-                        mapaCastillo = new Texture(Gdx.files.local("mapes/IMGmapas/mapacastillo.jpg"));
+                        mapaCastillo = new Texture(Gdx.files.local("castillo/mapacastillo.jpg"));
                     });
                     semaphore.release();
                 } catch (IOException e) {

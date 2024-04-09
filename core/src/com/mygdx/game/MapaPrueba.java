@@ -433,7 +433,7 @@ public class MapaPrueba implements Screen {
                 movement.put("knobY", String.valueOf(knobY));
                 movement.put("sala", sala.getId());
                 movement.put("user", jugadors.get(numJugador).getNomUsuari());
-                //mSocket.emit("touchDragged", movement);
+                mSocket.emit("touchDragged", movement);
                 //}
 
                 // Llama al método move del jugador con los valores de deltaX y deltaY adecuados
