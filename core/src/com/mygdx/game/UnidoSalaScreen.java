@@ -235,6 +235,7 @@ public class UnidoSalaScreen implements Screen {
                     JSONObject data = new JSONObject(jsonString);
                     String user = data.getString("user");
                     String sala = data.getString("sala");
+                    String equip = data.getString("equip");
                     if (sala.equals(idSala)) {
                         if (!user.equals(preferences.getString("username"))) {
                             int contador = 0;
@@ -245,6 +246,12 @@ public class UnidoSalaScreen implements Screen {
                                 }
                             }
                             usuarisSala.set(contador, user);
+                            if (equip.equals("EQUIP 1")) {
+                                usuarisAtacantes.add(user);
+                            }
+                            else if (equip.equals("EQUIP 2")) {
+                                usuarisDefensores.add(user);
+                            }
                         }
                     }
                     System.out.println("Nuevo usuario: " + user);
@@ -265,6 +272,7 @@ public class UnidoSalaScreen implements Screen {
                     if (sala.equals(salaId)) {
                         Sala salaNova = new Sala(sala, mapaSelecionado, usuarisAtacantes, usuarisDefensores);
                         Gdx.app.postRunnable(() -> {
+                            AssetManager.music.stop();
                             game.setScreen(new MapaPrueba(game, salaNova));
                         });
                     }
@@ -338,6 +346,15 @@ public class UnidoSalaScreen implements Screen {
 
                     usuarisAtacantes.add(usuarioClic);
 
+                    JSONObject json_canvi_equip = new JSONObject();
+                    json_canvi_equip.put("user", preferences.getString("username"));
+                    json_canvi_equip.put("sala", idSala);
+                    json_canvi_equip.put("equip", "EQUIP 1");
+
+                    mSocket.emit("userNuevo",json_canvi_equip.toString());
+
+
+
                     if (usuarisSala.contains(usuarioClic)) {
                         usuarisSala.remove(usuarioClic);
                         usuarisSala.add("NO PLAYER");
@@ -352,7 +369,7 @@ public class UnidoSalaScreen implements Screen {
                     usuarisDefensores.remove(usuarioClic);
                     labelDefensores.remove(usuarioClic);
                     System.out.println("N: " + labelDefensores.size());
-                    for (int i = 0; i <= labelDefensores.size(); i++) {
+                    for (int i = 0; i < labelDefensores.size(); i++) {
                         //enemigoLabel.setText("Defensor "+i);
                         labelDefensores.get(i).setText("Defensores: " + i);
                     }
@@ -362,7 +379,7 @@ public class UnidoSalaScreen implements Screen {
                     for (int i = 0; i < usuarisAtacantes.size(); i++) {
                         System.out.println("USERS: " + usuarisAtacantes.get(i));
                         for (String noms : usuarisAtacantes) {
-                            labelDefensores.get(i).setText(noms);
+                            labelsAtacantes.get(i).setText(noms);
                         }
                     }
                 }
@@ -391,6 +408,16 @@ public class UnidoSalaScreen implements Screen {
 
                     usuarisDefensores.add(usuarioClic);
 
+
+                    JSONObject json_canvi_equip = new JSONObject();
+                    json_canvi_equip.put("user", preferences.getString("username"));
+                    json_canvi_equip.put("sala", idSala);
+                    json_canvi_equip.put("equip", "EQUIP 2");
+
+                    mSocket.emit("userNuevo",json_canvi_equip.toString());
+
+
+
                     if (usuarisSala.contains(usuarioClic)) {
                         usuarisSala.remove(usuarioClic);
                         usuarisSala.add("NO PLAYER");
@@ -401,7 +428,7 @@ public class UnidoSalaScreen implements Screen {
                     usuarisAtacantes.remove(usuarioClic);
                     labelsAtacantes.remove(usuarioClic);
                     System.out.println("N: " + labelsAtacantes.size());
-                    for (int i = 0; i <= labelsAtacantes.size(); i++) {
+                    for (int i = 0; i < labelsAtacantes.size(); i++) {
                         labelsAtacantes.get(i).setText("Atacante " + i);
                     }
                 }

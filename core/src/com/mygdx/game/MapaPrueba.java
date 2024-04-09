@@ -97,6 +97,9 @@ public class MapaPrueba implements Screen {
         skin_vida = new Skin(Gdx.files.internal("skin_vida2/tubular-ui.json"));
 
         AssetManager.load();
+
+        AssetManager.music.stop();
+
         try {
             mSocket = IO.socket("http://r6pixel.duckdns.org:3169");
         } catch (URISyntaxException e) {
@@ -168,6 +171,7 @@ public class MapaPrueba implements Screen {
                 Jugador player;
                 if (sala.getNombreMapa().equals("castillo")) {
                     player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari, AssetManager.tiledCastillo);
+                    System.out.println("-------------------------------------------");
                 } else {
                     player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari, AssetManager.tiledMazmorra);
                 }
@@ -493,6 +497,8 @@ public class MapaPrueba implements Screen {
                 }
             }
         });
+
+
     }
 
     @Override
