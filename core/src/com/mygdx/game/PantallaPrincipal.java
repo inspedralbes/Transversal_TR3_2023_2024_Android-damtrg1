@@ -288,7 +288,7 @@ public class PantallaPrincipal implements Screen {
 
         TextButton btn_news = new TextButton("NOTICIES", textButtonStyle);
         btn_news.setSize(70,70);
-        btn_news.setPosition(0 + btn_tenda.getWidth(), Settings.GAME_HEIGHT - btn_news.getHeight());
+        btn_news.setPosition(0 + btn_tenda.getWidth() , Settings.GAME_HEIGHT - btn_news.getHeight());
 
         btn_news.addListener(new ClickListener() {
             @Override
@@ -299,7 +299,7 @@ public class PantallaPrincipal implements Screen {
 
         TextButton btn_inventari = new TextButton("INVENTARI", textButtonStyle);
         btn_inventari.setSize(70,70);
-        btn_inventari.setPosition(0 + btn_tenda.getWidth(), Settings.GAME_HEIGHT - btn_news.getHeight());
+        btn_inventari.setPosition(0 + btn_tenda.getWidth() * 2, Settings.GAME_HEIGHT - btn_news.getHeight());
 
         btn_inventari.addListener(new ClickListener() {
             @Override
