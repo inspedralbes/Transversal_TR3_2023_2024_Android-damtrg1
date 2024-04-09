@@ -65,7 +65,7 @@ public class AssetManager {
 
     public static Music music;
 
-
+    public static float volumen = 1f;
 
     public static void load() {
 
@@ -164,10 +164,10 @@ public class AssetManager {
         persona = new Texture(Gdx.files.internal("persona.jpg"));
 
         /******************************* MUSICA *************************************/
-        /*
-        music = Gdx.audio.newMusic(Gdx.files.internal("musica_ambiente2.mp3"));
+
+        music = Gdx.audio.newMusic(Gdx.files.internal("musica_ambiente1.mp3"));
+        music.setVolume(volumen);
         music.setLooping(true);
-        music.setVolume(2.9f);*/
 
 
     }
@@ -259,5 +259,6 @@ public class AssetManager {
 
     public static void dispose() {
         imgFondo.dispose();
+        music.dispose();
     }
 }
