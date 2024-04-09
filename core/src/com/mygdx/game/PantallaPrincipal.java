@@ -16,23 +16,31 @@ import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import Utils.Settings;
 import io.socket.client.IO;
 import io.socket.client.Socket;
-import objects.Background;import io.socket.client.IO;
+import objects.Background;
+import io.socket.client.IO;
 import io.socket.client.Socket;
 
 public class PantallaPrincipal implements Screen {
@@ -41,15 +49,26 @@ public class PantallaPrincipal implements Screen {
 
     Background bg;
 
-    Stage stage;
+    static Stage stage;
 
     OrthographicCamera camera;
 
-    Skin skin, skin_txt;
+    Skin skin;
+    static Skin skin_txt;
+    JSONArray noticies = null;
+    boolean creat =false;
 
     Preferences preferences;
 
     Socket mSocket;
+
+    Window popupWindow;
+
+    ArrayList<Label> llistaTitols;
+    ArrayList<Label> llistaDescripcio = new ArrayList<>();
+    ArrayList<Image> llistaImatges = new ArrayList<>();
+
+
 
 
     public PantallaPrincipal(Pixel_R6 game, boolean nou) {
@@ -259,6 +278,19 @@ public class PantallaPrincipal implements Screen {
             }
         });
 
+        TextButton btn_news = new TextButton("TENDA", textButtonStyle);
+        btn_news.setSize(70,70);
+        btn_news.setPosition(0 + btn_tenda.getWidth(), Settings.GAME_HEIGHT - btn_news.getHeight());
+
+        btn_news.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showNewsWindows();
+            }
+        });
+
+
+        stage.addActor(btn_news);
         stage.addActor(btn_tenda);
         stage.addActor(btn_play);
         stage.addActor(btn_settings);
@@ -297,6 +329,18 @@ public class PantallaPrincipal implements Screen {
     @Override
     public void render(float delta) {
 
+
+        if(creat){
+            for(int i = 0; i < noticies.length(); i++){
+                JSONObject json = noticies.getJSONObject(i);
+                System.out.println(noticies);
+                llistaTitols.get(i).setText(json.getString("title"));
+                llistaDescripcio.get(i).setText(json.getString("Description"));
+            }
+        }
+
+
+
         stage.draw();
         stage.act(delta);
 
@@ -325,5 +369,69 @@ public class PantallaPrincipal implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
+    }
+
+
+    private void showNewsWindows(){
+        Skin skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        Label.LabelStyle labelDescripcioStyle = skin.get(Label.LabelStyle.class);
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
+        httpRequest.setUrl("http://r6pixel.duckdns.org:3169/getBroadcastNews");
+        httpRequest.setHeader("Content-Type", "application/json");
+
+        Label.LabelStyle titleLabelStyle = skin_txt.get("title", Label.LabelStyle.class);
+
+        // Send the request
+        Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                HttpStatus status = httpResponse.getStatus();
+                if (status.getStatusCode() == 200) {
+                    // If the request was successful (status code 200)
+                    String responseData = httpResponse.getResultAsString();
+                    noticies = new JSONArray(responseData);
+                    System.out.println(noticies.length());
+                    for(int i = 0; i < noticies.length(); i++){
+                        System.out.println(i);
+                        Label titol = new Label("" ,titleLabelStyle);
+                        llistaTitols.add(titol);
+                        Label desc = new Label("", labelDescripcioStyle);
+                        llistaDescripcio.add(desc);
+                        Image img = new Image();
+                        llistaImatges.add(img);
+                        System.out.println("AAAAAAAAAAAAAAAAAAAa");
+                    }
+                    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                    creat = true;
+                }
+
+            }
+
+            @Override
+            public void failed(Throwable t) {
+
+            }
+
+            @Override
+            public void cancelled() {
+
+            }
+        });
+
+
+        popupWindow = new Window("NOTCIIES", skin);
+        popupWindow.getTitleLabel().setAlignment(Align.center);
+
+        popupWindow.setSize(Settings.GAME_WIDTH * 0.75f, Settings.GAME_HEIGHT*0.75f);
+        popupWindow.setPosition((Gdx.graphics.getWidth() - popupWindow.getWidth()) / 2, (Gdx.graphics.getHeight() - popupWindow.getHeight()) / 2);
+        popupWindow.setMovable(false); // Make the window non-movable
+        popupWindow.setModal(true); // Make the window modal (blocks input to other actors)
+
+        ScrollPane sp = new ScrollPane(popupWindow);
+
+        sp.setSize(Settings.GAME_WIDTH * 0.75f, Settings.GAME_HEIGHT*0.75f);
+        sp.setPosition((Gdx.graphics.getWidth() - popupWindow.getWidth()) / 2, (Gdx.graphics.getHeight() - popupWindow.getHeight()) / 2);
+
+        stage.addActor(sp);
     }
 }
