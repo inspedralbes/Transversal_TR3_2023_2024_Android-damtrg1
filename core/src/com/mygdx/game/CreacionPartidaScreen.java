@@ -360,6 +360,7 @@ public class CreacionPartidaScreen implements Screen {
                             if (equip.equals("EQUIP 1")) {
                                 usuarisAtacantes.add(user);
                                 if (usuarisSala.contains(user)) {
+                                    System.out.println("audeu");
                                     usuarisSala.remove(user);
                                     usuarisSala.add("NO PLAYER");
                                     for (String la : usuarisSala) {
@@ -370,8 +371,8 @@ public class CreacionPartidaScreen implements Screen {
                                     usuarisDefensores.remove(user);
                                     labelDefensores.remove(user);
                                     System.out.println("N: " + labelDefensores.size());
-                                    for (int i = 0; i <= labelDefensores.size(); i++) {
-                                        enemigoLabel.setText("Defensor " + i);
+                                    for (int i = 0; i < labelDefensores.size(); i++) {
+                                        labelDefensores.get(i).setText("Defensor " + i);
                                     }
                                 }
 
@@ -379,7 +380,7 @@ public class CreacionPartidaScreen implements Screen {
                                     for (int i = 0; i < usuarisAtacantes.size(); i++) {
                                         System.out.println("USERS: " + usuarisAtacantes.get(i));
                                         for (String noms : usuarisAtacantes) {
-                                            aliadoLabel.setText(noms);
+                                            labelsAtacantes.get(i).setText(noms);
                                         }
                                     }
                                 }
@@ -397,8 +398,8 @@ public class CreacionPartidaScreen implements Screen {
                                     usuarisAtacantes.remove(user);
                                     labelsAtacantes.remove(user);
                                     System.out.println("N: " + labelsAtacantes.size());
-                                    for (int i = 0; i <= labelsAtacantes.size(); i++) {
-                                        aliadoLabel.setText("Atacante " + i);
+                                    for (int i = 0; i < labelsAtacantes.size(); i++) {
+                                        labelsAtacantes.get(i).setText("Atacante " + i);
                                     }
                                 }
 
@@ -406,7 +407,7 @@ public class CreacionPartidaScreen implements Screen {
                                     for (int i = 0; i < usuarisDefensores.size(); i++) {
                                         System.out.println("USERS DEFENSORES: " + usuarisDefensores.get(i));
                                         for (String def : usuarisDefensores) {
-                                            enemigoLabel.setText(def);
+                                            labelDefensores.get(i).setText(def);
                                         }
                                     }
                                 }
