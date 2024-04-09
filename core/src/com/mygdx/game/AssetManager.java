@@ -169,6 +169,7 @@ public class AssetManager {
         music.setLooping(true);
         music.setVolume(2.9f);*/
 
+
     }
 
     public static void fetchAndSetImage(String bodyData) {

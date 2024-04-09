@@ -15,19 +15,15 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.ByteArray;
-import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.json.JSONArray;
@@ -39,7 +35,7 @@ import java.util.Collections;
 import Utils.Settings;
 import objects.Background;
 
-public class ShopScreen implements Screen {
+public class InventariScreen implements Screen {
 
     Pixel_R6 game;
 
@@ -68,7 +64,7 @@ public class ShopScreen implements Screen {
     Window popupWindow;
 
     private int currentIndex = 0;
-    public ShopScreen(Pixel_R6 game) {
+    public InventariScreen(Pixel_R6 game) {
         this.game = game;
 
         AssetManager.load();
