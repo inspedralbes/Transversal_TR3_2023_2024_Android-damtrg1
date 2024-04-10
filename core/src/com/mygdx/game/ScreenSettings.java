@@ -48,7 +48,6 @@ public class ScreenSettings implements Screen {
     public ScreenSettings(Pixel_R6 game) {
         this.game = game;
 
-        AssetManager.load();
 
 
 
@@ -304,7 +303,7 @@ public class ScreenSettings implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
-        AssetManager.music.play();
+        //AssetManager.music.play();
 
     }
 
@@ -349,6 +348,7 @@ public class ScreenSettings implements Screen {
 
     @Override
     public void dispose() {
-
+        stage.dispose();
+        AssetManager.dispose();
     }
 }

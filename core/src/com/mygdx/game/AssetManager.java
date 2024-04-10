@@ -170,7 +170,7 @@ public class AssetManager {
 
         /******************************* MUSICA *************************************/
 
-        music = Gdx.audio.newMusic(Gdx.files.internal("musica_ambiente1.mp3"));
+        music = Gdx.audio.newMusic(Gdx.files.internal("musica_ambiente2.mp3"));
         music.setVolume(volumen);
         music.setLooping(true);
 
