@@ -52,15 +52,17 @@ public class InventariScreen implements Screen {
     Preferences preferences;
 
     JSONArray skins;
+    TextButton btnComprar;
 
     ArrayList<Drawable> imatgesBaixades = new ArrayList<>(10);
 
-    Label labelNom, descripcioLabel, labelBtn, labelNumMonedas;
+    Label labelNom, descripcioLabel, labelNumMonedas;
     ImageButton.ImageButtonStyle imgStyle;
     Button btnEsquerra, btnDreta;
 
     ArrayList<String> inventariJugador;
-    Window popupWindow;
+    String idUser;
+    String idEquipat;
 
     private int currentIndex = 0;
     public InventariScreen(Pixel_R6 game) {
@@ -200,7 +202,6 @@ public class InventariScreen implements Screen {
                     JSONObject json = new JSONObject(responseData);
                     skins = json.getJSONArray("skins");
                     imatgesBaixades = new ArrayList<>(Collections.nCopies(skins.length(), null));
-//                    System.out.println(imatgesBaixades.size());
                     for (int i = 0; i < skins.length(); i++) {
                         JSONObject item = skins.getJSONObject(i);
                         System.out.println(item);
@@ -247,6 +248,8 @@ public class InventariScreen implements Screen {
                     System.out.println(jsonArrayString);
                     JSONObject json = new JSONObject(jsonArrayString);
 //                    System.out.println(json);
+                    idUser = json.getString("_id");
+                    idEquipat = json.getString("activo");
                     JSONArray arrayResultat = (JSONArray) json.get("skins");
                     // Convert JSONArray to String[]
                     inventariJugador = new ArrayList<>();
@@ -315,20 +318,6 @@ public class InventariScreen implements Screen {
         });
 
 
-
-
-
-
-
-// Create a pop-up window
-        popupWindow = new Window("Confirmacio", skin);
-        popupWindow.getTitleLabel().setAlignment(Align.center);
-
-        popupWindow.setSize(250, 250);
-        popupWindow.setPosition((Gdx.graphics.getWidth() - popupWindow.getWidth()) / 2, (Gdx.graphics.getHeight() - popupWindow.getHeight()) / 2);
-        popupWindow.setMovable(false); // Make the window non-movable
-        popupWindow.setModal(true); // Make the window modal (blocks input to other actors)
-
         //DEscripcio del producte
         Label.LabelStyle labelDescripcioStyle = skin.get(Label.LabelStyle.class);
         descripcioLabel = new Label("", labelDescripcioStyle);
@@ -340,24 +329,54 @@ public class InventariScreen implements Screen {
         Label missatge = new Label("", labelDescripcioStyle);
         missatge.setWrap(true);
         missatge.setAlignment(Align.center);
-        // Add content to the pop-up window
-        TextButton closeButton = new TextButton("Cancelar", skin);
-        closeButton.addListener(new ClickListener() {
+
+
+        //Boto de compra
+        TextButton.TextButtonStyle btnCompraStyle = skin.get("round", TextButton.TextButtonStyle.class);
+        btnComprar = new TextButton("EQUIPAR", textButtonStyle);
+        btnComprar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                popupWindow.remove(); // Remove the window when the close button is clicked}
-            }});
-        TextButton acceptButton = new TextButton("Acceptar", skin);
-        acceptButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                JSONObject item = new JSONObject(inventariJugador.get(currentIndex));
-                comprarItem(item);
-                popupWindow.remove(); // Remove the window when the close button is clicked}
-            }});
-        popupWindow.add(missatge).expandX().fillX().pad(10).colspan(2).row();
-        popupWindow.add(acceptButton).pad(10);
-        popupWindow.add(closeButton).pad(10).row();
+                idEquipat = inventariJugador.get(currentIndex);
+
+
+                Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+
+                // Construct the URL with query parameters
+                String url = "http://r6pixel.duckdns.org:3169/activarSkin";
+                httpRequest.setUrl(url);
+                httpRequest.setHeader("Content-Type", "application/json");
+                JSONObject json = new JSONObject();
+                json.put("id", idUser);
+                json.put("idNuevo", idEquipat);
+
+                httpRequest.setContent(json.toString());
+
+                // Send the HTTP request
+                Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
+                    @Override
+                    public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                        HttpStatus status = httpResponse.getStatus();
+                        if (status.getStatusCode() == 200) {
+                            System.out.println("EQUIPAT");
+                        }
+                    }
+
+                    @Override
+                    public void failed(Throwable t) {
+                        // Handle the case where the HTTP request failed
+                        t.printStackTrace();
+                    }
+
+                    @Override
+                    public void cancelled() {
+                        // Handle the case where the HTTP request was cancelled
+                    }
+                });
+
+            }
+        });
+
 
 
         //AFEGIR COSES A WINDOW
@@ -371,6 +390,8 @@ public class InventariScreen implements Screen {
         window.row();
         window.add();
         window.add(descripcioLabel).expandX().fillX().pad(10).row();
+        window.add();
+        window.add(btnComprar);
 
     }
 
@@ -385,14 +406,27 @@ public class InventariScreen implements Screen {
         stage.act(delta);
 
 
-        if(inventariJugador != null){
-            
-            JSONObject item = (JSONObject) skins.get(currentIndex);
-            labelNom.setText(item.getString("nombre"));
-            descripcioLabel.setText(item.getString("descripcion"));
-            if(imatgesBaixades.size() > 0) {
-                imgStyle.imageUp = imatgesBaixades.get(currentIndex);
+        if(inventariJugador != null && skins != null){
+            JSONObject resultat = new JSONObject();
+            int index = 0;
+            for(int i = 0; i < skins.length(); i++){
+                JSONObject a = skins.getJSONObject(i);
+                if(inventariJugador.get(currentIndex).equals(a.getString("_id"))){
+                    resultat = a;
+                    index = i;
+                }
             }
+            if(inventariJugador.get(currentIndex).equals(idEquipat)){
+                btnComprar.setText("EQUIPAT");
+            }else{
+                btnComprar.setText("EQUIPAR");
+            }
+            labelNom.setText(resultat.getString("nombre"));
+            descripcioLabel.setText(resultat.getString("descripcion"));
+            if(imatgesBaixades.size() > 0) {
+                imgStyle.imageUp = imatgesBaixades.get(index);
+            }
+
         }
     }
 
@@ -422,10 +456,12 @@ public class InventariScreen implements Screen {
     }
     public void fetchAndSetImage(String imageUrl, int num) {
         // Create a GET request to fetch the image
-        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
-        httpRequest.setUrl("http://r6pixel.duckdns.org:3169/getImg/" + imageUrl);
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpRequest.setUrl("http://r6pixel.duckdns.org:3169/getImg/");
         httpRequest.setHeader("Content-Type", "application/json");
-
+        JSONObject json = new JSONObject();
+        json.put("path", imageUrl);
+        httpRequest.setContent(json.toString());
         // Send the request
         Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
             @Override
@@ -470,65 +506,4 @@ public class InventariScreen implements Screen {
             }
         });
     }
-
-    public void comprarItem(JSONObject item){
-        //Canviar monedes
-        String monedes = preferences.getString("monedas");
-        System.out.println("MONEDES: " + monedes);
-
-        int totalActualMonedes = Integer.parseInt(monedes) - item.getInt("valorMonedas");
-        labelNumMonedas.setText(totalActualMonedes);
-        //Gaurdar en prefs
-        preferences.putString("monedas", String.valueOf(totalActualMonedes));
-        //Editar sql
-        // Create an HTTP request
-        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-
-        // Construct the URL with query parameters
-        String url = "http://r6pixel.duckdns.org:3169/comprarProducte";
-        httpRequest.setUrl(url);
-        httpRequest.setHeader("Content-Type", "application/json");
-        JSONObject jsonEnviar = new JSONObject();
-        jsonEnviar.put("user", preferences.getString("username"));
-        jsonEnviar.put("idProducto", item.getString("_id"));
-        jsonEnviar.put("monedes", totalActualMonedes);
-        String jsonString = jsonEnviar.toString();
-        httpRequest.setContent(jsonString);
-
-        // Send the HTTP request
-        Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
-            @Override
-            public void handleHttpResponse(Net.HttpResponse httpResponse) {
-                HttpStatus status = httpResponse.getStatus();
-                if (status.getStatusCode() == 200) {
-                    System.out.println("OK EDITAR MONEDES");
-
-                } else {
-                    // If the request failed, handle the error
-                    System.out.println("HTTP request failed with status code: " + status.getStatusCode());
-                }
-            }
-
-            @Override
-            public void failed(Throwable t) {
-                // Handle the case where the HTTP request failed
-                t.printStackTrace();
-            }
-
-            @Override
-            public void cancelled() {
-                // Handle the case where the HTTP request was cancelled
-            }
-        });
-
-
-        //Editar mongo inventari
-
-
-
-        //canviar boto a OBTINGUT
-
-        inventariJugador.add(item.getString("_id"));
-    }
-
 }
