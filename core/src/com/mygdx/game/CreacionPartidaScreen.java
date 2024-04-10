@@ -365,8 +365,8 @@ public class CreacionPartidaScreen implements Screen {
                                     System.out.println("SALA: "+ id);
                                     usuarisSala.remove(id);
                                     System.out.println("DESPUES NOM: "+user);
-                                    usuarisSala.add(id,"NO PLAYER");
-                                    labelsUsuaris.get(id).setText("NO PLAYER");
+                                    usuarisSala.add("NO PLAYER");
+                                    //labelsUsuaris.get(id).setText("NO PLAYER");
                                     for (String la : usuarisSala) {
                                         System.out.println("MEDIO: " + la);
                                     }
@@ -393,8 +393,9 @@ public class CreacionPartidaScreen implements Screen {
                                     System.out.println("ANTES NOM: "+user);
                                     System.out.println("SALA: "+ id);
                                     usuarisSala.remove(id);
+                                    usuarisSala.add("NO PLAYER");
                                     System.out.println("DESPUES NOM: "+user);
-                                    labelsUsuaris.get(id).setText("NO PLAYER");
+                                    //labelsUsuaris.get(id).setText("NO PLAYER");
                                     for (String la : usuarisSala) {
                                         System.out.println("MEDIO: " + la);
                                     }
@@ -539,8 +540,8 @@ public class CreacionPartidaScreen implements Screen {
                         System.out.println("SALA: "+ id);
                         usuarisSala.remove(id);
                         System.out.println("DESPUES NOM: "+usuarioClic);
-                        usuarisSala.add(id,"NO PLAYER");
-                        labelsUsuaris.get(id).setText("NO PLAYER");
+                        usuarisSala.add("NO PLAYER");
+                        //labelsUsuaris.get(id).setText("NO PLAYER");
                         for (String la : usuarisSala) {
                             System.out.println("MEDIO: " + la);
                         }
@@ -615,8 +616,8 @@ public class CreacionPartidaScreen implements Screen {
                         System.out.println("SALA: "+ id);
                         usuarisSala.remove(id);
                         System.out.println("DESPUES NOM: "+usuarioClic);
-                        usuarisSala.add(id,"NO PLAYER");
-                        labelsUsuaris.get(id).setText("NO PLAYER");
+                        usuarisSala.add("NO PLAYER");
+                        //labelsUsuaris.get(id).setText("NO PLAYER");
                     }
 
                 }

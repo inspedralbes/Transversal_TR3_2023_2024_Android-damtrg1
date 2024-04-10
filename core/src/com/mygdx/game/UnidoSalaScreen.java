@@ -254,8 +254,8 @@ public class UnidoSalaScreen implements Screen {
                                     System.out.println("SALA: "+ id);
                                     usuarisSala.remove(id);
                                     System.out.println("DESPUES NOM: "+user);
-                                    usuarisSala.add(id,"NO PLAYER");
-                                    labelsUsuaris.get(id).setText("NO PLAYER");
+                                    usuarisSala.add("NO PLAYER");
+                                    //labelsUsuaris.get(id).setText("NO PLAYER");
                                     for (String la : usuarisSala) {
                                         System.out.println("MEDIO: " + la);
                                     }
@@ -285,8 +285,8 @@ public class UnidoSalaScreen implements Screen {
                                     System.out.println("SALA: "+ id);
                                     usuarisSala.remove(id);
                                     System.out.println("DESPUES NOM: "+user);
-                                    usuarisSala.add(id,"NO PLAYER");
-                                    labelsUsuaris.get(id).setText("NO PLAYER");
+                                    usuarisSala.add("NO PLAYER");
+                                    //labelsUsuaris.get(id).setText("NO PLAYER");
                                     for (String la : usuarisSala) {
                                         System.out.println("MEDIO: " + la);
                                     }
@@ -417,8 +417,8 @@ public class UnidoSalaScreen implements Screen {
                         System.out.println("SALA: "+ id);
                         usuarisSala.remove(id);
                         System.out.println("DESPUES NOM: "+usuarioClic);
-                        usuarisSala.add(id,"NO PLAYER");
-                        labelsUsuaris.get(id).setText("NO PLAYER");
+                        usuarisSala.add("NO PLAYER");
+                        //labelsUsuaris.get(id).setText("NO PLAYER");
                         for (String la : usuarisSala) {
                             System.out.println("MEDIO: " + la);
                         }
@@ -483,8 +483,8 @@ public class UnidoSalaScreen implements Screen {
                         System.out.println("SALA: "+ id);
                         usuarisSala.remove(id);
                         System.out.println("DESPUES NOM: "+usuarioClic);
-                        usuarisSala.add(id,"NO PLAYER");
-                        labelsUsuaris.get(id).setText("NO PLAYER");
+                        usuarisSala.add("NO PLAYER");
+                        //labelsUsuaris.get(id).setText("NO PLAYER");
                     }
                 }
 
