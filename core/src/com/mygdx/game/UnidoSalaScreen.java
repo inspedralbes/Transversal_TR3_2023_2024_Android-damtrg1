@@ -329,7 +329,7 @@ public class UnidoSalaScreen implements Screen {
                     if (sala.equals(salaId)) {
                         Sala salaNova = new Sala(sala, mapaSelecionado, usuarisAtacantes, usuarisDefensores);
                         Gdx.app.postRunnable(() -> {
-                            AssetManager.music.stop();
+                            //AssetManager.music.stop();
                             game.setScreen(new MapaPrueba(game, salaNova));
                         });
                     }

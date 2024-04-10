@@ -58,7 +58,6 @@ public class InventariScreen implements Screen {
     Label labelNom, descripcioLabel, labelBtn, labelNumMonedas;
     ImageButton.ImageButtonStyle imgStyle;
     Button btnEsquerra, btnDreta;
-    TextButton btnComprar;
 
     ArrayList<String> inventariJugador;
     Window popupWindow;
@@ -200,7 +199,6 @@ public class InventariScreen implements Screen {
                     // Handle the response data here
                     JSONObject json = new JSONObject(responseData);
                     skins = json.getJSONArray("skins");
-//                    System.out.println(skins.length());
                     imatgesBaixades = new ArrayList<>(Collections.nCopies(skins.length(), null));
 //                    System.out.println(imatgesBaixades.size());
                     for (int i = 0; i < skins.length(); i++) {
@@ -255,7 +253,6 @@ public class InventariScreen implements Screen {
                     for (int i = 0; i < arrayResultat.length(); i++) {
                         inventariJugador.add(arrayResultat.getString(i));
                     }
-//                    System.out.println(json.get("skins"));
                 } else {
                     // If the request failed, handle the error
                     System.out.println("HTTP request failed with status code: " + status.getStatusCode());
@@ -296,7 +293,7 @@ public class InventariScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if(currentIndex == 0){
-                    currentIndex = skins.length()-1;
+                    currentIndex = inventariJugador.size()-1;
                 }else{
                     currentIndex--;
                 }
@@ -309,7 +306,7 @@ public class InventariScreen implements Screen {
         btnDreta.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (currentIndex == skins.length()-1){
+                if (currentIndex == inventariJugador.size()-1){
                     currentIndex = 0;
                 }else{
                     currentIndex++;
@@ -354,28 +351,13 @@ public class InventariScreen implements Screen {
         acceptButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                JSONObject item = (JSONObject) skins.get(currentIndex);
+                JSONObject item = new JSONObject(inventariJugador.get(currentIndex));
                 comprarItem(item);
                 popupWindow.remove(); // Remove the window when the close button is clicked}
             }});
         popupWindow.add(missatge).expandX().fillX().pad(10).colspan(2).row();
         popupWindow.add(acceptButton).pad(10);
         popupWindow.add(closeButton).pad(10).row();
-
-
-
-        //Boto de compra
-        TextButton.TextButtonStyle btnCompraStyle = skin.get("round", TextButton.TextButtonStyle.class);
-        btnComprar = new TextButton("-", textButtonStyle);
-        btnComprar.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                stage.addActor(popupWindow);
-                JSONObject item = (JSONObject) skins.get(currentIndex);
-                missatge.setText("Confimes la compra de " + item.getString("nombre") + " pel valor de " + item.get("valorMonedas") + " monedes?");
-            }
-        });
-
 
 
         //AFEGIR COSES A WINDOW
@@ -389,15 +371,6 @@ public class InventariScreen implements Screen {
         window.row();
         window.add();
         window.add(descripcioLabel).expandX().fillX().pad(10).row();
-        window.add();
-        window.add(btnComprar).center();
-        // Crear una instancia de Label con el texto "Username" y el estilo definido
-
-
-
-
-
-
 
     }
 
@@ -412,23 +385,13 @@ public class InventariScreen implements Screen {
         stage.act(delta);
 
 
-        if(skins != null){
+        if(inventariJugador != null){
+            
             JSONObject item = (JSONObject) skins.get(currentIndex);
             labelNom.setText(item.getString("nombre"));
             descripcioLabel.setText(item.getString("descripcion"));
             if(imatgesBaixades.size() > 0) {
                 imgStyle.imageUp = imatgesBaixades.get(currentIndex);
-            }
-            btnComprar.setText(String.valueOf(item.getInt("valorMonedas")));
-            btnComprar.setTouchable(Touchable.enabled);
-            if(inventariJugador != null) {
-                for (String id : inventariJugador) {
-                    if (id.equals(item.getString("_id"))) {
-                        btnComprar.setText("OBTINGUT");
-                        btnComprar.setTouchable(Touchable.disabled);
-
-                    }
-                }
             }
         }
     }

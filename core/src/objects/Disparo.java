@@ -163,7 +163,8 @@ public class Disparo extends Actor {
 
         boolean colision_player = collidesWithPlayer(this.array_jugadors_rivals);
         if (colision_player) {
-
+            System.out.println("colision");
+            //System.out.println(this.jugador_colisionat.getNomUsuari());
             for (int i=0;i<MapaPrueba.jugadors.size();i++) {
                 //System.out.println(jugador);
                 if (MapaPrueba.jugadors.get(i) == this.jugador_colisionat) {
@@ -173,17 +174,19 @@ public class Disparo extends Actor {
 
                         for (int j=0;j<MapaPrueba.array_jugadors_equip1.size();j++) {
                             if (MapaPrueba.array_jugadors_equip1.get(j) == this.jugador_colisionat) {
-                                MapaPrueba.array_jugadors_equip1.get(j).remove();
+                                MapaPrueba.array_jugadors_equip1.remove(j);
                             }
 
                         }
 
-                        for (int j=0;j<MapaPrueba.array_jugadors_equip2.size();j++) {
+                        for (int j = 0; j < MapaPrueba.array_jugadors_equip2.size(); j++) {
                             if (MapaPrueba.array_jugadors_equip2.get(j) == this.jugador_colisionat) {
-                                MapaPrueba.array_jugadors_equip2.get(j).remove();
-                                System.out.println();
+                                System.out.println(MapaPrueba.array_jugadors_equip2.size());
+                                MapaPrueba.array_jugadors_equip2.remove(j); // Elimina el elemento en el índice j
+                                System.out.println("eliminat");
+                                System.out.println(MapaPrueba.array_jugadors_equip2.size());
+                                break; // Importante: salir del bucle después de eliminar el elemento
                             }
-
                         }
 
                         MapaPrueba.jugadors.get(i).remove();
@@ -235,11 +238,12 @@ public class Disparo extends Actor {
             // Verificar si los límites se intersectan
             if (jugador.getBounds().overlaps(this.bounds.getBoundingRectangle())) {
                 this.jugador_colisionat = jugador;
+                System.out.println("jugador colisionat");
                 return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     // Función para convertir un rectángulo a un polígono

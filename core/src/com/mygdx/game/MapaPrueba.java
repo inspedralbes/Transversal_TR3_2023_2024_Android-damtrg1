@@ -336,53 +336,68 @@ public class MapaPrueba implements Screen {
         });
 
 
-        // Obtener dos estilos diferentes de botón de texto
-        TextButton.TextButtonStyle textButtonStyle1 = skin.get("round", TextButton.TextButtonStyle.class);
-        TextButton.TextButtonStyle textButtonStyle2 = skin.get("round", TextButton.TextButtonStyle.class);
+        // Obtener los estilos de botón de texto
+        TextButton.TextButtonStyle textButtonStyle1 = new TextButton.TextButtonStyle();
+        TextButton.TextButtonStyle textButtonStyle2 = new TextButton.TextButtonStyle();
 
-        // Establecer el color de la fuente para el primer estilo
+        // Asignar el estilo del botón de texto 1
+        textButtonStyle1.font = skin.getFont("font-title");
         textButtonStyle1.fontColor = Color.BLUE;
+        textButtonStyle1.up = skin.getDrawable("round-button"); // Asignar el drawable deseado
 
-        // Crear el primer botón de texto con el primer estilo
-        textButtonEquip1 = new TextButton("EQUIP 1: " + array_jugadors_equip1.size() + " JUGADOR(S) VIUS", textButtonStyle1);
-
-
-        // Establecer el color de la fuente para el segundo estilo
+        // Asignar el estilo del botón de texto 2
+        textButtonStyle2.font = skin.getFont("font-title");
         textButtonStyle2.fontColor = Color.YELLOW;
+        textButtonStyle2.up = skin.getDrawable("round-button"); // Asignar el drawable deseado
 
-        // Crear el segundo botón de texto con el segundo estilo
+        // Crear los botones de texto con los estilos respectivos
+        textButtonEquip1 = new TextButton("EQUIP 1: " + array_jugadors_equip1.size() + " JUGADOR(S) VIUS", textButtonStyle1);
         textButtonEquip2 = new TextButton("EQUIP 2: " + array_jugadors_equip2.size() + " JUGADOR(S) VIUS", textButtonStyle2);
 
+        // Agregar los botones al stage
         stage.addActor(textButtonEquip1);
         stage.addActor(textButtonEquip2);
 
 
 
 
+        //Label.LabelStyle labelStyle = skin_vida.get("default", Label.LabelStyle.class);
+        Label.LabelStyle labelStyle1 = new Label.LabelStyle();
+        Label.LabelStyle labelStyle2 = new Label.LabelStyle();
+
+        labelStyle1.font = skin.getFont("font-title");
+        labelStyle1.fontColor = Color.BLUE;
+
+        labelStyle2.font = skin.getFont("font-title");
+        labelStyle2.fontColor = Color.YELLOW;
 
         //NOMBRES DE JUGADORES EN PANTALLA
         for (int i = 0; i < jugadors.size(); i++) {
-            Label.LabelStyle labelStyle = skin_vida.get("default", Label.LabelStyle.class);
+
             for (int j = 0; j < array_jugadors_equip1.size(); j++) {
                 if (array_jugadors_equip1.get(j) == jugadors.get(i)) {
                     // Cambia el color del estilo
-                    labelStyle.fontColor = Color.BLUE; // Por ejemplo, establece el color rojo
+                    Label LabelNomJugador = new Label(jugadors.get(i).getNomUsuari(), labelStyle1);
+                    labelsNoms.add(LabelNomJugador);
+
+                    labelsNoms.get(i).setPosition(jugadors.get(i).getPosition().x, jugadors.get(i).getPosition().y + jugadors.get(i).getHeight() + 30);
+                    stage.addActor(labelsNoms.get(i));
                 }
             }
             for (int j = 0; j < array_jugadors_equip2.size(); j++) {
                 if (array_jugadors_equip2.get(j) == jugadors.get(i)) {
                     // Cambia el color del estilo
-                    labelStyle.fontColor = Color.YELLOW; // Por ejemplo, establece el color rojo
+                    Label LabelNomJugador = new Label(jugadors.get(i).getNomUsuari(), labelStyle2);
+                    labelsNoms.add(LabelNomJugador);
+
+                    labelsNoms.get(i).setPosition(jugadors.get(i).getPosition().x, jugadors.get(i).getPosition().y + jugadors.get(i).getHeight() + 30);
+                    stage.addActor(labelsNoms.get(i));
                 }
             }
 
 
 
-            Label LabelNomJugador = new Label(jugadors.get(i).getNomUsuari(), labelStyle);
-            labelsNoms.add(LabelNomJugador);
 
-            labelsNoms.get(i).setPosition(jugadors.get(i).getPosition().x, jugadors.get(i).getPosition().y + jugadors.get(i).getHeight() + 30);
-            stage.addActor(labelsNoms.get(i));
         }
 
 
@@ -522,7 +537,7 @@ public class MapaPrueba implements Screen {
                 mSocket.emit("posicioCorrecio", jsonEnviar);
                 System.out.println("CORRECIO ENVIADA");
             }
-        }, 0, 2000);
+        }, 0, 10);
     }
 
     @Override

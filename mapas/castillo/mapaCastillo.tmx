@@ -326,7 +326,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="13" name="colision">
+ <objectgroup id="13" name="Capa de Objetos 1">
   <object id="16" x="129.333" y="542" width="30" height="33.3333"/>
   <object id="17" x="254" y="509.333" width="99.3333" height="26.6667"/>
   <object id="18" x="527.333" y="481.333" width="63.3333" height="61.3333"/>

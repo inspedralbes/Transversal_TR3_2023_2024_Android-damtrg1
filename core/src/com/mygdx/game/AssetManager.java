@@ -13,30 +13,20 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.net.HttpStatus;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import objects.Jugador;
-
-import com.badlogic.gdx.utils.GdxRuntimeException;
-
 public class AssetManager {
 
-    public static Sprite[] imatgesJugador;
     public static Texture imgFondo, imgCuadrado, mapaCastillo, mapaMazmorra, persona;
 
     public static TextureRegion background;
@@ -61,13 +51,24 @@ public class AssetManager {
     public static TextureRegion jugador_amunt;
     public static Sprite jugadorSprite_amunt;
 
-    public static Map<String, Texture> imatges_mapes;
+    public static ArrayList<String> noms_mapes;
+    public static ArrayList<Texture> imatges_mapes;
+
 
     public static Music music;
 
-
+    public static float volumen = 1f;
 
     public static void load() {
+
+        noms_mapes = new ArrayList<String>();
+        imatges_mapes = new ArrayList<Texture>();
+
+        //noms_mapes.add("castillo");
+        //noms_mapes.add("mazmorra");
+
+        // Crear un semáforo para sincronizar el proceso de descompresión
+        final Semaphore semaphore = new Semaphore(0);
 
         // Create an HTTP request
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
@@ -83,41 +84,45 @@ public class AssetManager {
             public void handleHttpResponse(Net.HttpResponse httpResponse) {
                 HttpStatus status = httpResponse.getStatus();
                 if (status.getStatusCode() == 200) {
-
-
                     JSONObject body = new JSONObject();
-                    //body.put("path","mapas/mapes/IMGmapas/mapacastillo.jpg");
                     body.put("directory","mapas");
-                    //fetchAndSetImage(body.toString());
-
+                    fetchAndSetAssets(body.toString());
                 } else {
                     // If the request failed, handle the error
                     System.out.println("HTTP request failed with status code: " + status.getStatusCode());
                 }
+                semaphore.release(); // Liberar el semáforo después de que el proceso de descompresión haya terminado
             }
 
             @Override
             public void failed(Throwable t) {
                 // Handle the case where the HTTP request failed
                 t.printStackTrace();
+                semaphore.release(); // Liberar el semáforo después de que el proceso de descompresión haya terminado
             }
 
             @Override
             public void cancelled() {
                 // Handle the case where the HTTP request was cancelled
+                semaphore.release(); // Liberar el semáforo después de que el proceso de descompresión haya terminado
             }
         });
 
+        // Esperar hasta que la descompresión haya terminado
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         imgFondo = new Texture(Gdx.files.internal("fondo2.jpg"));
         imgFondo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
 
         background = new TextureRegion(imgFondo);
 
-
         //MAPAS
-        mapaCastillo = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapacastillo.jpg"));
-        mapaMazmorra = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapamazmorra.jpg"));
+        //mapaCastillo = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapacastillo.jpg"));
+        //mapaMazmorra = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapamazmorra.jpg"));
 
 
 
@@ -164,22 +169,21 @@ public class AssetManager {
         persona = new Texture(Gdx.files.internal("persona.jpg"));
 
         /******************************* MUSICA *************************************/
-        /*
-        music = Gdx.audio.newMusic(Gdx.files.internal("musica_ambiente2.mp3"));
+
+        music = Gdx.audio.newMusic(Gdx.files.internal("musica_ambiente1.mp3"));
+        music.setVolume(volumen);
         music.setLooping(true);
-        music.setVolume(2.9f);*/
 
 
     }
 
-    public static void fetchAndSetImage(String bodyData) {
+    public static void fetchAndSetAssets(String bodyData) {
 
-        // Crear un semáforo para sincronizar el proceso de descompresión
-        final Semaphore semaphore = new Semaphore(0);
+
 
         // Create a POST request to fetch the image
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-        httpRequest.setUrl("http://r6pixel.duckdns.org:3169/getImg_post/");
+        httpRequest.setUrl("http://r6pixel.duckdns.org:3169/getAssets_post/");
         httpRequest.setHeader("Content-Type", "application/json");
 
         // Set the body data if needed
@@ -224,9 +228,39 @@ public class AssetManager {
                     System.out.println("Archivos descomprimidos correctamente en la carpeta 'assets'");
                     // Cargar la textura mapaCastillo después de que la descompresión haya terminado
                     Gdx.app.postRunnable(() -> {
-                        mapaCastillo = new Texture(Gdx.files.local("mapes/IMGmapas/mapacastillo.jpg"));
+
+                            FileHandle mapasDir = Gdx.files.local("mapas");
+                            if (mapasDir.exists() && mapasDir.isDirectory()) {
+                                FileHandle[] subdirs = mapasDir.list();
+                                for (FileHandle subdir : subdirs) {
+                                    if (subdir.isDirectory()) {
+                                        noms_mapes.add(subdir.name());
+
+                                        // Obtener el archivo "mapa" + nombre_mapa + ".jpg"
+                                        FileHandle mapaFile = subdir.child("mapa" + subdir.name() + ".jpg");
+                                        if (mapaFile.exists()) {
+                                            // Hacer algo con el archivo mapaFile, como cargarlo o almacenarlo
+                                            System.out.println("Archivo encontrado: " + mapaFile.path());
+                                            Texture imatge_mapa = new Texture(Gdx.files.local(mapaFile.path()));
+                                            imatges_mapes.add(imatge_mapa);
+                                        } else {
+                                            System.out.println("Archivo no encontrado para el directorio: " + subdir.name());
+                                        }
+                                    }
+                                }
+                            }
+                            for (int i = 0;i<noms_mapes.size();i++) {
+                                System.out.println("mapa: " + noms_mapes.get(i));
+                            }
+
+                            imgFondo = new Texture(Gdx.files.internal("fondo2.jpg"));
+                            imgFondo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
+
+                            //background = new TextureRegion(imgFondo);
+
+
                     });
-                    semaphore.release();
+
                 } catch (IOException e) {
                     System.out.println("Error al descomprimir el archivo zip: " + e.getMessage());
                 }
@@ -246,12 +280,7 @@ public class AssetManager {
             }
         });
 
-        // Esperar hasta que la descompresión haya terminado
-        try {
-            semaphore.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
     }
 
 
@@ -259,5 +288,6 @@ public class AssetManager {
 
     public static void dispose() {
         imgFondo.dispose();
+        music.dispose();
     }
 }

@@ -1,5 +1,7 @@
 package com.mygdx.game;
 
+import static com.mygdx.game.AssetManager.noms_mapes;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
@@ -7,7 +9,6 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -20,7 +21,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -38,7 +38,6 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import objects.Background;
-import sun.font.TextLabel;
 
 public class CreacionPartidaScreen implements Screen {
 
@@ -63,7 +62,6 @@ public class CreacionPartidaScreen implements Screen {
     ArrayList<Label> labelDefensores = new ArrayList<>();
     Label salaLabel, seleccioMapa, aliadoLabel, jugadorLabel, enemigoLabel;
 
-    String[] mapes = {""};
     int numMapa = 0;
     String salaId;
     JSONObject json;
@@ -79,9 +77,12 @@ public class CreacionPartidaScreen implements Screen {
 
     Table table;
 
+    ArrayList<TextureRegionDrawable> arrayTextureRegionDrawable;
+
+
     public CreacionPartidaScreen(Pixel_R6 game) {
         this.game = game;
-        AssetManager.load();
+        //AssetManager.load();
         preferences = Gdx.app.getPreferences("Pref");
         for (int i = 0; i < 10; i++) {
             usuarisSala.add("NO PLAYER");
@@ -152,7 +153,7 @@ public class CreacionPartidaScreen implements Screen {
                     // Remove the square brackets, quotes, and commas from the string
                     String cleanInput = responseData.replaceAll("[\\[\\]\"]", "");
                     // Split the string into an array by empty space
-                    mapes = cleanInput.split(",");
+                    //noms_mapes = cleanInput.split(",");
                     // Output the array elements
                 } else {
                     // If the request failed, handle the error
@@ -171,7 +172,7 @@ public class CreacionPartidaScreen implements Screen {
                 // Handle the case where the HTTP request was cancelled
             }
         });
-
+        System.out.println("numero de mapes: " + noms_mapes.size());
 
         // Creem la càmera de les dimensions del joc
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Settings.GAME_HEIGHT);
@@ -283,10 +284,14 @@ public class CreacionPartidaScreen implements Screen {
         Button botoEsquerra = new Button(skin_inputs.get("left", Button.ButtonStyle.class));
         Button botoDreta = new Button(skin_inputs.get("right", Button.ButtonStyle.class));
 
-
+        arrayTextureRegionDrawable = new ArrayList<TextureRegionDrawable>();
+        for (int i=0;i<AssetManager.imatges_mapes.size();i++) {
+            TextureRegionDrawable textureRegionDrawable = new TextureRegionDrawable(AssetManager.imatges_mapes.get(i));
+            arrayTextureRegionDrawable.add(textureRegionDrawable);
+        }
         IMGMapas = new Image();
-        castillo = new TextureRegionDrawable(AssetManager.mapaCastillo);
-        mazmorra = new TextureRegionDrawable(AssetManager.mapaMazmorra);
+        //castillo = new TextureRegionDrawable(AssetManager.imatges_mapes.get(0));
+        //mazmorra = new TextureRegionDrawable(AssetManager.imatges_mapes.get(1));
 
         Table tableInfo = new Table();
         tableInfo.add(botoEsquerra).prefSize(40, 40).pad(20);
@@ -439,7 +444,7 @@ public class CreacionPartidaScreen implements Screen {
                             System.out.println("No puedes jugar sin elegir equipo");
                         } else {
                             Gdx.app.postRunnable(() -> {
-                                AssetManager.music.stop();
+                                //AssetManager.music.stop();
                                 game.setScreen(new MapaPrueba(game, salaNova));
                             });
                         }
@@ -656,6 +661,24 @@ public class CreacionPartidaScreen implements Screen {
         window.add(tableInfo).row();
         window.add(tableImg);
 
+
+
+        // Crear instancia del TextButton con el estilo obtenido del Skin
+        TextButton btn_volver = new TextButton("Volver", textButtonStyle);
+
+        btn_volver.setSize(200, 70);
+
+        btn_volver.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new PantallaPrincipal(game, false));
+
+            }
+        });
+
+        btn_volver.setPosition(windowX + 100, windowY - 100);
+
+        stage.addActor(btn_volver);
     }
 
     // Método para actualizar los labels de los atacantes
@@ -695,7 +718,7 @@ public class CreacionPartidaScreen implements Screen {
     public void cambiarMapa(int num) {
         switch (num) {
             case 1:
-                if (numMapa == mapes.length - 1) {
+                if (numMapa == noms_mapes.size() - 1) {
                     numMapa = 0;
                 } else {
                     numMapa++;
@@ -703,7 +726,7 @@ public class CreacionPartidaScreen implements Screen {
                 break;
             case -1:
                 if (numMapa == 0) {
-                    numMapa = mapes.length - 1;
+                    numMapa = noms_mapes.size() - 1;
                 } else {
                     numMapa--;
                 }
@@ -719,14 +742,18 @@ public class CreacionPartidaScreen implements Screen {
         for (int i = 0; i < labelsUsuaris.size(); i++) {
             labelsUsuaris.get(i).setText(usuarisSala.get(i));
         }
-        seleccioMapa.setText(mapes[numMapa]);
+        seleccioMapa.setText(noms_mapes.get(numMapa));
 
-
+        /*
         if (seleccioMapa.getText().toString().equals("castillo")) {
             IMGMapas.setDrawable(castillo);
         } else {
             IMGMapas.setDrawable(mazmorra);
         }
+
+         */
+
+        IMGMapas.setDrawable(arrayTextureRegionDrawable.get(numMapa));
 
     }
 

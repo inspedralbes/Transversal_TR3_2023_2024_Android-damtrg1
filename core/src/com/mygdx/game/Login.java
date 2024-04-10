@@ -55,7 +55,7 @@ public class Login implements Screen {
     public Login(Pixel_R6 game) {
         this.game = game;
 
-        AssetManager.load();
+        //AssetManager.load();
 
         preferences = Gdx.app.getPreferences("Pref");
 

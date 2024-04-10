@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="75" height="75" tilewidth="32" tileheight="32" infinite="0" nextlayerid="15" nextobjectid="291">
- <tileset firstgid="1" source="assetsMapa/hyptosis_tile-art-batch-1.tsx"/>
+ <tileset firstgid="1" source="hyptosis_tile-art-batch-1.tsx"/>
  <tileset firstgid="901" name="hyptosis_til-art-batch-2" tilewidth="32" tileheight="32" tilecount="900" columns="30">
-  <image source="assetsMapa/hyptosis_til-art-batch-2.png" width="960" height="960"/>
+  <image source="hyptosis_til-art-batch-2.png" width="960" height="960"/>
   <wangsets>
    <wangset name="Unnamed Set" type="corner" tile="225">
     <wangcolor name="" color="#ff0000" tile="-1" probability="1"/>
@@ -16,8 +16,8 @@
  <tileset firstgid="1801" source="assetsMapa/hyptosis_tile-art-batch-3.tsx"/>
  <tileset firstgid="2701" source="assetsMapa/hyptosis_tile-art-batch-4.tsx"/>
  <tileset firstgid="3601" source="assetsMapa/hyptosis_tile-art-batch-5.tsx"/>
- <tileset firstgid="4323" source="assetsMapa/terrenosInterior.tsx"/>
- <tileset firstgid="6339" source="assetsMapa/TerrenosExterirores.tsx"/>
+ <tileset firstgid="4323" source="TerrenosInteriores.tsx"/>
+ <tileset firstgid="6339" source="TerrenosExterirores.tsx"/>
  <layer id="2" name="capaSuelo" width="75" height="75">
   <data encoding="csv">
 729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,1610613228,522,522,522,522,522,522,522,522,2684355052,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,729,

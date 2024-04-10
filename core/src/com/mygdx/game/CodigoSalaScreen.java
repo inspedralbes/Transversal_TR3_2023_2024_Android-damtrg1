@@ -54,7 +54,7 @@ public class CodigoSalaScreen implements Screen {
     Preferences preferences;
 
     public CodigoSalaScreen(Pixel_R6 game) {
-        this.game = game;
+                this.game = game;
 
         preferences = Gdx.app.getPreferences("Pref");
 
@@ -191,13 +191,13 @@ public class CodigoSalaScreen implements Screen {
         TextField.TextFieldStyle textFieldStyle = skin_inputs.get("default", TextField.TextFieldStyle.class);
 
         // Crear una instancia de TextField con el estilo obtenido
-        codigo = new TextField("Ingrese código", textFieldStyle);
+        codigo = new TextField("Ingrese codigo", textFieldStyle);
 
         // Configurar el controlador de eventos para el TextField
         codigo.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                if (codigo.getText().equals("Ingrese código")) {
+                if (codigo.getText().equals("Ingrese codigo")) {
                     // Si lo es, borrar el texto
                     codigo.setText("");
                 } else {
@@ -261,6 +261,21 @@ public class CodigoSalaScreen implements Screen {
         //PARA INTRODUCIR DATOS
         Gdx.input.setInputProcessor(stage);
 
+        // Crear instancia del TextButton con el estilo obtenido del Skin
+        TextButton btn_volver = new TextButton("Volver", textButtonStyle);
+
+        btn_volver.setSize(200, 70);
+
+        btn_volver.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new PantallaPrincipal(game, false));
+            }
+        });
+
+        btn_volver.setPosition(windowX + 100, windowY - 100);
+
+        stage.addActor(btn_volver);
     }
 
 
