@@ -537,7 +537,7 @@ public class MapaPrueba implements Screen {
                 mSocket.emit("posicioCorrecio", jsonEnviar);
                 System.out.println("CORRECIO ENVIADA");
             }
-        }, 0, 10);
+        }, 0, 2000);
     }
 
     @Override
@@ -585,6 +585,8 @@ public class MapaPrueba implements Screen {
         textButtonEquip2.setPosition(camera.position.x + (float) 0.05*Gdx.graphics.getWidth(), camera.position.y + (float) 0.20*Gdx.graphics.getHeight());
         textButtonEquip2.setText("EQUIP 2: " + array_jugadors_equip2.size() + " JUGADOR(S) VIUS");
         //System.out.println("equip 2:" + array_jugadors_equip2.size());
+
+
 
 
         // Actualizar la posición del ProgressBar para que esté encima del jugador

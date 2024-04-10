@@ -23,6 +23,7 @@ public class Jugador extends Actor {
     private String nomUsuari;
     private Sprite spriteJugador;
     private String orientacio_jugador;
+    private Rectangle bounds; // Área de colisión del jugador
 
     public static boolean COLISIO_DRETA = false;
     public static boolean COLISIO_ABAIX = false;
@@ -37,11 +38,11 @@ public class Jugador extends Actor {
         return spriteJugador;
     }
 
-    public static Rectangle getBounds() {
-        return bounds;
-    }
 
-    private static Rectangle bounds; // Área de colisión del jugador
+
+
+
+
 
     public Vector2 getPosition() {
         return position;
@@ -88,12 +89,12 @@ public class Jugador extends Actor {
 
         if (deltaX > 0) {
             position.x += deltaX * Settings.JUGADOR_VELOCITY;
-            bounds.setPosition(position);
-            boolean colision = collidesWithWalls(tiledMap, bounds);
+            this.bounds.setPosition(position);
+            boolean colision = collidesWithWalls(tiledMap, this.bounds);
             if (colision) {
                 collisionX = true;
                 position.x = previousX;
-                bounds.setPosition(position);
+                this.bounds.setPosition(position);
                 COLISIO_DRETA = true;
             }
 
@@ -101,12 +102,12 @@ public class Jugador extends Actor {
 
         else if (deltaX < 0) {
             position.x += deltaX * Settings.JUGADOR_VELOCITY;
-            bounds.setPosition(position);
-            boolean colision = collidesWithWalls(tiledMap, bounds);
+            this.bounds.setPosition(position);
+            boolean colision = collidesWithWalls(tiledMap, this.bounds);
             if (colision) {
                 collisionX = true;
                 position.x = previousX;
-                bounds.setPosition(position);
+                this.bounds.setPosition(position);
                 COLISIO_ESQUERRA = true;
             }
 
@@ -114,24 +115,24 @@ public class Jugador extends Actor {
 
         if (deltaY > 0) {
             position.y += deltaY * Settings.JUGADOR_VELOCITY;
-            bounds.setPosition(position);
-            boolean colision = collidesWithWalls(tiledMap, bounds);
+            this.bounds.setPosition(position);
+            boolean colision = collidesWithWalls(tiledMap, this.bounds);
             if (colision) {
                 collisionY = true;
                 position.y = previousY;
-                bounds.setPosition(position);
+                this.bounds.setPosition(position);
                 COLISIO_ADALT = true;
             }
         }
 
         else if (deltaY < 0) {
             position.y += deltaY * Settings.JUGADOR_VELOCITY;
-            bounds.setPosition(position);
-            boolean colision = collidesWithWalls(tiledMap, bounds);
+            this.bounds.setPosition(position);
+            boolean colision = collidesWithWalls(tiledMap, this.bounds);
             if (colision) {
                 collisionY = true;
                 position.y = previousY;
-                bounds.setPosition(position);
+                this.bounds.setPosition(position);
                 COLISIO_ABAIX = true;
             }
         }
@@ -180,27 +181,27 @@ public class Jugador extends Actor {
 
         if (deltaX > 0) {
             position.x += deltaX * Settings.JUGADOR_VELOCITY;
-            bounds.setPosition(position);
+            this.bounds.setPosition(position);
 
 
         }
 
         else if (deltaX < 0) {
             position.x += deltaX * Settings.JUGADOR_VELOCITY;
-            bounds.setPosition(position);
+            this.bounds.setPosition(position);
 
 
         }
 
         if (deltaY > 0) {
             position.y += deltaY * Settings.JUGADOR_VELOCITY;
-            bounds.setPosition(position);
+            this.bounds.setPosition(position);
 
         }
 
         else if (deltaY < 0) {
             position.y += deltaY * Settings.JUGADOR_VELOCITY;
-            bounds.setPosition(position);
+            this.bounds.setPosition(position);
 
         }
 
@@ -277,4 +278,7 @@ public class Jugador extends Actor {
         return nomUsuari;
     }
 
+    public Rectangle getBounds() {
+        return bounds;
+    }
 }

@@ -233,12 +233,18 @@ public class Disparo extends Actor {
 
     public boolean collidesWithPlayer(ArrayList <Jugador> array_equip_rival) {
 
+        for (Jugador jugador : array_equip_rival) {
+            System.out.println("rival: " + jugador.getNomUsuari());
+            System.out.println("yo: " + this.jugador_associat.getNomUsuari());
+        }
+
 
         for (Jugador jugador : array_equip_rival) {
             // Verificar si los límites se intersectan
             if (jugador.getBounds().overlaps(this.bounds.getBoundingRectangle())) {
                 this.jugador_colisionat = jugador;
-                System.out.println("jugador colisionat");
+                System.out.println("bounds rival: " + this.jugador_colisionat.getBounds());
+                System.out.println("bounds rival: " + this.jugador_associat.getBounds());
                 return true;
             }
         }
