@@ -415,7 +415,7 @@ public class UnidoSalaScreen implements Screen {
                         int id = usuarisSala.indexOf(usuarioClic);
                         System.out.println("ANTES NOM: "+usuarioClic);
                         System.out.println("SALA: "+ id);
-                        usuarisSala.remove(id);
+                        //usuarisSala.remove(id);
                         System.out.println("DESPUES NOM: "+usuarioClic);
                         usuarisSala.add("NO PLAYER");
                         //labelsUsuaris.get(id).setText("NO PLAYER");
@@ -481,7 +481,7 @@ public class UnidoSalaScreen implements Screen {
                         int id = usuarisSala.indexOf(usuarioClic);
                         System.out.println("ANTES NOM: "+usuarioClic);
                         System.out.println("SALA: "+ id);
-                        usuarisSala.remove(id);
+                        //usuarisSala.remove(id);
                         System.out.println("DESPUES NOM: "+usuarioClic);
                         usuarisSala.add("NO PLAYER");
                         //labelsUsuaris.get(id).setText("NO PLAYER");
