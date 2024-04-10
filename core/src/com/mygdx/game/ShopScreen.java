@@ -463,9 +463,12 @@ public class ShopScreen implements Screen {
     }
     public void fetchAndSetImage(String imageUrl, int num) {
         // Create a GET request to fetch the image
-        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
-        httpRequest.setUrl("http://r6pixel.duckdns.org:3169/getImg/" + imageUrl);
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpRequest.setUrl("http://r6pixel.duckdns.org:3169/getImg/");
         httpRequest.setHeader("Content-Type", "application/json");
+        JSONObject json = new JSONObject();
+        json.put("path", imageUrl);
+        httpRequest.setContent(json.toString());
 
         // Send the request
         Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
