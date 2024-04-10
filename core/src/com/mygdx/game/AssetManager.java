@@ -115,12 +115,10 @@ public class AssetManager {
             e.printStackTrace();
         }
 
-        /*
         imgFondo = new Texture(Gdx.files.internal("fondo2.jpg"));
         imgFondo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
 
         background = new TextureRegion(imgFondo);
-        */
 
         //MAPAS
         //mapaCastillo = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapacastillo.jpg"));
@@ -258,7 +256,7 @@ public class AssetManager {
                             imgFondo = new Texture(Gdx.files.internal("fondo2.jpg"));
                             imgFondo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
 
-                            background = new TextureRegion(imgFondo);
+                            //background = new TextureRegion(imgFondo);
 
 
                     });
