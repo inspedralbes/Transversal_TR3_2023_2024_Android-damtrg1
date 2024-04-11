@@ -120,8 +120,12 @@ public class PantallaWIN implements Screen {
             System.out.println("Perder WIN: "+ Userperdedores.get(i));
         }
 
+        Label.LabelStyle labeljugadors = skin_inputs.get("default", Label.LabelStyle.class);
+        labeljugadors .font.getData().setScale(2f); // Ajustar el tamaño de la fuente
+
+
         for (int i = 0; i < Userganadores.size(); i++) {
-            Label wins = new Label(Userganadores.get(i).toString(), skin_inputs);
+            Label wins = new Label(Userganadores.get(i).getNomUsuari(), labeljugadors);
             Label monWin = new Label("50 Coins", skin_inputs);
             monedasGanadores.add(monWin);
             ganadores.add(wins);
@@ -130,7 +134,7 @@ public class PantallaWIN implements Screen {
         }
 
         for (int i = 0; i < Userperdedores.size(); i++) {
-            Label perduts = new Label(Userperdedores.get(i).toString(), skin_inputs);
+            Label perduts = new Label(Userperdedores.get(i).getNomUsuari(), labeljugadors);
             Label monLose = new Label("10 Coins", skin_inputs);
             monedasPerdedores.add(monLose);
             perdedores.add(perduts);
@@ -165,6 +169,7 @@ public class PantallaWIN implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.postRunnable(()->{
                     game.setScreen(new PantallaPrincipal(game, false));
+
                 });
             }
         });

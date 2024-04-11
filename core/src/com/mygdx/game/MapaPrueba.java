@@ -501,7 +501,7 @@ public class MapaPrueba implements Screen {
                             int index = -1; // Initialize index to -1 (not found)
                             for (int i = 0; i < jugadors.size(); i++) {
                                 Jugador jugador = jugadors.get(i);
-                                System.out.println("hola");
+                                //System.out.println("hola");
                                 if (jugador.getNomUsuari().equals(usernameToFind)) {
                                     // Found the Jugador with the specified username
                                     index = i;
@@ -510,7 +510,7 @@ public class MapaPrueba implements Screen {
                             }
                             float x = Float.valueOf(data.getString("x"));
                             float y = Float.valueOf(data.getString("y"));
-                            System.out.println("CORRECIO DE " + jugadors.get(index).getNomUsuari() + "X / Y: " + x + "/" + y);
+                            //System.out.println("CORRECIO DE " + jugadors.get(index).getNomUsuari() + "X / Y: " + x + "/" + y);
                             jugadors.get(index).setPosition(x, y);
                         }
                     }
@@ -525,10 +525,10 @@ public class MapaPrueba implements Screen {
         System.out.println("COPIA 2: " + array_jugadors_equip2_copia.size());
 
         for (Jugador a : array_jugadors_equip1_copia) {
-            System.out.println("EQUIPO COPIA 1: " + a);
+            System.out.println("EQUIPO COPIA 1: " + a.getNomUsuari());
         }
         for (Jugador b : array_jugadors_equip2_copia) {
-            System.out.println("EQUIPO COPIA 2: " + b);
+            System.out.println("EQUIPO COPIA 2: " + b.getNomUsuari());
         }
 
 
@@ -549,7 +549,7 @@ public class MapaPrueba implements Screen {
                 jsonEnviar.put("x", String.valueOf(jugadors.get(numJugador).getPosition().x));
                 jsonEnviar.put("y", String.valueOf(jugadors.get(numJugador).getPosition().y));
                 mSocket.emit("posicioCorrecio", jsonEnviar);
-                System.out.println("CORRECIO ENVIADA");
+                //System.out.println("CORRECIO ENVIADA");
             }
         }, 0, 10);
     }
