@@ -97,7 +97,7 @@ public class AssetManager {
         Net.HttpRequest httpRequest_assets = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url_assets = "http://r6pixel.duckdns.org:3168/getAssets";
+        String url_assets = "http://192.168.205.67:3168/getAssets";
         httpRequest_assets.setUrl(url_assets);
         httpRequest_assets.setHeader("Content-Type", "application/json");
 
@@ -145,7 +145,7 @@ public class AssetManager {
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url = "http://r6pixel.duckdns.org:3168/getAssets";
+        String url = "http://192.168.205.67:3168/getAssets";
         httpRequest.setUrl(url);
         httpRequest.setHeader("Content-Type", "application/json");
 
@@ -192,7 +192,7 @@ public class AssetManager {
         Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url2 = "http://r6pixel.duckdns.org:3168/getInventari/" + preferences.getString("username");
+        String url2 = "http://192.168.205.67:3168/getInventari/" + preferences.getString("username");
         httpRequest2.setUrl(url2);
         httpRequest2.setHeader("Content-Type", "application/json");
 
@@ -338,7 +338,7 @@ public class AssetManager {
 
         // Create a POST request to fetch the image
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-        httpRequest.setUrl("http://r6pixel.duckdns.org:3168/getAssets_post/");
+        httpRequest.setUrl("http://192.168.205.67:3168/getAssets_post/");
         httpRequest.setHeader("Content-Type", "application/json");
 
         // Set the body data if needed

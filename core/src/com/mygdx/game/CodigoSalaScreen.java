@@ -116,7 +116,7 @@ public class CodigoSalaScreen implements Screen {
         stage.addActor(titleLabel);
 
         try {
-            mSocket = IO.socket("http://r6pixel.duckdns.org:3168");
+            mSocket = IO.socket("http://192.168.205.67:3168");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -134,7 +134,7 @@ public class CodigoSalaScreen implements Screen {
                 Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
 
                 // Construct the URL with query parameters
-                String url = "http://r6pixel.duckdns.org:3168/unirSala";
+                String url = "http://192.168.205.67:3168/unirSala";
                 String username = preferences.getString("username");
                 httpRequest.setUrl(url);
                 httpRequest.setHeader("Content-Type", "application/json");
