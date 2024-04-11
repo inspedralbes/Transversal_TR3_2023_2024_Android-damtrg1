@@ -1,13 +1,11 @@
 package com.mygdx.game;
 
-import static com.badlogic.gdx.net.HttpRequestBuilder.json;
 import static com.mygdx.game.AssetManager.imatges_mapes;
 import static com.mygdx.game.AssetManager.jugador_amunt;
 import static com.mygdx.game.AssetManager.jugador_avall;
 import static com.mygdx.game.AssetManager.jugador_dreta;
 import static com.mygdx.game.AssetManager.jugador_esquerra;
 import static com.mygdx.game.AssetManager.noms_mapes;
-import static com.mygdx.game.AssetManager.noms_skins;
 import static com.mygdx.game.AssetManager.spritesheet_joc_amunt;
 import static com.mygdx.game.AssetManager.spritesheet_joc_avall;
 import static com.mygdx.game.AssetManager.spritesheet_joc_dreta;
@@ -25,30 +23,26 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.net.HttpStatus;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 
-import org.json.JSONException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.concurrent.Semaphore;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -72,6 +66,22 @@ public class LoadingScreen implements Screen {
     TextField Username, Password;
 
     Preferences preferences;
+
+    static boolean peticion_getAssets1 = false;
+
+    static boolean peticion_getAssets2 = false;
+
+    static boolean peticion_getInventari = false;
+
+    public static String idUser;
+    public static String idEquipat;
+    public static ArrayList<String> inventariJugador;
+
+    public static JSONArray skins;
+
+    public static ArrayList<String> noms_skins;
+
+    public static ArrayList<Drawable> imatgesBaixades = new ArrayList<>(10);
 
 
     public LoadingScreen(Pixel_R6 game) {
@@ -211,7 +221,8 @@ public class LoadingScreen implements Screen {
         //PARA INTRODUCIR DATOS
         Gdx.input.setInputProcessor(stage);
 
-        final Semaphore semaphore = new Semaphore(0);
+        noms_mapes = new ArrayList<String>();
+        noms_skins = new ArrayList<String>();
 
         Net.HttpRequest httpRequest_assets = new Net.HttpRequest(Net.HttpMethods.GET);
         String url_assets = "http://r6pixel.duckdns.org:3168/getAssets";
@@ -229,7 +240,6 @@ public class LoadingScreen implements Screen {
                 } else {
                     System.out.println("HTTP request failed with status code: " + status.getStatusCode());
                 }
-                semaphore.release(); // Liberar el semáforo después de que el proceso de descompresión haya terminado
             }
 
             @Override
@@ -242,28 +252,14 @@ public class LoadingScreen implements Screen {
             }
         });
 
-        try {
-            semaphore.acquire(); // Esperar hasta que la descompresión haya terminado
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-// Aquí continúa el código después de que se haya completado la descompresión
-        if (preferences.getBoolean("logged")) {
-            System.out.println("hola");
-            Gdx.app.postRunnable(() -> {
-                game.setScreen(new PantallaPrincipal(game, true));
-            });
-        } else {
-            Gdx.app.postRunnable(() -> {
-                game.setScreen(new Login(game));
-            });
-        }
 
 
 
 
-/*
+
+
+
+
         // Create an HTTP request
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
@@ -284,7 +280,6 @@ public class LoadingScreen implements Screen {
                     JSONObject json = new JSONObject(responseData);
                     skins = json.getJSONArray("skins");
                     System.out.println("skins: " + skins);
-                    semaphore.release(); // Liberar el semáforo después de que el proceso de descompresión haya terminado
                 } else {
                     // If the request failed, handle the error
                     System.out.println("HTTP request failed with status code: " + status.getStatusCode());
@@ -303,12 +298,7 @@ public class LoadingScreen implements Screen {
             }
         });
 
-        // Esperar hasta que la descompresión haya terminado
-        try {
-            semaphore.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
 
 
         // Create an HTTP request
@@ -339,9 +329,9 @@ public class LoadingScreen implements Screen {
                     inventariJugador = new ArrayList<>();
                     for (int i = 0; i < arrayResultat.length(); i++) {
                         inventariJugador.add(arrayResultat.getString(i));
-                        semaphore.release(); // Liberar el semáforo después de que el proceso de descompresión haya terminado
                     }
                     System.out.println("inventariJugador:" + inventariJugador);
+                    peticion_getInventari = true;
                 } else {
                     // If the request failed, handle the error
                     System.out.println("HTTP request failed with status code: " + status.getStatusCode());
@@ -360,31 +350,12 @@ public class LoadingScreen implements Screen {
             }
         });
 
-        // Esperar hasta que la descompresión haya terminado
-        try {
-            semaphore.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
 
-        System.out.println("HOLA");
-        if(inventariJugador != null && skins != null) {
-            System.out.println("LLEGAMOS AQUI");
-            JSONObject resultat = new JSONObject();
-            int index = 0;
-            for (int i = 0; i < skins.length(); i++) {
-                JSONObject a = skins.getJSONObject(i);
-                if (idEquipat.equals(a.getString("_id"))) {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("directory",a.getString("path_directori_skin"));
 
-                    fetchAndSetAssets(jsonObject.toString());
-                }
-            }
-        }
 
- */
+
+
 
     }
 
@@ -441,6 +412,7 @@ public class LoadingScreen implements Screen {
                     Gdx.app.postRunnable(() -> {
                         JSONObject jsonObject = new JSONObject(bodyData);
                         if (jsonObject.get("directory").equals("mapas")) {
+                            System.out.println("DENTRO DE GETASSETS1");
                             FileHandle mapasDir = Gdx.files.local("mapas");
                             if (mapasDir.exists() && mapasDir.isDirectory()) {
                                 FileHandle[] subdirs = mapasDir.list();
@@ -465,6 +437,8 @@ public class LoadingScreen implements Screen {
                             for (int i = 0;i<noms_mapes.size();i++) {
                                 System.out.println("mapa: " + noms_mapes.get(i));
                             }
+
+                            peticion_getAssets1 = true;
                         }
 
 
@@ -476,6 +450,7 @@ public class LoadingScreen implements Screen {
                         //background = new TextureRegion(imgFondo);
 
                         else {
+
                             FileHandle mapasDir = Gdx.files.local("skinsMod");
                             if (mapasDir.exists() && mapasDir.isDirectory()) {
                                 FileHandle[] subdirs = mapasDir.list();
@@ -511,6 +486,9 @@ public class LoadingScreen implements Screen {
                                     }
                                 }
                             }
+
+                            peticion_getAssets2 = true;
+                            System.out.println("peticion_getAssets true");
                         }
 
 
@@ -548,6 +526,40 @@ public class LoadingScreen implements Screen {
     public void render(float delta) {
         stage.draw();
         stage.act(delta);
+
+        System.out.println(peticion_getAssets1);
+
+        if (peticion_getAssets1 && peticion_getAssets2 && peticion_getInventari) {
+            if (preferences.getBoolean("logged")) {
+                System.out.println("hola");
+                Gdx.app.postRunnable(() -> {
+                    game.setScreen(new PantallaPrincipal(game, true));
+                });
+            } else {
+                Gdx.app.postRunnable(() -> {
+                    game.setScreen(new Login(game));
+                });
+            }
+        }
+
+        if(inventariJugador != null && skins != null && peticion_getAssets1) {
+            System.out.println("peticion_getAssets1: " + peticion_getAssets1);
+            System.out.println("peticion_getAssets2: " + peticion_getAssets2);
+            System.out.println("peticion_getInventari: " + peticion_getInventari);
+            JSONObject resultat = new JSONObject();
+            int index = 0;
+            for (int i = 0; i < skins.length(); i++) {
+                JSONObject a = skins.getJSONObject(i);
+                if (idEquipat.equals(a.getString("_id"))) {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("directory",a.getString("path_directori_skin"));
+
+                    fetchAndSetAssets(jsonObject.toString());
+                }
+            }
+        }
+
+
 
 
     }
