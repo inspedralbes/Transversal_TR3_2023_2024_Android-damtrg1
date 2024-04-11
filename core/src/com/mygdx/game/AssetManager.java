@@ -140,7 +140,7 @@ public class AssetManager {
 
 
 
-
+/*
         // Create an HTTP request
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
@@ -261,6 +261,8 @@ public class AssetManager {
             }
         }
 
+ */
+
         imgFondo = new Texture(Gdx.files.internal("fondo2.jpg"));
         imgFondo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
 
@@ -285,7 +287,7 @@ public class AssetManager {
         tiledMazmorra = new TmxMapLoader().load("mapas/mapes/mapaMasmorra/mapaMazmorra.tmx");
         tiledCastillo = new TmxMapLoader().load("mapas/mapes/mapaCastell/mapaCastell.tmx");
 
-        /*
+
         spritesheet_joc_dreta = new Texture(Gdx.files.internal("swat_sprite_dreta.png"));
         spritesheet_joc_dreta.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         spritesheet_joc_avall = new Texture(Gdx.files.internal("swat_sprite_avall.png"));
@@ -309,7 +311,6 @@ public class AssetManager {
         // Crear una nueva Sprite con la región de textura
         jugadorSprite_amunt = new Sprite(jugador_amunt);
 
-         */
 
         FileHandle fontFile = Gdx.files.internal("default.fnt"); // Assuming your font is in the "fonts" folder
         font = new BitmapFont(fontFile);

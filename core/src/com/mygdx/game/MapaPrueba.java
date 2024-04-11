@@ -537,7 +537,7 @@ public class MapaPrueba implements Screen {
                 mSocket.emit("posicioCorrecio", jsonEnviar);
                 System.out.println("CORRECIO ENVIADA");
             }
-        }, 0, 2000);
+        }, 0, 10);
     }
 
     @Override
