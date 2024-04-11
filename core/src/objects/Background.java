@@ -11,11 +11,13 @@ public class Background extends Actor {
     protected float width;
     protected float height;
     protected boolean leftOfScreen;
+    protected boolean win;
 
-    public Background(float x, float y, float width, float height) {
-        position = new Vector2(x,y);
+    public Background(float x, float y, float width, float height, boolean win) {
+        position = new Vector2(x, y);
         this.width = width;
         this.height = height;
+        this.win = win;
     }
 
     public void act(float delta) {
@@ -24,7 +26,12 @@ public class Background extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        batch.draw(AssetManager.background, position.x, position.y, width, height);
+        if (!win) {
+            batch.draw(AssetManager.background, position.x, position.y, width, height);
+        } else {
+            batch.draw(AssetManager.backWin, position.x, position.y, width, height);
+        }
+
     }
 
     public float getTailX() {

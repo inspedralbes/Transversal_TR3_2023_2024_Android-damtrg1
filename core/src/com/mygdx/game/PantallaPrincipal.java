@@ -181,7 +181,7 @@ public class PantallaPrincipal implements Screen {
 
 
                 //CONFIGURACION DEL FONDO
-        bg = new Background(0, 0, Gdx.graphics.getWidth(), Settings.GAME_HEIGHT);
+        bg = new Background(0, 0, Gdx.graphics.getWidth(), Settings.GAME_HEIGHT, false);
 
         //AÑADIMOS EL FONDO AL STAGE
         stage.addActor(bg);
@@ -245,6 +245,7 @@ public class PantallaPrincipal implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new ScreenSettings(game));
+                //game.setScreen(new PantallaWIN(game));
             }
         });
 

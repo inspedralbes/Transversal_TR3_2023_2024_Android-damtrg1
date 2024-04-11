@@ -188,7 +188,7 @@ public class CreacionPartidaScreen implements Screen {
         stage = new Stage(viewport);
 
         //CONFIGURACION DEL FONDO
-        bg = new Background(0, 0, Gdx.graphics.getWidth(), Settings.GAME_HEIGHT);
+        bg = new Background(0, 0, Gdx.graphics.getWidth(), Settings.GAME_HEIGHT, false);
 
         //AÑADIMOS EL FONDO AL STAGE
         stage.addActor(bg);
