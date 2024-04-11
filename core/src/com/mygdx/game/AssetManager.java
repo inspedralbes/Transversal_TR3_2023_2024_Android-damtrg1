@@ -34,9 +34,9 @@ public class AssetManager {
 
     public static Preferences preferences;
 
-    public static Texture imgFondo, imgCuadrado, mapaCastillo, mapaMazmorra, persona;
+    public static Texture imgFondo, imgCuadrado, mapaCastillo, mapaMazmorra, persona, imgWin;
 
-    public static TextureRegion background;
+    public static TextureRegion background, backWin;
 
     public static Color grisTransparente;
 
@@ -82,7 +82,12 @@ public class AssetManager {
         imgFondo = new Texture(Gdx.files.internal("fondo2.jpg"));
         imgFondo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
 
+        imgWin = new Texture(Gdx.files.internal("win.jpg"));
+        imgWin.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
+
         background = new TextureRegion(imgFondo);
+
+        backWin = new TextureRegion(imgWin);
 
         //MAPAS
         //mapaCastillo = new Texture(Gdx.files.internal("mapas/mapes/IMGmapas/mapacastillo.jpg"));

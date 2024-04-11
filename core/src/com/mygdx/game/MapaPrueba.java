@@ -84,6 +84,10 @@ public class MapaPrueba implements Screen {
     public static ArrayList<Jugador> array_jugadors_equip1;
     public static ArrayList<Jugador> array_jugadors_equip2;
 
+
+    public static ArrayList<Jugador> array_jugadors_equip1_copia;
+    public static ArrayList<Jugador> array_jugadors_equip2_copia;
+
     TextButton textButtonEquip1;
     TextButton textButtonEquip2;
 
@@ -126,6 +130,9 @@ public class MapaPrueba implements Screen {
         array_jugadors_equip1 = new ArrayList<Jugador>();
         array_jugadors_equip2 = new ArrayList<Jugador>();
 
+        array_jugadors_equip1_copia = new ArrayList<Jugador>();
+        array_jugadors_equip2_copia = new ArrayList<Jugador>();
+
         JsonLoader jsonLoader = new JsonLoader();
         JSONObject jsonPosicions = jsonLoader.loadJson("posicions.json");
         jsonPosicions = jsonPosicions.getJSONObject("Mazmorra");
@@ -133,7 +140,7 @@ public class MapaPrueba implements Screen {
         for (String usuari : sala.getUsuarisAtacantes()) {
             if (!usuari.equals("NO PLAYER")) {
                 JSONObject posicions = jsonPosicions.getJSONObject("pos" + (contador + 1));
-                System.out.println("ATA: "+ posicions);
+                System.out.println("ATA: " + posicions);
                 Jugador player;
                 if (sala.getNombreMapa().equals("castillo")) {
                     player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari, AssetManager.tiledCastillo);
@@ -145,6 +152,7 @@ public class MapaPrueba implements Screen {
 
                 //PROVA, AFEGIR UN JUGADOR A EQUIP1 Y L'ALTRE A EQUIP2
                 array_jugadors_equip1.add(player);
+                array_jugadors_equip1_copia.add(player);
 
                 //BARRA DE VIDA
                 ProgressBar.ProgressBarStyle progressBarStyle = skin_vida.get("default-horizontal", ProgressBar.ProgressBarStyle.class);
@@ -167,7 +175,7 @@ public class MapaPrueba implements Screen {
         for (String usuari : sala.getUsuarisDefensores()) {
             if (!usuari.equals("NO PLAYER")) {
                 JSONObject posicions = jsonPosicions.getJSONObject("pos" + (contador + 6));
-                System.out.println("DEF: "+ posicions);
+                System.out.println("DEF: " + posicions);
                 Jugador player;
                 if (sala.getNombreMapa().equals("castillo")) {
                     player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari, AssetManager.tiledCastillo);
@@ -180,6 +188,7 @@ public class MapaPrueba implements Screen {
 
                 //PROVA, AFEGIR UN JUGADOR A EQUIP1 Y L'ALTRE A EQUIP2
                 array_jugadors_equip2.add(player);
+                array_jugadors_equip2_copia.add(player);
 
                 //BARRA DE VIDA
                 ProgressBar.ProgressBarStyle progressBarStyle = skin_vida.get("default-horizontal", ProgressBar.ProgressBarStyle.class);
@@ -290,7 +299,6 @@ public class MapaPrueba implements Screen {
                 }
 
 
-
             }
         });
 
@@ -359,8 +367,6 @@ public class MapaPrueba implements Screen {
         stage.addActor(textButtonEquip2);
 
 
-
-
         //Label.LabelStyle labelStyle = skin_vida.get("default", Label.LabelStyle.class);
         Label.LabelStyle labelStyle1 = new Label.LabelStyle();
         Label.LabelStyle labelStyle2 = new Label.LabelStyle();
@@ -394,8 +400,6 @@ public class MapaPrueba implements Screen {
                     stage.addActor(labelsNoms.get(i));
                 }
             }
-
-
 
 
         }
@@ -497,7 +501,7 @@ public class MapaPrueba implements Screen {
                             int index = -1; // Initialize index to -1 (not found)
                             for (int i = 0; i < jugadors.size(); i++) {
                                 Jugador jugador = jugadors.get(i);
-                                System.out.println("hola");
+                                //System.out.println("hola");
                                 if (jugador.getNomUsuari().equals(usernameToFind)) {
                                     // Found the Jugador with the specified username
                                     index = i;
@@ -506,7 +510,7 @@ public class MapaPrueba implements Screen {
                             }
                             float x = Float.valueOf(data.getString("x"));
                             float y = Float.valueOf(data.getString("y"));
-                            System.out.println("CORRECIO DE " + jugadors.get(index).getNomUsuari() + "X / Y: " + x + "/" + y);
+                            //System.out.println("CORRECIO DE " + jugadors.get(index).getNomUsuari() + "X / Y: " + x + "/" + y);
                             jugadors.get(index).setPosition(x, y);
                         }
                     }
@@ -516,6 +520,16 @@ public class MapaPrueba implements Screen {
             }
         });
 
+
+        System.out.println("COPIA 1: " + array_jugadors_equip1_copia.size());
+        System.out.println("COPIA 2: " + array_jugadors_equip2_copia.size());
+
+        for (Jugador a : array_jugadors_equip1_copia) {
+            System.out.println("EQUIPO COPIA 1: " + a.getNomUsuari());
+        }
+        for (Jugador b : array_jugadors_equip2_copia) {
+            System.out.println("EQUIPO COPIA 2: " + b.getNomUsuari());
+        }
 
 
 
@@ -535,7 +549,7 @@ public class MapaPrueba implements Screen {
                 jsonEnviar.put("x", String.valueOf(jugadors.get(numJugador).getPosition().x));
                 jsonEnviar.put("y", String.valueOf(jugadors.get(numJugador).getPosition().y));
                 mSocket.emit("posicioCorrecio", jsonEnviar);
-                System.out.println("CORRECIO ENVIADA");
+                //System.out.println("CORRECIO ENVIADA");
             }
         }, 0, 10);
     }
@@ -578,15 +592,13 @@ public class MapaPrueba implements Screen {
 
         touchpad.setPosition(touchpadX, touchpadY);
 
-        textButtonEquip1.setPosition(camera.position.x - (float) 0.25*Gdx.graphics.getWidth(), camera.position.y + (float) 0.20*Gdx.graphics.getHeight());
+        textButtonEquip1.setPosition(camera.position.x - (float) 0.25 * Gdx.graphics.getWidth(), camera.position.y + (float) 0.20 * Gdx.graphics.getHeight());
         textButtonEquip1.setText("EQUIP 1: " + array_jugadors_equip1.size() + " JUGADOR(S) VIUS");
         //System.out.println("equip 1:" + array_jugadors_equip1.size());
 
-        textButtonEquip2.setPosition(camera.position.x + (float) 0.05*Gdx.graphics.getWidth(), camera.position.y + (float) 0.20*Gdx.graphics.getHeight());
+        textButtonEquip2.setPosition(camera.position.x + (float) 0.05 * Gdx.graphics.getWidth(), camera.position.y + (float) 0.20 * Gdx.graphics.getHeight());
         textButtonEquip2.setText("EQUIP 2: " + array_jugadors_equip2.size() + " JUGADOR(S) VIUS");
         //System.out.println("equip 2:" + array_jugadors_equip2.size());
-
-
 
 
         // Actualizar la posición del ProgressBar para que esté encima del jugador
@@ -619,6 +631,24 @@ public class MapaPrueba implements Screen {
 
         // Actualizar la posición del botón de disparo
         disparo.setPosition(buttonX, buttonY);
+
+
+        if (array_jugadors_equip1.isEmpty() || array_jugadors_equip2.isEmpty()) {
+            ArrayList<Jugador> ganadores;
+            ArrayList<Jugador> perdedores;
+
+            if (array_jugadors_equip1.isEmpty()) {
+                ganadores = array_jugadors_equip2_copia;
+                perdedores = array_jugadors_equip1_copia;
+            } else {
+                ganadores = array_jugadors_equip1_copia;
+                perdedores = array_jugadors_equip2_copia;
+            }
+
+            Gdx.app.postRunnable(() -> {
+                game.setScreen(new PantallaWIN(game, ganadores, perdedores));
+            });
+        }
 
 
         // Dibujar el mapa

@@ -88,7 +88,7 @@ public class ShopScreen implements Screen {
         stage = new Stage(viewport);
 
         //CONFIGURACION DEL FONDO
-        bg = new Background(0, 0, Gdx.graphics.getWidth(), Settings.GAME_HEIGHT);
+        bg = new Background(0, 0, Gdx.graphics.getWidth(), Settings.GAME_HEIGHT, false);
 
         //AÑADIMOS EL FONDO AL STAGE
         stage.addActor(bg);
@@ -359,8 +359,15 @@ public class ShopScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 JSONObject item = (JSONObject) skins.get(currentIndex);
-                comprarItem(item);
-                popupWindow.remove(); // Remove the window when the close button is clicked}
+                int valorProducte = item.getInt("valorMonedas");
+                int totalActualMonedes = Integer.parseInt(preferences.getString("monedas")) - valorProducte;
+
+                if (totalActualMonedes < 0) {
+                    showInsufficientFundsPopup();
+                } else {
+                    comprarItem(item);
+                    popupWindow.remove(); // Remove the window when the close button is clicked
+                }
             }});
         popupWindow.add(missatge).expandX().fillX().pad(10).colspan(2).row();
         popupWindow.add(acceptButton).pad(10);
@@ -398,12 +405,45 @@ public class ShopScreen implements Screen {
         // Crear una instancia de Label con el texto "Username" y el estilo definido
 
 
-
-
-
-
-
     }
+
+    private void showInsufficientFundsPopup() {
+        // Cerrar el pop-up de confirmación si está abierto
+        if (popupWindow != null && popupWindow.hasParent()) {
+            popupWindow.remove();
+        }
+
+        // Crear un nuevo pop-up de fondos insuficientes
+        popupWindow = new Window("Insufficient Funds", skin);
+        popupWindow.setMovable(false);
+        popupWindow.setModal(true);
+        popupWindow.setSize(300, 200);
+        popupWindow.setPosition((Settings.GAME_WIDTH - popupWindow.getWidth()) / 2, (Settings.GAME_HEIGHT - popupWindow.getHeight()) / 2);
+
+        Label.LabelStyle labelStyle = skin.get("title", Label.LabelStyle.class);
+        Label label = new Label("No tens monedes suficients", labelStyle);
+        label.setAlignment(Align.center);
+        label.setWrap(true);
+        label.setSize(popupWindow.getWidth() - 20, popupWindow.getHeight() - 20);
+        label.setPosition(10, (popupWindow.getHeight() - label.getHeight()) / 2);
+
+        TextButton.TextButtonStyle textButtonStyle = skin.get("round", TextButton.TextButtonStyle.class);
+        TextButton closeButton = new TextButton("Close", textButtonStyle);
+        closeButton.setSize(100, 50);
+        closeButton.setPosition((popupWindow.getWidth() - closeButton.getWidth()) / 2, 20);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                popupWindow.remove();
+            }
+        });
+
+        popupWindow.addActor(label);
+        popupWindow.addActor(closeButton);
+
+        stage.addActor(popupWindow);
+    }
+
 
     @Override
     public void show() {
@@ -522,6 +562,7 @@ public class ShopScreen implements Screen {
         int valorProducte = item.getInt("valorMonedas");
 
         int totalActualMonedes = Integer.parseInt(monedes) - item.getInt("valorMonedas");
+
         labelNumMonedas.setText(totalActualMonedes);
         //Gaurdar en prefs
         preferences.putString("monedas", String.valueOf(totalActualMonedes));
