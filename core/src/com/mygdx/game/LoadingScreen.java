@@ -67,9 +67,10 @@ public class LoadingScreen implements Screen {
 
     Preferences preferences;
 
-    static boolean peticion_getAssets1 = false;
+    static boolean peticion_getMapas = false;
+    static boolean peticion_getSkins = false;
 
-    static boolean peticion_getAssets2 = false;
+    static boolean peticion_getSkin_guardada = false;
 
     static boolean peticion_getInventari = false;
 
@@ -83,11 +84,15 @@ public class LoadingScreen implements Screen {
 
     public static ArrayList<Drawable> imatgesBaixades = new ArrayList<>(10);
 
+    private boolean inventari_canviat;
 
-    public LoadingScreen(Pixel_R6 game) {
+
+    public LoadingScreen(Pixel_R6 game, boolean inventari_canviat) {
         this.game = game;
 
         //AssetManager.load();
+
+        this.inventari_canviat = inventari_canviat;
 
         preferences = Gdx.app.getPreferences("Pref");
 
@@ -225,7 +230,7 @@ public class LoadingScreen implements Screen {
         noms_skins = new ArrayList<String>();
 
         Net.HttpRequest httpRequest_assets = new Net.HttpRequest(Net.HttpMethods.GET);
-        String url_assets = "http://r6pixel.duckdns.org:3168/getAssets";
+        String url_assets = "http://192.168.0.14:3168/getAssets";
         httpRequest_assets.setUrl(url_assets);
         httpRequest_assets.setHeader("Content-Type", "application/json");
 
@@ -260,103 +265,6 @@ public class LoadingScreen implements Screen {
 
 
 
-        // Create an HTTP request
-        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
-
-        // Construct the URL with query parameters
-        String url = "http://r6pixel.duckdns.org:3168/getAssets";
-        httpRequest.setUrl(url);
-        httpRequest.setHeader("Content-Type", "application/json");
-
-        // Send the HTTP request
-        Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
-            @Override
-            public void handleHttpResponse(Net.HttpResponse httpResponse) {
-                HttpStatus status = httpResponse.getStatus();
-                if (status.getStatusCode() == 200) {
-                    // If the request was successful (status code 200)
-                    String responseData = httpResponse.getResultAsString();
-                    // Handle the response data here
-                    JSONObject json = new JSONObject(responseData);
-                    skins = json.getJSONArray("skins");
-                    System.out.println("skins: " + skins);
-                } else {
-                    // If the request failed, handle the error
-                    System.out.println("HTTP request failed with status code: " + status.getStatusCode());
-                }
-            }
-
-            @Override
-            public void failed(Throwable t) {
-                // Handle the case where the HTTP request failed
-                t.printStackTrace();
-            }
-
-            @Override
-            public void cancelled() {
-                // Handle the case where the HTTP request was cancelled
-            }
-        });
-
-
-
-
-        // Create an HTTP request
-        Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
-
-        // Construct the URL with query parameters
-        String url2 = "http://r6pixel.duckdns.org:3168/getInventari/" + preferences.getString("username");
-        httpRequest2.setUrl(url2);
-        httpRequest2.setHeader("Content-Type", "application/json");
-
-        // Send the HTTP request
-        Gdx.net.sendHttpRequest(httpRequest2, new Net.HttpResponseListener() {
-            @Override
-            public void handleHttpResponse(Net.HttpResponse httpResponse) {
-                HttpStatus status = httpResponse.getStatus();
-                if (status.getStatusCode() == 200) {
-                    // If the request was successful (status code 200)
-                    String responseData = httpResponse.getResultAsString();
-                    String jsonArrayString = responseData.substring(1, responseData.length() - 1);
-                    // Handle the response data here
-                    System.out.println(jsonArrayString);
-                    JSONObject json = new JSONObject(jsonArrayString);
-//                    System.out.println(json);
-                    idUser = json.getString("_id");
-                    idEquipat = json.getString("activo");
-                    JSONArray arrayResultat = (JSONArray) json.get("skins");
-                    // Convert JSONArray to String[]
-                    inventariJugador = new ArrayList<>();
-                    for (int i = 0; i < arrayResultat.length(); i++) {
-                        inventariJugador.add(arrayResultat.getString(i));
-                    }
-                    System.out.println("inventariJugador:" + inventariJugador);
-                    peticion_getInventari = true;
-                } else {
-                    // If the request failed, handle the error
-                    System.out.println("HTTP request failed with status code: " + status.getStatusCode());
-                }
-            }
-
-            @Override
-            public void failed(Throwable t) {
-                // Handle the case where the HTTP request failed
-                t.printStackTrace();
-            }
-
-            @Override
-            public void cancelled() {
-                // Handle the case where the HTTP request was cancelled
-            }
-        });
-
-
-
-
-
-
-
-
     }
 
     public static void fetchAndSetAssets(String bodyData) {
@@ -365,7 +273,7 @@ public class LoadingScreen implements Screen {
 
         // Create a POST request to fetch the image
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-        httpRequest.setUrl("http://r6pixel.duckdns.org:3168/getAssets_post/");
+        httpRequest.setUrl("http://192.168.0.14:3168/getAssets_post/");
         httpRequest.setHeader("Content-Type", "application/json");
 
         // Set the body data if needed
@@ -432,13 +340,14 @@ public class LoadingScreen implements Screen {
                                         }
                                     }
                                 }
+                                peticion_getMapas = true;
                             }
                             System.out.println("Archivos descomprimidos correctamente en la carpeta 'assets'");
                             for (int i = 0;i<noms_mapes.size();i++) {
                                 System.out.println("mapa: " + noms_mapes.get(i));
                             }
 
-                            peticion_getAssets1 = true;
+
                         }
 
 
@@ -450,15 +359,15 @@ public class LoadingScreen implements Screen {
                         //background = new TextureRegion(imgFondo);
 
                         else {
-
+                            System.out.println("buscando las skins");
                             FileHandle mapasDir = Gdx.files.local("skinsMod");
                             if (mapasDir.exists() && mapasDir.isDirectory()) {
                                 FileHandle[] subdirs = mapasDir.list();
                                 for (FileHandle subdir : subdirs) {
-                                    if (subdir.isDirectory()) {
+                                    System.out.println(subdir.name());
                                         noms_skins.add(subdir.name());
 
-
+                                        System.out.println(subdir.name());
 
                                         spritesheet_joc_dreta = new Texture(Gdx.files.local("skinsMod/swat_sprite_dreta.png"));
                                         spritesheet_joc_dreta.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
@@ -482,13 +391,16 @@ public class LoadingScreen implements Screen {
                                         jugador_amunt = new TextureRegion(spritesheet_joc_amunt, 7, 484, 26, 38);
                                         // Crear una nueva Sprite con la región de textura
                                         AssetManager.jugadorSprite_amunt = new Sprite(jugador_amunt);
-
+                                        peticion_getSkin_guardada = true;
+                                        System.out.println("peticion_getAssets true");
                                     }
-                                }
+
+
+
                             }
 
-                            peticion_getAssets2 = true;
-                            System.out.println("peticion_getAssets true");
+
+
                         }
 
 
@@ -527,25 +439,104 @@ public class LoadingScreen implements Screen {
         stage.draw();
         stage.act(delta);
 
-        System.out.println(peticion_getAssets1);
 
-        if (peticion_getAssets1 && peticion_getAssets2 && peticion_getInventari) {
-            if (preferences.getBoolean("logged")) {
-                System.out.println("hola");
-                Gdx.app.postRunnable(() -> {
-                    game.setScreen(new PantallaPrincipal(game, true));
-                });
-            } else {
-                Gdx.app.postRunnable(() -> {
-                    game.setScreen(new Login(game));
-                });
-            }
+
+        if (peticion_getMapas) {
+            peticion_getMapas = false;
+            // Create an HTTP request
+            Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
+
+            // Construct the URL with query parameters
+            String url = "http://192.168.0.14:3168/getAssets";
+            httpRequest.setUrl(url);
+            httpRequest.setHeader("Content-Type", "application/json");
+
+            // Send the HTTP request
+            Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
+                @Override
+                public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                    HttpStatus status = httpResponse.getStatus();
+                    if (status.getStatusCode() == 200) {
+                        // If the request was successful (status code 200)
+                        String responseData = httpResponse.getResultAsString();
+                        // Handle the response data here
+                        JSONObject json = new JSONObject(responseData);
+                        skins = json.getJSONArray("skins");
+                        System.out.println("skins: " + skins);
+                        peticion_getSkins = true;
+                    } else {
+                        // If the request failed, handle the error
+                        System.out.println("HTTP request failed with status code: " + status.getStatusCode());
+                    }
+                }
+
+                @Override
+                public void failed(Throwable t) {
+                    // Handle the case where the HTTP request failed
+                    t.printStackTrace();
+                }
+
+                @Override
+                public void cancelled() {
+                    // Handle the case where the HTTP request was cancelled
+                }
+            });
         }
 
-        if(inventariJugador != null && skins != null && peticion_getAssets1) {
-            System.out.println("peticion_getAssets1: " + peticion_getAssets1);
-            System.out.println("peticion_getAssets2: " + peticion_getAssets2);
-            System.out.println("peticion_getInventari: " + peticion_getInventari);
+        if (peticion_getSkins) {
+            peticion_getSkins = false;
+            // Create an HTTP request
+            Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
+
+            // Construct the URL with query parameters
+            String url2 = "http://192.168.0.14:3168/getInventari/" + preferences.getString("username");
+            httpRequest2.setUrl(url2);
+            httpRequest2.setHeader("Content-Type", "application/json");
+
+            // Send the HTTP request
+            Gdx.net.sendHttpRequest(httpRequest2, new Net.HttpResponseListener() {
+                @Override
+                public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                    HttpStatus status = httpResponse.getStatus();
+                    if (status.getStatusCode() == 200) {
+                        // If the request was successful (status code 200)
+                        String responseData = httpResponse.getResultAsString();
+                        String jsonArrayString = responseData.substring(1, responseData.length() - 1);
+                        // Handle the response data here
+                        System.out.println(jsonArrayString);
+                        JSONObject json = new JSONObject(jsonArrayString);
+//                    System.out.println(json);
+                        idUser = json.getString("_id");
+                        idEquipat = json.getString("activo");
+                        JSONArray arrayResultat = (JSONArray) json.get("skins");
+                        // Convert JSONArray to String[]
+                        inventariJugador = new ArrayList<>();
+                        for (int i = 0; i < arrayResultat.length(); i++) {
+                            inventariJugador.add(String.valueOf(arrayResultat.get(i)));
+                        }
+                        System.out.println("inventariJugador:" + inventariJugador);
+                        peticion_getInventari = true;
+                    } else {
+                        // If the request failed, handle the error
+                        System.out.println("HTTP request failed with status code: " + status.getStatusCode());
+                    }
+                }
+
+                @Override
+                public void failed(Throwable t) {
+                    // Handle the case where the HTTP request failed
+                    t.printStackTrace();
+                }
+
+                @Override
+                public void cancelled() {
+                    // Handle the case where the HTTP request was cancelled
+                }
+            });
+        }
+
+        if (peticion_getInventari) {
+            peticion_getInventari = false;
             JSONObject resultat = new JSONObject();
             int index = 0;
             for (int i = 0; i < skins.length(); i++) {
@@ -555,8 +546,34 @@ public class LoadingScreen implements Screen {
                     jsonObject.put("directory",a.getString("path_directori_skin"));
 
                     fetchAndSetAssets(jsonObject.toString());
+                    break;
                 }
             }
+        }
+
+
+
+        if (peticion_getSkin_guardada) {
+            peticion_getSkin_guardada = false;
+
+            if (this.inventari_canviat) {
+                Gdx.app.postRunnable(() -> {
+                    game.setScreen(new InventariScreen(game));
+                });
+            }
+
+            else {
+                if (preferences.getBoolean("logged")) {
+                    Gdx.app.postRunnable(() -> {
+                        game.setScreen(new PantallaPrincipal(game, true));
+                    });
+                } else {
+                    Gdx.app.postRunnable(() -> {
+                        game.setScreen(new Login(game));
+                    });
+                }
+            }
+
         }
 
 

@@ -158,6 +158,6 @@ public class AssetManager {
 
     public static void dispose() {
         imgFondo.dispose();
-        music.dispose();
+        //music.dispose();
     }
 }

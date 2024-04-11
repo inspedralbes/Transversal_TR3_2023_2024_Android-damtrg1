@@ -150,7 +150,7 @@ public class Login implements Screen {
 
                     // Crear una solicitud HTTP POST
                     Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-                    httpRequest.setUrl("http://r6pixel.duckdns.org:3168/login"); // URL de tu servidor
+                    httpRequest.setUrl("http://192.168.0.14:3168/login"); // URL de tu servidor
                     httpRequest.setHeader("Content-Type", "application/json");
                     String data = json.toString();
                     httpRequest.setContent(data);
@@ -186,7 +186,7 @@ public class Login implements Screen {
                                     game.setLoggedIn(true, nombreUsuario);
                                     // Redirige a la pantalla principal
                                     Gdx.app.postRunnable(() -> {
-                                        game.setScreen(new PantallaPrincipal(game, true));
+                                        game.setScreen(new LoadingScreen(game, true));
                                     });
 
                                 } else {

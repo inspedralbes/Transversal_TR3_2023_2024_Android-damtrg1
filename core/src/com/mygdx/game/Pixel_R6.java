@@ -45,7 +45,7 @@ public class Pixel_R6 extends Game {
         if (preferences.getBoolean("logged")) {
 
 				//setScreen(new PantallaPrincipal(this, true));
-			setScreen(new LoadingScreen(this));
+			setScreen(new LoadingScreen(this, false));
         } else {
             setScreen(new Login(this)); // Si no está logueado, va a la pantalla de login
         }

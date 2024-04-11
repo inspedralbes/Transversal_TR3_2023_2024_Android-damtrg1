@@ -186,7 +186,7 @@ public class InventariScreen implements Screen {
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url = "http://r6pixel.duckdns.org:3168/getAssets";
+        String url = "http://192.168.0.14:3168/getAssets";
         httpRequest.setUrl(url);
         httpRequest.setHeader("Content-Type", "application/json");
 
@@ -231,7 +231,7 @@ public class InventariScreen implements Screen {
         Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url2 = "http://r6pixel.duckdns.org:3168/getInventari/" + preferences.getString("username");
+        String url2 = "http://192.168.0.14:3168/getInventari/" + preferences.getString("username");
         httpRequest2.setUrl(url2);
         httpRequest2.setHeader("Content-Type", "application/json");
 
@@ -254,7 +254,7 @@ public class InventariScreen implements Screen {
                     // Convert JSONArray to String[]
                     inventariJugador = new ArrayList<>();
                     for (int i = 0; i < arrayResultat.length(); i++) {
-                        inventariJugador.add(arrayResultat.getString(i));
+                        inventariJugador.add(String.valueOf(arrayResultat.get(i)));
                     }
                 } else {
                     // If the request failed, handle the error
@@ -344,7 +344,7 @@ public class InventariScreen implements Screen {
                 Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
 
                 // Construct the URL with query parameters
-                String url = "http://r6pixel.duckdns.org:3168/activarSkin";
+                String url = "http://192.168.0.14:3168/activarSkin";
                 httpRequest.setUrl(url);
                 httpRequest.setHeader("Content-Type", "application/json");
                 JSONObject json = new JSONObject();
@@ -374,6 +374,11 @@ public class InventariScreen implements Screen {
                         // Handle the case where the HTTP request was cancelled
                     }
                 });
+
+                Gdx.app.postRunnable(() -> {
+                    game.setScreen(new LoadingScreen(game, true));
+                });
+
 
             }
         });
@@ -411,7 +416,7 @@ public class InventariScreen implements Screen {
             JSONObject resultat = new JSONObject();
             int index = 0;
             for(int i = 0; i < skins.length(); i++){
-                JSONObject a = skins.getJSONObject(i);
+                JSONObject a = (JSONObject) skins.get(i);
                 if(inventariJugador.get(currentIndex).equals(a.getString("_id"))){
                     resultat = a;
                     index = i;
@@ -422,8 +427,8 @@ public class InventariScreen implements Screen {
             }else{
                 btnComprar.setText("EQUIPAR");
             }
-            labelNom.setText(resultat.getString("nombre"));
-            descripcioLabel.setText(resultat.getString("descripcion"));
+            labelNom.setText(String.valueOf(resultat.get("nombre")));
+            descripcioLabel.setText(String.valueOf(resultat.get("descripcion")));
             if(imatgesBaixades.size() > 0) {
                 imgStyle.imageUp = imatgesBaixades.get(index);
             }
@@ -458,7 +463,7 @@ public class InventariScreen implements Screen {
     public void fetchAndSetImage(String imageUrl, int num) {
         // Create a GET request to fetch the image
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-        httpRequest.setUrl("http://r6pixel.duckdns.org:3168/getImg/");
+        httpRequest.setUrl("http://192.168.0.14:3168/getImg/");
         httpRequest.setHeader("Content-Type", "application/json");
         JSONObject json = new JSONObject();
         json.put("path", imageUrl);
