@@ -3,17 +3,22 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import java.util.ArrayList;
 
 import Utils.Settings;
 import objects.Background;
+import objects.Jugador;
 
 public class PantallaWIN implements Screen {
 
@@ -32,7 +37,11 @@ public class PantallaWIN implements Screen {
     ArrayList<Label> ganadores = new ArrayList<>();
     ArrayList<Label> perdedores = new ArrayList<>();
 
-    public PantallaWIN(Pixel_R6 game) {
+    ArrayList<Label> monedasGanadores = new ArrayList<>();
+
+    ArrayList<Label> monedasPerdedores = new ArrayList<>();
+
+    public PantallaWIN(Pixel_R6 game, ArrayList<Jugador> Userganadores, ArrayList<Jugador> Userperdedores) {
         this.game = game;
 
         // Creem la càmera de les dimensions del joc
@@ -50,7 +59,7 @@ public class PantallaWIN implements Screen {
         stage = new Stage(viewport);
 
         //CONFIGURACION DEL FONDO
-        bg = new Background(0, 0, Gdx.graphics.getWidth(), Settings.GAME_HEIGHT);
+        bg = new Background(0, 0, Gdx.graphics.getWidth(), Settings.GAME_HEIGHT, true);
 
         //AÑADIMOS EL FONDO AL STAGE
         stage.addActor(bg);
@@ -96,33 +105,75 @@ public class PantallaWIN implements Screen {
 
         window.setSize(1000, 600); // Establece el tamaño como desees
 
-        table = new Table();
 
         Table ganadors = new Table();
         Table perdedors = new Table();
+        Table moneWINS = new Table();
+        Table moneLose = new Table();
 
-        for (int i = 0; i <= 5; i++) {
-            Label wins = new Label("GANADORES " + i, skin_inputs);
-            ganadores.add(wins);
-            ganadors.add(wins);
+
+        for (int i=0; i < Userganadores.size();i++){
+            System.out.println("Ganar WIN: "+ Userganadores.get(i));
         }
 
-        for (int i = 0; i <= 5; i++) {
-            Label perduts = new Label("PERDEDORES " + i, skin_inputs);
+        for (int i=0; i < Userperdedores.size();i++){
+            System.out.println("Perder WIN: "+ Userperdedores.get(i));
+        }
+
+        for (int i = 0; i < Userganadores.size(); i++) {
+            Label wins = new Label(Userganadores.get(i).toString(), skin_inputs);
+            Label monWin = new Label("50 Coins", skin_inputs);
+            monedasGanadores.add(monWin);
+            ganadores.add(wins);
+            moneWINS.add(monWin).pad(40);
+            ganadors.add(wins).pad(20);
+        }
+
+        for (int i = 0; i < Userperdedores.size(); i++) {
+            Label perduts = new Label(Userperdedores.get(i).toString(), skin_inputs);
+            Label monLose = new Label("10 Coins", skin_inputs);
+            monedasPerdedores.add(monLose);
             perdedores.add(perduts);
-            perdedors.add(perduts);
+            moneLose.add(monLose).pad(40);
+            perdedors.add(perduts).pad(20);
         }
 
         Label tituloGanador = new Label("GANADORES", skin_inputs);
         Label tituloPerdedores = new Label("PERDEDORES", skin_inputs);
 
 
+        //GANADORES
         window.add(tituloGanador).row();
+        window.add(moneWINS).pad(20).row();
         window.add(ganadors).row();
-        window.add(tituloPerdedores).row();
-        window.add(perdedors);
+
+        //PERDEDORES
+        window.add(tituloPerdedores).pad(20).row();
+        window.add(moneLose).row();
+        window.add(perdedors).pad(20);
 
         stage.addActor(window);
+
+        TextButton.TextButtonStyle textButtonStyle = skin_inputs.get("round", TextButton.TextButtonStyle.class);
+
+        TextButton btn_volver = new TextButton("VOLVER", textButtonStyle);
+
+        btn_volver.setSize(200, 70);
+
+        btn_volver.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.postRunnable(()->{
+                    game.setScreen(new PantallaPrincipal(game, false));
+                });
+            }
+        });
+
+        btn_volver.setPosition(windowX + 100, windowY - 100);
+
+        stage.addActor(btn_volver);
+
+        Gdx.input.setInputProcessor(stage);
 
     }
 
