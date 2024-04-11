@@ -283,7 +283,7 @@ public class RegisterScreen implements Screen {
 
                     // Crear una solicitud HTTP POST
                     Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-                    httpRequest.setUrl("http://192.168.205.67:3168/register"); // URL de tu servidor
+                    httpRequest.setUrl("http://r6pixel.duckdns.org:3168/register"); // URL de tu servidor
                     httpRequest.setHeader("Content-Type", "application/json");
                     String data = json.toString();
                     httpRequest.setContent(data);
