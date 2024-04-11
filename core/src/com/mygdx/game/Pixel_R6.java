@@ -51,10 +51,11 @@ public class Pixel_R6 extends Game {
 
 		Gdx.graphics.setResizable(false);  // Deshabilitar la capacidad de redimensionar
 
+		/*
 		if(!AssetManager.music.isPlaying()){
 			AssetManager.music.play();
 		}
-
+		*/
 	}
 
 	// Cridem per descartar els recursos carregats.
