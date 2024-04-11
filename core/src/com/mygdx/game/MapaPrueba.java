@@ -98,10 +98,10 @@ public class MapaPrueba implements Screen {
 
         AssetManager.load();
 
-        AssetManager.music.stop();
+        //AssetManager.music.stop();
 
         try {
-            mSocket = IO.socket("http://r6pixel.duckdns.org:3169");
+            mSocket = IO.socket("http://r6pixel.duckdns.org:3168");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

@@ -68,7 +68,7 @@ public class InventariScreen implements Screen {
     public InventariScreen(Pixel_R6 game) {
         this.game = game;
 
-        AssetManager.load();
+        //AssetManager.load();
         preferences = Gdx.app.getPreferences("Pref");
 
         // Creem la càmera de les dimensions del joc
@@ -186,7 +186,7 @@ public class InventariScreen implements Screen {
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url = "http://r6pixel.duckdns.org:3169/getAssets";
+        String url = "http://r6pixel.duckdns.org:3168/getAssets";
         httpRequest.setUrl(url);
         httpRequest.setHeader("Content-Type", "application/json");
 
@@ -231,7 +231,7 @@ public class InventariScreen implements Screen {
         Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url2 = "http://r6pixel.duckdns.org:3169/getInventari/" + preferences.getString("username");
+        String url2 = "http://r6pixel.duckdns.org:3168/getInventari/" + preferences.getString("username");
         httpRequest2.setUrl(url2);
         httpRequest2.setHeader("Content-Type", "application/json");
 
@@ -340,10 +340,11 @@ public class InventariScreen implements Screen {
                 idEquipat = inventariJugador.get(currentIndex);
 
 
+
                 Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
 
                 // Construct the URL with query parameters
-                String url = "http://r6pixel.duckdns.org:3169/activarSkin";
+                String url = "http://r6pixel.duckdns.org:3168/activarSkin";
                 httpRequest.setUrl(url);
                 httpRequest.setHeader("Content-Type", "application/json");
                 JSONObject json = new JSONObject();
@@ -457,7 +458,7 @@ public class InventariScreen implements Screen {
     public void fetchAndSetImage(String imageUrl, int num) {
         // Create a GET request to fetch the image
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-        httpRequest.setUrl("http://r6pixel.duckdns.org:3169/getImg/");
+        httpRequest.setUrl("http://r6pixel.duckdns.org:3168/getImg/");
         httpRequest.setHeader("Content-Type", "application/json");
         JSONObject json = new JSONObject();
         json.put("path", imageUrl);
