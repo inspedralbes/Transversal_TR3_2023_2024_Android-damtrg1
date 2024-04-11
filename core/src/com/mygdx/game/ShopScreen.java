@@ -519,6 +519,7 @@ public class ShopScreen implements Screen {
         //Canviar monedes
         String monedes = preferences.getString("monedas");
         System.out.println("MONEDES: " + monedes);
+        int valorProducte = item.getInt("valorMonedas");
 
         int totalActualMonedes = Integer.parseInt(monedes) - item.getInt("valorMonedas");
         labelNumMonedas.setText(totalActualMonedes);
@@ -535,7 +536,7 @@ public class ShopScreen implements Screen {
         JSONObject jsonEnviar = new JSONObject();
         jsonEnviar.put("user", preferences.getString("username"));
         jsonEnviar.put("idProducto", item.getString("_id"));
-        jsonEnviar.put("monedes", totalActualMonedes);
+        jsonEnviar.put("monedes", valorProducte);
         String jsonString = jsonEnviar.toString();
         httpRequest.setContent(jsonString);
 
