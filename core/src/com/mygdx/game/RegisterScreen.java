@@ -283,7 +283,7 @@ public class RegisterScreen implements Screen {
 
                     // Crear una solicitud HTTP POST
                     Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-                    httpRequest.setUrl("http://192.168.0.14:3168/register"); // URL de tu servidor
+                    httpRequest.setUrl("http://192.168.1.46:3168/register"); // URL de tu servidor
                     httpRequest.setHeader("Content-Type", "application/json");
                     String data = json.toString();
                     httpRequest.setContent(data);
@@ -371,10 +371,35 @@ public class RegisterScreen implements Screen {
                     });
 
 
-                } catch (JSONException e) {
+                }
+                catch (ParseException e) {
+                    // Si la fecha no puede ser parseada, muestra un mensaje de error
+                    Window.WindowStyle windowStyle = skin_windows.get(Window.WindowStyle.class);
+                    Window windowerror = new Window("ERROR", windowStyle);
+                    windowerror.getTitleLabel().setAlignment(Align.center);
+                    float windowErrorX = ((Gdx.graphics.getWidth() * 0.93f) - windowerror.getWidth()) / 2;
+                    float windowErrorY = (Settings.GAME_HEIGHT - windowerror.getHeight()) / 2;
+                    windowerror.setPosition(windowErrorX, windowErrorY);
+                    windowerror.setSize(200, 100);
+                    Label.LabelStyle labelStyle = skin_windows.get("error", Label.LabelStyle.class);
+                    Label errorUser = new Label("FORMATO DE FECHA INCORRECTO", labelStyle);
+                    windowerror.add(errorUser);
+                    stage.addActor(windowerror);
+                    windowerror.setName("error_window");
+                    TextButton btn_cerrar = new TextButton("CERRRAR", textButtonStyle);
+                    btn_cerrar.setPosition(windowErrorX + 40, windowErrorY - 50);
+                    stage.addActor(btn_cerrar);
+                    btn_cerrar.setName("btn_cerrar_windows");
+                    btn_cerrar.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            stage.getRoot().findActor("error_window").remove();
+                            stage.getRoot().findActor("btn_cerrar_windows").remove();
+                        }
+                    });
+                }
+                catch (JSONException e) {
                     e.printStackTrace();
-                } catch (ParseException e) {
-                    throw new RuntimeException(e);
                 }
                 //game.setScreen(new GameSceen(game));
             }

@@ -105,7 +105,7 @@ public class MapaPrueba implements Screen {
         //AssetManager.music.stop();
 
         try {
-            mSocket = IO.socket("http://192.168.0.14:3168");
+            mSocket = IO.socket("http://192.168.1.46:3168");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

@@ -189,7 +189,7 @@ public class ShopScreen implements Screen {
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url = "http://192.168.0.14:3168/getAssets";
+        String url = "http://192.168.1.46:3168/getAssets";
         httpRequest.setUrl(url);
         httpRequest.setHeader("Content-Type", "application/json");
 
@@ -236,7 +236,7 @@ public class ShopScreen implements Screen {
         Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url2 = "http://192.168.0.14:3168/getInventari/" + preferences.getString("username");
+        String url2 = "http://192.168.1.46:3168/getInventari/" + preferences.getString("username");
         httpRequest2.setUrl(url2);
         httpRequest2.setHeader("Content-Type", "application/json");
 
@@ -504,7 +504,7 @@ public class ShopScreen implements Screen {
     public void fetchAndSetImage(String imageUrl, int num) {
         // Create a GET request to fetch the image
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-        httpRequest.setUrl("http://192.168.0.14:3168/getImg/");
+        httpRequest.setUrl("http://192.168.1.46:3168/getImg/");
         httpRequest.setHeader("Content-Type", "application/json");
         JSONObject json = new JSONObject();
         json.put("path", imageUrl);
@@ -571,7 +571,7 @@ public class ShopScreen implements Screen {
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
 
         // Construct the URL with query parameters
-        String url = "http://192.168.0.14:3168/comprarProducte";
+        String url = "http://192.168.1.46:3168/comprarProducte";
         httpRequest.setUrl(url);
         httpRequest.setHeader("Content-Type", "application/json");
         JSONObject jsonEnviar = new JSONObject();
