@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -64,7 +65,10 @@ public class AssetManager {
 
     public static Music music;
 
+    public static Sound disparo;
+
     public static float volumen = 1f;
+    public static float volumenTotal = 1f;
 
     public static void load() {
 
@@ -143,17 +147,25 @@ public class AssetManager {
 
         /******************************* MUSICA *************************************/
 
-        //music = Gdx.audio.newMusic(Gdx.files.internal("musica_ambiente2.mp3"));
-        //music.setVolume(volumen);
-        //music.setLooping(true);
+        music = Gdx.audio.newMusic(Gdx.files.internal("musica_ambiente2.mp3"));
+        music.setVolume(volumen);
+        music.setLooping(true);
+
+        disparo =  Gdx.audio.newSound(Gdx.files.internal("sonido_bala.mp3"));
+        disparo.setVolume(disparo.play(), volumenTotal);
+
+
 
 
     }
 
 
-
-    
-
+    // En algún lugar donde quieras cambiar el volumen del sonido
+    public static void setVolumenTotal(float nuevoVolumen) {
+        volumenTotal = nuevoVolumen;
+        // También actualiza el volumen del sonido disparo si está actualmente reproduciéndose
+        disparo.setVolume(disparo.play(), volumenTotal);
+    }
 
 
     public static void dispose() {

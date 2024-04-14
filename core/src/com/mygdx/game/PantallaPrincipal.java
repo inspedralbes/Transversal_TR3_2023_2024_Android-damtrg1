@@ -561,7 +561,7 @@ public class PantallaPrincipal implements Screen {
 
 
 
-        Label.LabelStyle titleLabelStyle = skin_txt.get("title", Label.LabelStyle.class);
+        //Label.LabelStyle titleLabelStyle = skin_txt.get("title", Label.LabelStyle.class);
         popupWindow = new Window("NOTICIES", skin);
         popupWindow.getTitleLabel().setAlignment(Align.center);
 
