@@ -120,7 +120,7 @@ public class MapaPrueba implements Screen {
         // Carga el Skin
         skin_txt = new Skin(Gdx.files.internal("skin_txt/arcade-ui.json"));
 
-        AssetManager.load();
+        //AssetManager.load();
 
         //AssetManager.music.stop();
 

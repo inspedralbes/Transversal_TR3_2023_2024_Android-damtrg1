@@ -62,7 +62,7 @@ public class InventariScreen implements Screen {
 
     ArrayList<String> inventariJugador;
     String idUser;
-    String idEquipat;
+    String idEquipat = "";
 
     private int currentIndex = 0;
     public InventariScreen(Pixel_R6 game) {
@@ -168,9 +168,12 @@ public class InventariScreen implements Screen {
         btn_volver.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.postRunnable(() -> {
-                    game.setScreen(new PantallaPrincipal(game, false));
-                });
+
+                    Gdx.app.postRunnable(() -> {
+                        game.setScreen(new PantallaPrincipal(game, false));
+                    });
+
+
             }
         });
 
@@ -295,11 +298,15 @@ public class InventariScreen implements Screen {
         btnEsquerra.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(currentIndex == 0){
-                    currentIndex = inventariJugador.size()-1;
-                }else{
-                    currentIndex--;
+
+                if (inventariJugador.size() != 0) {
+                    if(currentIndex == 0){
+                        currentIndex = inventariJugador.size()-1;
+                    }else{
+                        currentIndex--;
+                    }
                 }
+
             }
         });
 
@@ -309,11 +316,15 @@ public class InventariScreen implements Screen {
         btnDreta.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (currentIndex == inventariJugador.size()-1){
-                    currentIndex = 0;
-                }else{
-                    currentIndex++;
+
+                if (inventariJugador.size() != 0) {
+                    if (currentIndex == inventariJugador.size()-1){
+                        currentIndex = 0;
+                    }else{
+                        currentIndex++;
+                    }
                 }
+
             }
         });
 
@@ -335,49 +346,55 @@ public class InventariScreen implements Screen {
         TextButton.TextButtonStyle btnCompraStyle = skin.get("round", TextButton.TextButtonStyle.class);
         btnComprar = new TextButton("EQUIPAR", textButtonStyle);
         btnComprar.addListener(new ClickListener() {
+
+
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                idEquipat = inventariJugador.get(currentIndex);
+
+                if (inventariJugador.size() != 0) {
+                    idEquipat = inventariJugador.get(currentIndex);
 
 
 
-                Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+                    Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
 
-                // Construct the URL with query parameters
-                String url = "http://192.168.0.14:3168/activarSkin";
-                httpRequest.setUrl(url);
-                httpRequest.setHeader("Content-Type", "application/json");
-                JSONObject json = new JSONObject();
-                json.put("id", idUser);
-                json.put("idNuevo", idEquipat);
+                    // Construct the URL with query parameters
+                    String url = "http://192.168.0.14:3168/activarSkin";
+                    httpRequest.setUrl(url);
+                    httpRequest.setHeader("Content-Type", "application/json");
+                    JSONObject json = new JSONObject();
+                    json.put("id", idUser);
+                    json.put("idNuevo", idEquipat);
 
-                httpRequest.setContent(json.toString());
+                    httpRequest.setContent(json.toString());
 
-                // Send the HTTP request
-                Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
-                    @Override
-                    public void handleHttpResponse(Net.HttpResponse httpResponse) {
-                        HttpStatus status = httpResponse.getStatus();
-                        if (status.getStatusCode() == 200) {
-                            System.out.println("EQUIPAT");
+                    // Send the HTTP request
+                    Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
+                        @Override
+                        public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                            HttpStatus status = httpResponse.getStatus();
+                            if (status.getStatusCode() == 200) {
+                                System.out.println("EQUIPAT");
+                            }
                         }
-                    }
 
-                    @Override
-                    public void failed(Throwable t) {
-                        // Handle the case where the HTTP request failed
-                        t.printStackTrace();
-                    }
+                        @Override
+                        public void failed(Throwable t) {
+                            // Handle the case where the HTTP request failed
+                            t.printStackTrace();
+                        }
 
-                    @Override
-                    public void cancelled() {
-                        // Handle the case where the HTTP request was cancelled
-                    }
-                });
+                        @Override
+                        public void cancelled() {
+                            // Handle the case where the HTTP request was cancelled
+                        }
+                    });
 
-                Gdx.app.postRunnable(() -> {
-                    game.setScreen(new LoadingScreen(game, true));
-                });
+                    Gdx.app.postRunnable(() -> {
+                        game.setScreen(new LoadingScreen(game, true));
+                    });
+                }
+
 
 
             }
@@ -413,27 +430,33 @@ public class InventariScreen implements Screen {
 
 
         if(inventariJugador != null && skins != null){
-            JSONObject resultat = new JSONObject();
-            int index = 0;
-            for(int i = 0; i < skins.length(); i++){
-                JSONObject a = (JSONObject) skins.get(i);
-                if(inventariJugador.get(currentIndex).equals(a.getString("_id"))){
-                    resultat = a;
-                    index = i;
+            if (inventariJugador.size() !=0) {
+                System.out.println("Tenim inventari");
+                JSONObject resultat = new JSONObject();
+                int index = 0;
+                for(int i = 0; i < skins.length(); i++){
+                    JSONObject a = (JSONObject) skins.get(i);
+                    if(inventariJugador.get(currentIndex).equals(a.getString("_id"))){
+                        resultat = a;
+                        index = i;
+                    }
+                }
+                if(inventariJugador.get(currentIndex).equals(idEquipat)){
+                    btnComprar.setText("EQUIPAT");
+                }else{
+                    btnComprar.setText("EQUIPAR");
+                }
+                labelNom.setText(String.valueOf(resultat.get("nombre")));
+                descripcioLabel.setText(String.valueOf(resultat.get("descripcion")));
+                if(imatgesBaixades.size() > 0) {
+                    imgStyle.imageUp = imatgesBaixades.get(index);
                 }
             }
-            if(inventariJugador.get(currentIndex).equals(idEquipat)){
-                btnComprar.setText("EQUIPAT");
-            }else{
-                btnComprar.setText("EQUIPAR");
-            }
-            labelNom.setText(String.valueOf(resultat.get("nombre")));
-            descripcioLabel.setText(String.valueOf(resultat.get("descripcion")));
-            if(imatgesBaixades.size() > 0) {
-                imgStyle.imageUp = imatgesBaixades.get(index);
-            }
+
 
         }
+
+
     }
 
     @Override

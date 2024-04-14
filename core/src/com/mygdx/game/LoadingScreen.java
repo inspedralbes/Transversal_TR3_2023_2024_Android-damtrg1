@@ -86,7 +86,7 @@ public class LoadingScreen implements Screen {
 
     private boolean inventari_canviat;
 
-    public static String nom_skin;
+    public static String nom_skin = "";
 
 
     public LoadingScreen(Pixel_R6 game, boolean inventari_canviat) {
@@ -380,6 +380,7 @@ public class LoadingScreen implements Screen {
 
 
 
+
                             }
 
 
@@ -516,6 +517,15 @@ public class LoadingScreen implements Screen {
                     // Handle the case where the HTTP request was cancelled
                 }
             });
+            /*
+            if (!peticion_getInventari) {
+                Gdx.app.postRunnable(() -> {
+                    game.setScreen(new PantallaPrincipal(game, true));
+                });
+            }
+
+             */
+
         }
 
         if (peticion_getInventari) {
@@ -531,6 +541,13 @@ public class LoadingScreen implements Screen {
                     fetchAndSetAssets(jsonObject.toString());
                     break;
                 }
+
+                if (i==skins.length()-1) {
+                    peticion_getSkin_guardada = true;
+                }
+
+
+
             }
         }
 

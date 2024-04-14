@@ -58,7 +58,7 @@ public class PantallaPrincipal implements Screen {
     OrthographicCamera camera;
 
     Skin skin;
-    static Skin skin_txt;
+    static Skin skin_txt, skin_windows;
     JSONArray noticies = null;
     ScrollPane sp;
 
@@ -190,7 +190,7 @@ public class PantallaPrincipal implements Screen {
         // Carga el Skin
         skin_txt = new Skin(Gdx.files.internal("skin_txt/arcade-ui.json"));
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-
+        skin_windows = new Skin(Gdx.files.internal("skin/uiskin.json"));
 
         //TITULO
         // Registro del color blanco en el Skin
@@ -234,7 +234,54 @@ public class PantallaPrincipal implements Screen {
         btn_play.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SelectPlayScreen(game));
+
+                if (LoadingScreen.nom_skin.equals("")) {
+                    Window.WindowStyle windowStyle = skin_windows.get(Window.WindowStyle.class);
+                    // Crea una instancia de Window con el estilo obtenido
+                    Window windowerror = new Window("ERROR", windowStyle);
+                    windowerror.getTitleLabel().setAlignment(Align.center);
+
+                    // Calcula las coordenadas X e Y para colocar la ventana en el centro de la pantalla
+                    float windowErrorX = ((Gdx.graphics.getWidth() * 0.93f) - windowerror.getWidth()) / 2;
+                    float windowErrorY = (Settings.GAME_HEIGHT - windowerror.getHeight()) / 2;
+
+                    // Establece la posición de la ventana en el centro de la pantalla
+                    windowerror.setPosition(windowErrorX  - (float) 0.20*Gdx.graphics.getWidth(), windowErrorY  - (float) 0.20*Gdx.graphics.getHeight());
+
+                    windowerror.setSize((float) 0.50 * Gdx.graphics.getWidth(), (float) 0.50 * Gdx.graphics.getHeight());
+
+                    Label.LabelStyle labelStyle = skin_windows.get("error", Label.LabelStyle.class);
+
+                    Label errorUser = new Label("SELECCIONA UNA SKIN EN EL INVENTARIO", labelStyle);
+
+                    windowerror.add(errorUser);
+
+                    stage.addActor(windowerror);
+
+                    windowerror.setName("error_window");
+
+                    // Crear instancia del TextButton con el estilo obtenido del Skin
+                    TextButton btn_cerrar = new TextButton("CERRRAR", textButtonStyle);
+
+                    btn_cerrar.setPosition(windowErrorX + (float) 0.03*Gdx.graphics.getWidth(), windowErrorY - (float) 0.30*Gdx.graphics.getHeight());
+
+                    stage.addActor(btn_cerrar);
+
+                    btn_cerrar.setName("btn_cerrar_windows");
+
+                    btn_cerrar.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            stage.getRoot().findActor("error_window").remove();
+                            stage.getRoot().findActor("btn_cerrar_windows").remove();
+                        }
+                    });
+                }
+
+                else {
+                    game.setScreen(new SelectPlayScreen(game));
+                }
+
             }
         });
 

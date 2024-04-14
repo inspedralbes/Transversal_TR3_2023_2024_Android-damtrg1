@@ -71,7 +71,7 @@ public class ShopScreen implements Screen {
     public ShopScreen(Pixel_R6 game) {
         this.game = game;
 
-        AssetManager.load();
+        //AssetManager.load();
         preferences = Gdx.app.getPreferences("Pref");
 
         // Creem la càmera de les dimensions del joc

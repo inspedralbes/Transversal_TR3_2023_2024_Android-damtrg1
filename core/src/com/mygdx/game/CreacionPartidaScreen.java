@@ -265,6 +265,7 @@ public class CreacionPartidaScreen implements Screen {
 
         // Crea una instancia de Window con el estilo obtenido
         Window window = new Window("SALA", windowStyle);
+        window.setMovable(false);
         window.getTitleLabel().setAlignment(Align.center);
 
         // Obtén las dimensiones de la ventana del juego desde la clase Settings
@@ -377,7 +378,7 @@ public class CreacionPartidaScreen implements Screen {
                             }
 
 
-                            if (equip.equals("EQUIP 1")) {
+                            if (equip.equals("EQUIP 1") && usuarisAtacantes.size()<5) {
                                 usuarisAtacantes.add(user);
                                 skinsAtacantes.add(nom_skin);
                                 System.out.println("skinsAtacantes: " + skinsAtacantes);
@@ -415,7 +416,7 @@ public class CreacionPartidaScreen implements Screen {
                                 }
 
                                  */
-                            } else if (equip.equals("EQUIP 2")) {
+                            } else if (equip.equals("EQUIP 2") && usuarisDefensores.size()<5) {
                                 usuarisDefensores.add(user);
                                 skinsDefensores.add(nom_skin);
                                 System.out.println("skinsDefensores: " + skinsDefensores);
@@ -547,53 +548,54 @@ public class CreacionPartidaScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 // Actualiza los componentes de la interfaz de usuario aquí
 
-                System.out.println("ATACANTES");
-                // Obtener el nombre del usuario que hizo clic en el botón
-                String usuarioClic = preferences.getString("username");
-                // Imprimir el nombre del usuario
-                System.out.println("Usuario seleccionado como atacante: " + usuarioClic);
+                if (usuarisAtacantes.size()<5) {
+                    System.out.println("ATACANTES");
+                    // Obtener el nombre del usuario que hizo clic en el botón
+                    String usuarioClic = preferences.getString("username");
+                    // Imprimir el nombre del usuario
+                    System.out.println("Usuario seleccionado como atacante: " + usuarioClic);
 
 
-                System.out.println("ATANCANTE: " + usuarioClic);
-
-
-
-
-                JSONObject json_canvi_equip = new JSONObject();
-                json_canvi_equip.put("user", usuarioClic);
-                json_canvi_equip.put("sala", salaId);
-                json_canvi_equip.put("equip", "EQUIP 1");
-                json_canvi_equip.put("nom_skin", LoadingScreen.nom_skin);
-
-                mSocket.emit("userNuevo", json_canvi_equip.toString());
-
-
-                usuarisAtacantes.add(usuarioClic);
-                skinsAtacantes.add(LoadingScreen.nom_skin);
-                System.out.println("skinsAtacantes: " + skinsAtacantes);
-
-                if (usuarisSala.contains(usuarioClic)) {
-                    usuarisSala.remove(usuarioClic);
-                    skinsSala.remove(LoadingScreen.nom_skin);
-                    System.out.println("skinsSala: " + skinsSala);
-                }
+                    System.out.println("ATANCANTE: " + usuarioClic);
 
 
 
 
-                else if (usuarisDefensores.contains(usuarioClic)) {
+                    JSONObject json_canvi_equip = new JSONObject();
+                    json_canvi_equip.put("user", usuarioClic);
+                    json_canvi_equip.put("sala", salaId);
+                    json_canvi_equip.put("equip", "EQUIP 1");
+                    json_canvi_equip.put("nom_skin", LoadingScreen.nom_skin);
 
-                    int id = usuarisDefensores.indexOf(usuarioClic);
-                    usuarisDefensores.remove(id);
-                    skinsDefensores.remove(id);
-                    System.out.println("skinsDefensores: " + skinsDefensores);
-                    //labelDefensores.remove(usuarioClic);
-                    System.out.println("N: " + labelDefensores.size());
-                    //enemigoLabel.setText("Defensor "+i);
-                    //labelDefensores.get(id).setText("Defensores");
+                    mSocket.emit("userNuevo", json_canvi_equip.toString());
 
 
-                }
+                    usuarisAtacantes.add(usuarioClic);
+                    skinsAtacantes.add(LoadingScreen.nom_skin);
+                    System.out.println("skinsAtacantes: " + skinsAtacantes);
+
+                    if (usuarisSala.contains(usuarioClic)) {
+                        usuarisSala.remove(usuarioClic);
+                        skinsSala.remove(LoadingScreen.nom_skin);
+                        System.out.println("skinsSala: " + skinsSala);
+                    }
+
+
+
+
+                    else if (usuarisDefensores.contains(usuarioClic)) {
+
+                        int id = usuarisDefensores.indexOf(usuarioClic);
+                        usuarisDefensores.remove(id);
+                        skinsDefensores.remove(id);
+                        System.out.println("skinsDefensores: " + skinsDefensores);
+                        //labelDefensores.remove(usuarioClic);
+                        System.out.println("N: " + labelDefensores.size());
+                        //enemigoLabel.setText("Defensor "+i);
+                        //labelDefensores.get(id).setText("Defensores");
+
+
+                    }
 
 
 
@@ -608,7 +610,9 @@ public class CreacionPartidaScreen implements Screen {
                 }
                 */
 
-                System.out.println("AAA: " + labelsAtacantes.size());
+                    System.out.println("AAA: " + labelsAtacantes.size());
+                }
+
 
             }
         });
@@ -617,53 +621,56 @@ public class CreacionPartidaScreen implements Screen {
         btnDefensor.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // Actualiza los componentes de la interfaz de usuario aquí
 
-                // Actualiza los componentes de la interfaz de usuario aquí
+                if (usuarisDefensores.size()<5) {
 
-                System.out.println("DEFENSORES");
+                    // Actualiza los componentes de la interfaz de usuario aquí
 
-                String usuarioClic = preferences.getString("username");
+                    // Actualiza los componentes de la interfaz de usuario aquí
 
+                    System.out.println("DEFENSORES");
 
-
-
-
-
-                JSONObject json_canvi_equip = new JSONObject();
-                json_canvi_equip.put("user", usuarioClic);
-                json_canvi_equip.put("sala", salaId);
-                json_canvi_equip.put("equip", "EQUIP 2");
-                json_canvi_equip.put("nom_skin", LoadingScreen.nom_skin);
-
-                mSocket.emit("userNuevo", json_canvi_equip.toString());
-
-                usuarisDefensores.add(usuarioClic);
-                skinsDefensores.add(LoadingScreen.nom_skin);
-                System.out.println("skinsDefensores: " + skinsDefensores);
-
-                if (usuarisSala.contains(usuarioClic)) {
-                    usuarisSala.remove(usuarioClic);
-                    skinsSala.remove(LoadingScreen.nom_skin);
-                    System.out.println("skinsSala: " + skinsSala);
-                }
+                    String usuarioClic = preferences.getString("username");
 
 
 
 
-                else if (usuarisAtacantes.contains(usuarioClic)) {
-
-                    int id = usuarisAtacantes.indexOf(usuarioClic);
-                    usuarisAtacantes.remove(id);
-                    skinsAtacantes.remove(id);
-                    System.out.println("skinsAtacantes: " + skinsAtacantes);
-                    //labelDefensores.remove(usuarioClic);
-                    System.out.println("N: " + labelDefensores.size());
-                    //enemigoLabel.setText("Defensor "+i);
-                    //labelDefensores.get(id).setText("Defensores");
 
 
-                }
+                    JSONObject json_canvi_equip = new JSONObject();
+                    json_canvi_equip.put("user", usuarioClic);
+                    json_canvi_equip.put("sala", salaId);
+                    json_canvi_equip.put("equip", "EQUIP 2");
+                    json_canvi_equip.put("nom_skin", LoadingScreen.nom_skin);
+
+                    mSocket.emit("userNuevo", json_canvi_equip.toString());
+
+                    usuarisDefensores.add(usuarioClic);
+                    skinsDefensores.add(LoadingScreen.nom_skin);
+                    System.out.println("skinsDefensores: " + skinsDefensores);
+
+                    if (usuarisSala.contains(usuarioClic)) {
+                        usuarisSala.remove(usuarioClic);
+                        skinsSala.remove(LoadingScreen.nom_skin);
+                        System.out.println("skinsSala: " + skinsSala);
+                    }
+
+
+
+
+                    else if (usuarisAtacantes.contains(usuarioClic)) {
+
+                        int id = usuarisAtacantes.indexOf(usuarioClic);
+                        usuarisAtacantes.remove(id);
+                        skinsAtacantes.remove(id);
+                        System.out.println("skinsAtacantes: " + skinsAtacantes);
+                        //labelDefensores.remove(usuarioClic);
+                        System.out.println("N: " + labelDefensores.size());
+                        //enemigoLabel.setText("Defensor "+i);
+                        //labelDefensores.get(id).setText("Defensores");
+
+
+                    }
 
 
 
@@ -675,6 +682,9 @@ public class CreacionPartidaScreen implements Screen {
                 }
 
                  */
+                }
+
+
 
             }
         });
@@ -807,6 +817,59 @@ public class CreacionPartidaScreen implements Screen {
 
         IMGMapas.setDrawable(arrayTextureRegionDrawable.get(numMapa));
 
+    }
+
+    private void updateSala () {
+        // Create an HTTP request
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+
+        // Construct the URL with query parameters
+        String url = "http://192.168.0.14:3168/updateSala";
+        JSONObject body = new JSONObject();
+        body.put("directory","mapas");
+
+        httpRequest.setUrl(url);
+        httpRequest.setHeader("Content-Type", "application/json");
+
+        // Send the HTTP request
+        Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                HttpStatus status = httpResponse.getStatus();
+                if (status.getStatusCode() == 200) {
+                    // If the request was successful (status code 200)
+                    String responseData = httpResponse.getResultAsString();
+                    // Handle the response data here
+                    JSONObject json = new JSONObject(responseData);
+                    salaId = json.getString("salaId");// Parse the JSON response string
+                    JSONArray jsonArray = json.getJSONArray("users");
+
+                    // Iterate through the JSON array
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        // Get each element from the JSON array and add it to the list
+                        String element = jsonArray.getString(i);
+                        usuarisSala.set(i, element);
+                        skinsSala.add(LoadingScreen.nom_skin);
+                        System.out.println("skinsSala: " + skinsSala);
+                    }
+                    System.out.println(responseData);
+                } else {
+                    // If the request failed, handle the error
+                    System.out.println("HTTP request failed with status code: " + status.getStatusCode());
+                }
+            }
+
+            @Override
+            public void failed(Throwable t) {
+                // Handle the case where the HTTP request failed
+                t.printStackTrace();
+            }
+
+            @Override
+            public void cancelled() {
+                // Handle the case where the HTTP request was cancelled
+            }
+        });
     }
 
     @Override

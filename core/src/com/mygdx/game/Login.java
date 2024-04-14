@@ -339,6 +339,7 @@ public class Login implements Screen {
 
         // Crea una instancia de Window con el estilo obtenido
         Window window = new Window("LOGIN", windowStyle);
+        window.setMovable(false);
         window.getTitleLabel().setAlignment(Align.center);
 
         // Obtén las dimensiones de la ventana del juego desde la clase Settings

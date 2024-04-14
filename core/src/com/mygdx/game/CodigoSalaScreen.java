@@ -237,7 +237,7 @@ public class CodigoSalaScreen implements Screen {
 
         // Establece la posición de la ventana en el centro de la pantalla
         window.setPosition(windowX, windowY);
-
+        window.setMovable(false);
         window.setSize(1000, 500); // Establece el tamaño como desees
 
         Table table = new Table();

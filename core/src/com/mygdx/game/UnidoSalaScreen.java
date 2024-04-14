@@ -204,6 +204,7 @@ public class UnidoSalaScreen implements Screen {
 
         // Crea una instancia de Window con el estilo obtenido
         Window window = new Window("SALA", windowStyle);
+        window.setMovable(false);
         window.getTitleLabel().setAlignment(Align.center);
 
         // Obtén las dimensiones de la ventana del juego desde la clase Settings
@@ -263,7 +264,7 @@ public class UnidoSalaScreen implements Screen {
                             }
 
 
-                            if (equip.equals("EQUIP 1")) {
+                            if (equip.equals("EQUIP 1") && usuarisAtacantes.size()<5) {
                                 usuarisAtacantes.add(user);
                                 skinsAtacantes.add(nom_skin);
                                 System.out.println("skinsAtacantes: " + skinsAtacantes);
@@ -301,7 +302,7 @@ public class UnidoSalaScreen implements Screen {
                                 }
 
                                  */
-                            } else if (equip.equals("EQUIP 2")) {
+                            } else if (equip.equals("EQUIP 2") && usuarisDefensores.size()<5) {
                                 usuarisDefensores.add(user);
                                 skinsDefensores.add(nom_skin);
                                 System.out.println("skinsDefensores: " + skinsDefensores);
@@ -419,45 +420,48 @@ public class UnidoSalaScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
 
-                System.out.println("ATACANTES");
-                // Obtener el nombre del usuario que hizo clic en el botón
-                String usuarioClic = preferences.getString("username");
-                // Imprimir el nombre del usuario
-                System.out.println("Usuario seleccionado como atacante: " + usuarioClic);
+                if (usuarisAtacantes.size() < 5) {
+                    System.out.println("ATACANTES");
+                    // Obtener el nombre del usuario que hizo clic en el botón
+                    String usuarioClic = preferences.getString("username");
+                    // Imprimir el nombre del usuario
+                    System.out.println("Usuario seleccionado como atacante: " + usuarioClic);
 
-                JSONObject json_canvi_equip = new JSONObject();
-                json_canvi_equip.put("user", usuarioClic);
-                json_canvi_equip.put("sala", salaId);
-                json_canvi_equip.put("equip", "EQUIP 1");
-                json_canvi_equip.put("nom_skin", LoadingScreen.nom_skin);
+                    JSONObject json_canvi_equip = new JSONObject();
+                    json_canvi_equip.put("user", usuarioClic);
+                    json_canvi_equip.put("sala", salaId);
+                    json_canvi_equip.put("equip", "EQUIP 1");
+                    json_canvi_equip.put("nom_skin", LoadingScreen.nom_skin);
 
-                mSocket.emit("userNuevo", json_canvi_equip.toString());
-
-
-                usuarisAtacantes.add(usuarioClic);
-                skinsAtacantes.add(LoadingScreen.nom_skin);
-                System.out.println("skinsAtacantes: " + skinsAtacantes);
-
-                if (usuarisSala.contains(usuarioClic)) {
-                    usuarisSala.remove(usuarioClic);
-                    skinsSala.remove(LoadingScreen.nom_skin);
-                    System.out.println("skinsSala: " + skinsSala);
-                }
+                    mSocket.emit("userNuevo", json_canvi_equip.toString());
 
 
+                    usuarisAtacantes.add(usuarioClic);
+                    skinsAtacantes.add(LoadingScreen.nom_skin);
+                    System.out.println("skinsAtacantes: " + skinsAtacantes);
+
+                    if (usuarisSala.contains(usuarioClic)) {
+                        usuarisSala.remove(usuarioClic);
+                        skinsSala.remove(LoadingScreen.nom_skin);
+                        System.out.println("skinsSala: " + skinsSala);
+                    }
 
 
-                else if (usuarisDefensores.contains(usuarioClic)) {
 
-                    int id = usuarisDefensores.indexOf(usuarioClic);
-                    usuarisDefensores.remove(id);
-                    skinsDefensores.remove(id);
-                    System.out.println("skinsDefensores: " + skinsDefensores);
-                    //labelDefensores.remove(usuarioClic);
-                    System.out.println("N: " + labelDefensores.size());
-                    //enemigoLabel.setText("Defensor "+i);
-                    //labelDefensores.get(id).setText("Defensores");
 
+                    else if (usuarisDefensores.contains(usuarioClic)) {
+
+                        int id = usuarisDefensores.indexOf(usuarioClic);
+                        usuarisDefensores.remove(id);
+                        skinsDefensores.remove(id);
+                        System.out.println("skinsDefensores: " + skinsDefensores);
+                        //labelDefensores.remove(usuarioClic);
+                        System.out.println("N: " + labelDefensores.size());
+                        //enemigoLabel.setText("Defensor "+i);
+                        //labelDefensores.get(id).setText("Defensores");
+
+
+                    }
 
                 }
 
@@ -468,44 +472,48 @@ public class UnidoSalaScreen implements Screen {
         btnDefensor.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("DEFENSORES");
 
-                String usuarioClic = preferences.getString("username");
+                if (usuarisDefensores.size()<5) {
+                    System.out.println("DEFENSORES");
 
-                JSONObject json_canvi_equip = new JSONObject();
-                json_canvi_equip.put("user", usuarioClic);
-                json_canvi_equip.put("sala", salaId);
-                json_canvi_equip.put("equip", "EQUIP 2");
-                json_canvi_equip.put("nom_skin", LoadingScreen.nom_skin);
+                    String usuarioClic = preferences.getString("username");
 
-                mSocket.emit("userNuevo", json_canvi_equip.toString());
+                    JSONObject json_canvi_equip = new JSONObject();
+                    json_canvi_equip.put("user", usuarioClic);
+                    json_canvi_equip.put("sala", salaId);
+                    json_canvi_equip.put("equip", "EQUIP 2");
+                    json_canvi_equip.put("nom_skin", LoadingScreen.nom_skin);
 
-                usuarisDefensores.add(usuarioClic);
-                skinsDefensores.add(LoadingScreen.nom_skin);
-                System.out.println("skinsDefensores: " + skinsDefensores);
+                    mSocket.emit("userNuevo", json_canvi_equip.toString());
 
-                if (usuarisSala.contains(usuarioClic)) {
-                    usuarisSala.remove(usuarioClic);
-                    skinsSala.remove(LoadingScreen.nom_skin);
-                    System.out.println("skinsSala: " + skinsSala);
+                    usuarisDefensores.add(usuarioClic);
+                    skinsDefensores.add(LoadingScreen.nom_skin);
+                    System.out.println("skinsDefensores: " + skinsDefensores);
+
+                    if (usuarisSala.contains(usuarioClic)) {
+                        usuarisSala.remove(usuarioClic);
+                        skinsSala.remove(LoadingScreen.nom_skin);
+                        System.out.println("skinsSala: " + skinsSala);
+                    }
+
+
+
+
+                    else if (usuarisAtacantes.contains(usuarioClic)) {
+
+                        int id = usuarisAtacantes.indexOf(usuarioClic);
+                        usuarisAtacantes.remove(id);
+                        skinsAtacantes.remove(id);
+                        System.out.println("skinsAtacantes: " + skinsAtacantes);
+                        //labelDefensores.remove(usuarioClic);
+                        System.out.println("N: " + labelDefensores.size());
+                        //enemigoLabel.setText("Defensor "+i);
+                        //labelDefensores.get(id).setText("Defensores");
+
+
+                    }
                 }
 
-
-
-
-                else if (usuarisAtacantes.contains(usuarioClic)) {
-
-                    int id = usuarisAtacantes.indexOf(usuarioClic);
-                    usuarisAtacantes.remove(id);
-                    skinsAtacantes.remove(id);
-                    System.out.println("skinsAtacantes: " + skinsAtacantes);
-                    //labelDefensores.remove(usuarioClic);
-                    System.out.println("N: " + labelDefensores.size());
-                    //enemigoLabel.setText("Defensor "+i);
-                    //labelDefensores.get(id).setText("Defensores");
-
-
-                }
             }
         });
 

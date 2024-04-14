@@ -29,7 +29,7 @@ public class GameSceen implements Screen {
     public GameSceen(Pixel_R6 game) {
         this.game = game;
 
-        AssetManager.load();
+        //AssetManager.load();
 
         // Creem la càmera de les dimensions del joc
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Settings.GAME_HEIGHT);
