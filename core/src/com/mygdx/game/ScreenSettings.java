@@ -21,8 +21,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
+import org.json.JSONObject;
+
 import Utils.Settings;
 import objects.Background;
+import objects.Disparo;
 
 public class ScreenSettings implements Screen {
 
@@ -43,6 +46,8 @@ public class ScreenSettings implements Screen {
     Slider slider_musica, slider_volumen;
 
     Slider.SliderStyle horizontalSliderStyle;
+
+    Button disparo;
 
 
     public ScreenSettings(Pixel_R6 game) {
@@ -132,15 +137,6 @@ public class ScreenSettings implements Screen {
         horizontalSliderStyle.knob = skin.getDrawable("slider-bar-knob");
         horizontalSliderStyle.knobBefore = skin.getDrawable("slider-bar-fill");
 
-        // Crear una instancia del Slider con el estilo horizontal
-        slider_volumen = new Slider(0f, 1f, 0.1f, false, horizontalSliderStyle);
-
-
-        //ESTABLECER QUE LAS BARRAS DE SONIDO ESTEN LLENAS
-        float volumenGuardado = preferences.getFloat("volumen", 100); // 100 es el valor predeterminado si no se encuentra ningún valor guardado
-
-        // Establece los valores de los sliders a los valores guardados
-        slider_volumen.setValue(volumenGuardado);
 
 
         //BOTON DE MUTE
@@ -162,14 +158,17 @@ public class ScreenSettings implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if (btn_volumen.isChecked()) {
                     System.out.println("TRUE");
-                    slider_volumen.setValue(valorSliderVolumen);
+                    AssetManager.volumenTotal = valorSliderVolumen;
+                    AssetManager.setVolumenTotal(AssetManager.volumenTotal);
+                    slider_volumen.setValue(AssetManager.volumenTotal);
                 } else {
                     System.out.println("FALSE");
                     // Guardar el valor actual del Slider
                     valorSliderVolumen = slider_volumen.getValue();
 
                     // Establecer el valor del Slider a 0
-                    AssetManager.music.setVolume(0f);
+                    AssetManager.volumenTotal = 0f;
+                    slider_volumen.setValue(0f);
                 }
             }
         });
@@ -198,27 +197,19 @@ public class ScreenSettings implements Screen {
             }
         });
 
-        // Verifica si el valor del slider es diferente de cero para encender el botón correspondiente
-        if (volumenGuardado != 0) {
-            btn_volumen.setChecked(true);
-        }
 
-        if (AssetManager.volumen != 0f) {
-            btn_musica.setChecked(true);
-        }
+        // Crear una instancia del Slider con el estilo horizontal
+        slider_volumen = new Slider(0f, 1f, 0.1f, false, horizontalSliderStyle);
 
-        if (AssetManager.volumen == 0f) {
-            btn_musica.setChecked(false);
-        }
-        if (slider_volumen.getValue() == 0) {
-            btn_volumen.setChecked(false);
-        }
+
+        slider_volumen.setValue(AssetManager.volumenTotal);
+
 
         slider_volumen.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                AssetManager.volumen = slider_musica.getValue();
-                AssetManager.music.setVolume(AssetManager.volumen);
+                AssetManager.volumenTotal = slider_volumen.getValue();
+                AssetManager.setVolumenTotal(AssetManager.volumenTotal);
             }
         });
 
@@ -237,6 +228,23 @@ public class ScreenSettings implements Screen {
                 AssetManager.music.setVolume(AssetManager.volumen);
             }
         });
+
+
+        // Verifica si el valor del slider es diferente de cero para encender el botón correspondiente
+        if (AssetManager.volumenTotal != 0) {
+            btn_volumen.setChecked(true);
+        }
+
+        if (AssetManager.volumen != 0f) {
+            btn_musica.setChecked(true);
+        }
+
+        if (AssetManager.volumen == 0f) {
+            btn_musica.setChecked(false);
+        }
+        if (AssetManager.volumenTotal == 0) {
+            btn_volumen.setChecked(false);
+        }
 
 
         //VENTANA
@@ -303,7 +311,6 @@ public class ScreenSettings implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
-        //AssetManager.music.play();
 
     }
 
@@ -312,10 +319,6 @@ public class ScreenSettings implements Screen {
 
 
 
-
-
-
-        //stage.addActor(slider_musica);
     }
 
     @Override

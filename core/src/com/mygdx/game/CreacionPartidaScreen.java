@@ -95,7 +95,7 @@ public class CreacionPartidaScreen implements Screen {
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url = "http://192.168.0.14:3168/crearSala";
+        String url = "http://192.168.1.35:3168/crearSala";
         String username = preferences.getString("username");
         url += "?user=" + username;
         System.out.println(LoadingScreen.nom_skin);
@@ -146,7 +146,7 @@ public class CreacionPartidaScreen implements Screen {
 
         Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
 
-        httpRequest2.setUrl("http://192.168.0.14:3168/getMapes");
+        httpRequest2.setUrl("http://192.168.1.35:3168/getMapes");
         httpRequest2.setHeader("Content-Type", "application/json");
 
         // Send the HTTP request
@@ -342,7 +342,7 @@ public class CreacionPartidaScreen implements Screen {
 
 
         try {
-            mSocket = IO.socket("http://192.168.0.14:3168");
+            mSocket = IO.socket("http://192.168.1.35:3168");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -716,7 +716,7 @@ public class CreacionPartidaScreen implements Screen {
         btn_volver.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new PantallaPrincipal(game, false));
+                game.setScreen(new SelectPlayScreen(game));
 
             }
         });

@@ -113,7 +113,8 @@ public class MapaPrueba implements Screen {
         this.sala = sala;
         this.game = game;
 
-
+        AssetManager.music.stop();
+        
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         skin_vida = new Skin(Gdx.files.internal("skin_vida2/tubular-ui.json"));
 
@@ -125,7 +126,7 @@ public class MapaPrueba implements Screen {
         //AssetManager.music.stop();
 
         try {
-            mSocket = IO.socket("http://192.168.0.14:3168");
+            mSocket = IO.socket("http://192.168.1.35:3168");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -160,7 +161,7 @@ public class MapaPrueba implements Screen {
         JSONObject jsonPosicions = jsonLoader.loadJson("posicions.json");
         jsonPosicions = jsonPosicions.getJSONObject("Mazmorra");
         int contador = 0;
-        for (int i=0; i<sala.getUsuarisAtacantes().size();i++) {
+        for (int i = 0; i < sala.getUsuarisAtacantes().size(); i++) {
             if (!sala.getUsuarisAtacantes().get(i).equals("NO PLAYER")) {
                 JSONObject posicions = jsonPosicions.getJSONObject("pos" + (contador + 1));
                 System.out.println("ATA: " + posicions);
@@ -195,7 +196,7 @@ public class MapaPrueba implements Screen {
             contador++;
         }
 
-        for (int i=0;i<sala.getUsuarisDefensores().size();i++) {
+        for (int i = 0; i < sala.getUsuarisDefensores().size(); i++) {
             if (!sala.getUsuarisDefensores().get(i).equals("NO PLAYER")) {
                 JSONObject posicions = jsonPosicions.getJSONObject("pos" + (contador + 6));
                 System.out.println("DEF: " + posicions);
@@ -247,17 +248,6 @@ public class MapaPrueba implements Screen {
 
 
         Touchpad.TouchpadStyle touchpadStyle = skin.get("default", Touchpad.TouchpadStyle.class);
-        /*
-        // Obtener el Drawable del fondo del Touchpad
-        Drawable touchpadBackground = touchpadStyle.background;
-
-        Color color = touchpadBackground.getColor();
-
-        // Establecer la opacidad del color (transparencia)
-        color.a = 0.2f; // Establece la opacidad a 0.2 (20%)
-
-        // Establecer el color modificado en el Drawable
-        touchpadBackground.setTint(color);*/
 
         touchpad = new Touchpad(0, touchpadStyle);
         touchpad.setBounds(40, 225, 100, 100); // Establecer posición y tamaño del Touchpad
@@ -297,6 +287,7 @@ public class MapaPrueba implements Screen {
                     disparo.put("y_vector_direccio", String.valueOf(y_vector_direccio));
                     disparo.put("sala", sala.getId());
                     disparo.put("user", jugadors.get(numJugador).getNomUsuari());
+                    System.out.println("BOTON IF: "+ jugadors.get(numJugador).getNomUsuari());
                     mSocket.emit("disparo", disparo);
                 } else {
                     float x1 = jugadors.get(numJugador).getPosition().x;
@@ -318,9 +309,10 @@ public class MapaPrueba implements Screen {
                     disparo.put("y_vector_direccio", String.valueOf(y_vector_direccio));
                     disparo.put("sala", sala.getId());
                     disparo.put("user", jugadors.get(numJugador).getNomUsuari());
+                    System.out.println("BOTON ELSE: "+ jugadors.get(numJugador).getNomUsuari());
                     mSocket.emit("disparo", disparo);
                 }
-
+                AssetManager.disparo.play(AssetManager.volumenTotal);
 
             }
         });
@@ -335,7 +327,7 @@ public class MapaPrueba implements Screen {
             public void call(Object... args) {
                 JSONObject data = (JSONObject) args[0];
 
-                if (numJugador<jugadors.size() && permetre_render) {
+                if (numJugador < jugadors.size() && permetre_render) {
                     try {
                         //JSONObject data = new JSONObject(jsonString);
                         String salaDisparo = data.getString("sala");
@@ -453,7 +445,7 @@ public class MapaPrueba implements Screen {
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
 
-                if (numJugador<jugadors.size() && permetre_render) {
+                if (numJugador < jugadors.size() && permetre_render) {
                     if (jugadors.get(numJugador).getNomUsuari().equals(preferences.getString("username"))) {
                         knobX = touchpad.getKnobPercentX();
                         knobY = touchpad.getKnobPercentY();
@@ -481,8 +473,6 @@ public class MapaPrueba implements Screen {
                 }
 
 
-
-
             }
 
             @Override
@@ -499,7 +489,7 @@ public class MapaPrueba implements Screen {
             public void call(Object... args) {
                 JSONObject data = (JSONObject) args[0];
 
-                if (numJugador<jugadors.size() && permetre_render) {
+                if (numJugador < jugadors.size() && permetre_render) {
                     try {
 
                         //JSONObject data = new JSONObject(jsonString);
@@ -525,7 +515,7 @@ public class MapaPrueba implements Screen {
                                 float knobY = Float.valueOf(data.getString("knobY"));
                                 jugadors.get(index).moveRival(knobX, knobY);
                                 jugadors.get(index).setPosition(X, Y);
-                                jugadors.get(index).setBounds(jugadors.get(index).getBounds().setPosition(X,Y));
+                                jugadors.get(index).setBounds(jugadors.get(index).getBounds().setPosition(X, Y));
                                 //System.out.println("movement: " + jugadors.get(index).getPosition());
                             }
                         }
@@ -595,7 +585,6 @@ public class MapaPrueba implements Screen {
         }
 
 
-
     }
 
     @Override
@@ -606,22 +595,19 @@ public class MapaPrueba implements Screen {
             @Override
             public void run() {
                 // Emit socket event here
-                if (numJugador<jugadors.size() && permetre_render) {
-                        JSONObject jsonEnviar = new JSONObject();
-                        jsonEnviar.put("user", jugadors.get(numJugador).getNomUsuari());
-                        jsonEnviar.put("sala", sala.getId());
-                        jsonEnviar.put("x", String.valueOf(jugadors.get(numJugador).getPosition().x));
+                if (numJugador < jugadors.size() && permetre_render) {
+                    JSONObject jsonEnviar = new JSONObject();
+                    jsonEnviar.put("user", jugadors.get(numJugador).getNomUsuari());
+                    jsonEnviar.put("sala", sala.getId());
+                    jsonEnviar.put("x", String.valueOf(jugadors.get(numJugador).getPosition().x));
                     //System.out.println("x: " + jugadors.get(numJugador).getPosition().x);
-                        jsonEnviar.put("y", String.valueOf(jugadors.get(numJugador).getPosition().y));
+                    jsonEnviar.put("y", String.valueOf(jugadors.get(numJugador).getPosition().y));
                     //System.out.println("y: " + jugadors.get(numJugador).getPosition().y);
-                        mSocket.emit("posicioCorrecio", jsonEnviar);
-                        //System.out.println("CORRECIO ENVIADA");
-
-
+                    mSocket.emit("posicioCorrecio", jsonEnviar);
+                    //System.out.println("CORRECIO ENVIADA");
 
 
                 }
-
 
 
             }
@@ -631,7 +617,7 @@ public class MapaPrueba implements Screen {
     @Override
     public void render(float delta) {
 
-        if (numJugador<jugadors.size()){
+        if (numJugador < jugadors.size()) {
             // Actualizar la posición de la cámara para que siga al jugador
             camera.position.set(jugadors.get(numJugador).getPosition().x, jugadors.get(numJugador).getPosition().y, 0);
 
@@ -688,6 +674,7 @@ public class MapaPrueba implements Screen {
                 labelsNoms.get(i).setPosition(jugadors.get(i).getPosition().x, jugadors.get(i).getPosition().y + jugadors.get(i).getHeight() + 30);
             }
 
+
             // Definir la posición del botón de disparo
 
             float buttonX = 150; // Ajustar la posición del Touchpad en X
@@ -708,11 +695,7 @@ public class MapaPrueba implements Screen {
             disparo.setPosition(buttonX, buttonY);
 
 
-
-        }
-
-
-        else {
+        } else {
             System.out.println("canviar pantalla");
             Gdx.app.postRunnable(() -> {
                 game.setScreen(new WaitingScreen(game));
@@ -755,7 +738,6 @@ public class MapaPrueba implements Screen {
 
 
         }
-
 
 
         // Dibujar el mapa

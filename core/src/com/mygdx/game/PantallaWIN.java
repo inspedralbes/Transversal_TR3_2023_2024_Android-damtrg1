@@ -1,8 +1,10 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -12,7 +14,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -72,7 +78,7 @@ public class PantallaWIN implements Screen {
         Label.LabelStyle titleLabelStyle = skin_inputs.get("title", Label.LabelStyle.class);
 
 
-        Label titulo = new Label("GANDORES", titleLabelStyle);
+        Label titulo = new Label("GANADORES", titleLabelStyle);
 
         // Calcula la posición X centrada en la pantalla
         float posX = (Gdx.graphics.getWidth() - titulo.getWidth()) / 2;
@@ -112,16 +118,16 @@ public class PantallaWIN implements Screen {
         Table moneLose = new Table();
 
 
-        for (int i=0; i < Userganadores.size();i++){
-            System.out.println("Ganar WIN: "+ Userganadores.get(i));
+        for (int i = 0; i < Userganadores.size(); i++) {
+            System.out.println("Ganar WIN: " + Userganadores.get(i));
         }
 
-        for (int i=0; i < Userperdedores.size();i++){
-            System.out.println("Perder WIN: "+ Userperdedores.get(i));
+        for (int i = 0; i < Userperdedores.size(); i++) {
+            System.out.println("Perder WIN: " + Userperdedores.get(i));
         }
 
         Label.LabelStyle labeljugadors = skin_inputs.get("default", Label.LabelStyle.class);
-        labeljugadors .font.getData().setScale(2f); // Ajustar el tamaño de la fuente
+        labeljugadors.font.getData().setScale(2f); // Ajustar el tamaño de la fuente
 
 
         for (int i = 0; i < Userganadores.size(); i++) {
@@ -158,18 +164,74 @@ public class PantallaWIN implements Screen {
 
         stage.addActor(window);
 
+        JSONObject jsonUserWinKills = new JSONObject();
+
+        for (int i = 0; i < Userganadores.size(); i++) {
+            String jugador = Userganadores.get(i).getNomUsuari();
+            int kills = Userganadores.get(i).getKills();
+            System.out.println("KILLS: " + jugador + " " + kills);
+            jsonUserWinKills.put("UserWIN", jugador);
+            jsonUserWinKills.put("KillWIN", kills);
+        }
+
+        JSONObject jsonUserLoseKills = new JSONObject();
+        for (int i = 0; i < Userperdedores.size(); i++) {
+            String perdedor = Userperdedores.get(i).getNomUsuari();
+            int kill = Userperdedores.get(i).getKills();
+            System.out.println("KILL PERDEDOR: " + perdedor + " " + kill);
+            jsonUserLoseKills.put("UserLose", perdedor);
+            jsonUserLoseKills.put("KillLOSE", kill);
+        }
+
+        System.out.println();
+
+        // Crear un HashMap para almacenar los datos del usuario
+        JSONObject json = new JSONObject();
+
+        json.put("userWin", jsonUserWinKills);
+        json.put("userLose", jsonUserLoseKills);
+        json.put("monedasWin", 50);
+        json.put("monedasLose", 10);
+
+
+        // Crear una solicitud HTTP POST
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpRequest.setUrl("http://192.168.1.35:3168/finalGame"); // URL de tu servidor
+        httpRequest.setHeader("Content-Type", "application/json");
+        String data = json.toString();
+        httpRequest.setContent(data);
+
+        // Enviar la solicitud al servidor
+        Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+
+            }
+
+            @Override
+            public void failed(Throwable t) {
+                // Ocurrió un error al enviar la solicitud
+                System.out.println("Error al enviar la solicitud: " + t.getMessage());
+            }
+
+            @Override
+            public void cancelled() {
+                // La solicitud fue cancelada
+                System.out.println("Solicitud cancelada");
+            }
+        });
+
         TextButton.TextButtonStyle textButtonStyle = skin_inputs.get("round", TextButton.TextButtonStyle.class);
 
         TextButton btn_volver = new TextButton("VOLVER", textButtonStyle);
 
         btn_volver.setSize(200, 70);
 
-        btn_volver.addListener(new ClickListener(){
+        btn_volver.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.postRunnable(()->{
+                Gdx.app.postRunnable(() -> {
                     game.setScreen(new PantallaPrincipal(game, false));
-
                 });
             }
         });

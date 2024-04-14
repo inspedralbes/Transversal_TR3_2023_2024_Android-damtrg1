@@ -150,7 +150,7 @@ public class Login implements Screen {
 
                     // Crear una solicitud HTTP POST
                     Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-                    httpRequest.setUrl("http://192.168.0.14:3168/login"); // URL de tu servidor
+                    httpRequest.setUrl("http://192.168.1.35:3168/login"); // URL de tu servidor
                     httpRequest.setHeader("Content-Type", "application/json");
                     String data = json.toString();
                     httpRequest.setContent(data);

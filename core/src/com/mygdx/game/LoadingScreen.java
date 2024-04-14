@@ -232,7 +232,7 @@ public class LoadingScreen implements Screen {
         noms_skins = new ArrayList<String>();
 
         Net.HttpRequest httpRequest_assets = new Net.HttpRequest(Net.HttpMethods.GET);
-        String url_assets = "http://192.168.0.14:3168/getAssets";
+        String url_assets = "http://192.168.1.35:3168/getAssets";
         httpRequest_assets.setUrl(url_assets);
         httpRequest_assets.setHeader("Content-Type", "application/json");
 
@@ -275,7 +275,7 @@ public class LoadingScreen implements Screen {
 
         // Create a POST request to fetch the image
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-        httpRequest.setUrl("http://192.168.0.14:3168/getAssets_post/");
+        httpRequest.setUrl("http://192.168.1.35:3168/getAssets_post/");
         httpRequest.setHeader("Content-Type", "application/json");
 
         // Set the body data if needed
@@ -431,7 +431,7 @@ public class LoadingScreen implements Screen {
             Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
             // Construct the URL with query parameters
-            String url = "http://192.168.0.14:3168/getAssets";
+            String url = "http://192.168.1.35:3168/getAssets";
             httpRequest.setUrl(url);
             httpRequest.setHeader("Content-Type", "application/json");
 
@@ -473,7 +473,7 @@ public class LoadingScreen implements Screen {
             Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
 
             // Construct the URL with query parameters
-            String url2 = "http://192.168.0.14:3168/getInventari/" + preferences.getString("username");
+            String url2 = "http://192.168.1.35:3168/getInventari/" + preferences.getString("username");
             httpRequest2.setUrl(url2);
             httpRequest2.setHeader("Content-Type", "application/json");
 
