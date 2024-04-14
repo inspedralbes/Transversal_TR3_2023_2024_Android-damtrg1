@@ -1,7 +1,20 @@
 package objects;
 
+import static com.mygdx.game.AssetManager.jugador_amunt;
+import static com.mygdx.game.AssetManager.jugador_avall;
+import static com.mygdx.game.AssetManager.jugador_dreta;
+import static com.mygdx.game.AssetManager.jugador_esquerra;
+import static com.mygdx.game.AssetManager.spritesheet_joc_amunt;
+import static com.mygdx.game.AssetManager.spritesheet_joc_avall;
+import static com.mygdx.game.AssetManager.spritesheet_joc_dreta;
+import static com.mygdx.game.AssetManager.spritesheet_joc_esquerra;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -24,6 +37,11 @@ public class Jugador extends Actor {
     private Sprite spriteJugador;
     private String orientacio_jugador;
     private Rectangle bounds; // Área de colisión del jugador
+
+    private Sprite jugadorSprite_dreta;
+    private Sprite jugadorSprite_avall;
+    private Sprite jugadorSprite_esquerra;
+    private Sprite jugadorSprite_amunt;
 
     public static boolean COLISIO_DRETA = false;
     public static boolean COLISIO_ABAIX = false;
@@ -51,7 +69,7 @@ public class Jugador extends Actor {
     public static TiledMap tiledMap;
 
     //ShapeRenderer shapeRenderer = new ShapeRenderer();
-    public Jugador(float x, float y, int width, int height, String nomUsuari, TiledMap tiledMap) {
+    public Jugador(float x, float y, int width, int height, String nomUsuari, TiledMap tiledMap, String nom_skin) {
         this.position = new Vector2(x, y);
         this.width = width;
         this.height = height;
@@ -63,7 +81,48 @@ public class Jugador extends Actor {
         // Inicializar el área de colisión
         this.bounds = new Rectangle(x, y, width/2, height);
 
-        this.spriteJugador = AssetManager.jugadorSprite_dreta;
+
+
+        System.out.println("buscando las skins");
+        FileHandle mapasDir = Gdx.files.local("skinsMod");
+        if (mapasDir.exists() && mapasDir.isDirectory()) {
+
+            FileHandle[] subdirs = mapasDir.list();
+            for (FileHandle subdir : subdirs) {
+                System.out.println(subdir);
+                System.out.println(nom_skin);
+                if (String.valueOf(subdir).equals("skinsMod/"+nom_skin)) {
+
+                    Texture spritesheet_joc_dreta = new Texture(Gdx.files.local(subdir+"/swat_sprite_dreta.png"));
+                    spritesheet_joc_dreta.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+                    Texture spritesheet_joc_avall = new Texture(Gdx.files.local(subdir+"/swat_sprite_avall.png"));
+                    spritesheet_joc_avall.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+                    Texture spritesheet_joc_esquerra = new Texture(Gdx.files.local(subdir+"/swat_sprite_esquerra.png"));
+                    spritesheet_joc_esquerra.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+                    Texture spritesheet_joc_amunt = new Texture(Gdx.files.local(subdir+"/swat_sprite_amunt.png"));
+                    spritesheet_joc_amunt.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+
+                    TextureRegion jugador_dreta = new TextureRegion(spritesheet_joc_dreta, 47, 8, 31, 23);
+                    // Crear una nueva Sprite con la región de textura
+                    this.jugadorSprite_dreta = new Sprite(jugador_dreta);
+
+                    TextureRegion jugador_avall = new TextureRegion(spritesheet_joc_avall, 426, 42, 31, 38);
+                    // Crear una nueva Sprite con la región de textura
+                    this.jugadorSprite_avall = new Sprite(jugador_avall);
+                    TextureRegion jugador_esquerra = new TextureRegion(spritesheet_joc_esquerra, 485, 427, 36, 30);
+                    // Crear una nueva Sprite con la región de textura
+                    this.jugadorSprite_esquerra = new Sprite(jugador_esquerra);
+                    TextureRegion jugador_amunt = new TextureRegion(spritesheet_joc_amunt, 7, 484, 26, 38);
+                    // Crear una nueva Sprite con la región de textura
+                    this.jugadorSprite_amunt = new Sprite(jugador_amunt);
+
+                }
+            }
+
+        }
+
+        this.spriteJugador = this.jugadorSprite_dreta;
+
         this.orientacio_jugador = "dreta";
     }
 
@@ -139,21 +198,21 @@ public class Jugador extends Actor {
 
         if (Math.abs(deltaX) > Math.abs(deltaY)) {
             if (deltaX > 0) {
-                this.spriteJugador = AssetManager.jugadorSprite_dreta;
+                this.spriteJugador = this.jugadorSprite_dreta;
                 this.orientacio_jugador = "dreta";
             }
             else if (deltaX < 0){
-                this.spriteJugador = AssetManager.jugadorSprite_esquerra;
+                this.spriteJugador = this.jugadorSprite_esquerra;
                 this.orientacio_jugador = "esquerra";
             }
         }
         else {
             if (deltaY > 0) {
-                this.spriteJugador = AssetManager.jugadorSprite_amunt;
+                this.spriteJugador = this.jugadorSprite_amunt;
                 this.orientacio_jugador = "amunt";
             }
             else if (deltaY < 0){
-                this.spriteJugador = AssetManager.jugadorSprite_avall;
+                this.spriteJugador = this.jugadorSprite_avall;
                 this.orientacio_jugador = "avall";
             }
         }
@@ -161,6 +220,10 @@ public class Jugador extends Actor {
 
 
 
+    }
+
+    public void setBounds(Rectangle bounds) {
+        this.bounds = bounds;
     }
 
     public void moveRival(float deltaX, float deltaY) {
@@ -178,7 +241,7 @@ public class Jugador extends Actor {
         // Verificar colisiones con las paredes del mapa
         boolean collisionX = false;
         boolean collisionY = false;
-
+/*
         if (deltaX > 0) {
             position.x += deltaX * Settings.JUGADOR_VELOCITY;
             this.bounds.setPosition(position);
@@ -189,6 +252,8 @@ public class Jugador extends Actor {
         else if (deltaX < 0) {
             position.x += deltaX * Settings.JUGADOR_VELOCITY;
             this.bounds.setPosition(position);
+
+
 
 
         }
@@ -205,23 +270,25 @@ public class Jugador extends Actor {
 
         }
 
+ */
+
         if (Math.abs(deltaX) > Math.abs(deltaY)) {
             if (deltaX > 0) {
-                this.spriteJugador = AssetManager.jugadorSprite_dreta;
+                this.spriteJugador = this.jugadorSprite_dreta;
                 this.orientacio_jugador = "dreta";
             }
             else if (deltaX < 0){
-                this.spriteJugador = AssetManager.jugadorSprite_esquerra;
+                this.spriteJugador = this.jugadorSprite_esquerra;
                 this.orientacio_jugador = "esquerra";
             }
         }
         else {
             if (deltaY > 0) {
-                this.spriteJugador = AssetManager.jugadorSprite_amunt;
+                this.spriteJugador = this.jugadorSprite_amunt;
                 this.orientacio_jugador = "amunt";
             }
             else if (deltaY < 0){
-                this.spriteJugador = AssetManager.jugadorSprite_avall;
+                this.spriteJugador = this.jugadorSprite_avall;
                 this.orientacio_jugador = "avall";
             }
         }
@@ -246,7 +313,10 @@ public class Jugador extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
-        batch.draw(spriteJugador, position.x, position.y, width, height);
+        if (MapaPrueba.permetre_render) {
+            batch.draw(spriteJugador, position.x, position.y, width, height);
+        }
+
         // Draw the player hitbox (for debugging purposes)
 
     }

@@ -188,16 +188,40 @@ public class Disparo extends Actor {
                                 break; // Importante: salir del bucle después de eliminar el elemento
                             }
                         }
+                        MapaPrueba.permetre_render = false;
+                        MapaPrueba.jugadors.remove(i);
+                        System.out.println("eliminat");
+                        System.out.println(MapaPrueba.jugadors);
 
-                        MapaPrueba.jugadors.get(i).remove();
-                        MapaPrueba.progressBars.get(i).remove();
-                        MapaPrueba.labelsNoms.get(i).remove();
+
+                        MapaPrueba.stage.getRoot().removeActor(this.jugador_colisionat);
+                        MapaPrueba.stage.getRoot().removeActor(MapaPrueba.progressBars.get(i));
+                        MapaPrueba.stage.getRoot().removeActor(MapaPrueba.labelsNoms.get(i));
+
+                        MapaPrueba.progressBars.remove(i);
+                        MapaPrueba.labelsNoms.remove(i);
+
+
+                        int contador = 0;
+                        for (int j=0;j<MapaPrueba.jugadors.size();j++) {
+                            if (MapaPrueba.jugadors.get(j).getNomUsuari().equals(MapaPrueba.preferences.getString("username"))) {
+                                MapaPrueba.numJugador = contador;
+                                break;
+                            }
+                            else {
+                                contador++;
+                                MapaPrueba.numJugador = contador;
+                            }
+                        }
+
+                        MapaPrueba.permetre_render = true;
                     }
 
 
                 }
             }
             this.remove();
+
         }
 
         boolean colision_walls = collidesWithWalls(tiledMap, this.bounds);

@@ -22,19 +22,23 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import Utils.Sala;
 import Utils.Settings;
 import io.socket.client.IO;
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import objects.Background;
+import objects.Jugador;
 
-public class CodigoSalaScreen implements Screen {
+public class WaitingScreen implements Screen {
 
-    Game game;
+    Pixel_R6 game;
     TextField codigo;
 
     Background bg;
@@ -53,8 +57,8 @@ public class CodigoSalaScreen implements Screen {
     String salaId;
     Preferences preferences;
 
-    public CodigoSalaScreen(Pixel_R6 game) {
-                this.game = game;
+    public WaitingScreen(Pixel_R6 game) {
+        this.game = game;
 
         preferences = Gdx.app.getPreferences("Pref");
 
@@ -122,103 +126,6 @@ public class CodigoSalaScreen implements Screen {
         }
         mSocket.connect();
 
-        TextButton.TextButtonStyle textButtonStyle = skin_inputs.get("round", TextButton.TextButtonStyle.class);
-
-        // Crear instancia del TextButton con el estilo obtenido del Skin
-        TextButton btn_acceder = new TextButton("ENTRAR", textButtonStyle);
-
-        btn_acceder.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                // Create an HTTP request
-                Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-
-                // Construct the URL with query parameters
-                String url = "http://192.168.0.14:3168/unirSala";
-                String username = preferences.getString("username");
-                httpRequest.setUrl(url);
-                httpRequest.setHeader("Content-Type", "application/json");
-                JSONObject json = new JSONObject();
-                json.put("user", username);
-                json.put("sala", codigo.getText());
-                json.put("equip", "EQUIP NO SELECCIONAT");
-                json.put("nom_skin",LoadingScreen.nom_skin);
-                httpRequest.setContent(json.toString());
-
-                // Send the HTTP request
-                Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
-                    @Override
-                    public void handleHttpResponse(Net.HttpResponse httpResponse) {
-                        HttpStatus status = httpResponse.getStatus();
-                        if (status.getStatusCode() == 200) {
-                            // If the request was successful (status code 200)
-                            String responseData = httpResponse.getResultAsString();
-                            // Handle the response data here
-                            JSONObject jsonResponse = new JSONObject(responseData);
-                            if (jsonResponse.getBoolean("auth")) {
-                                System.out.println("UNIDO A LA SALA");
-                                mSocket.emit("userNuevo", json.toString());
-                                Gdx.app.postRunnable(() -> {
-                                    game.setScreen(new UnidoSalaScreen(game, json.getString("sala")));
-                                });
-                            }
-                            System.out.println(responseData);
-                        } else {
-                            // If the request failed, handle the error
-                            System.out.println("HTTP request failed with status code: " + status.getStatusCode());
-                        }
-                    }
-
-                    @Override
-                    public void failed(Throwable t) {
-                        // Handle the case where the HTTP request failed
-                        t.printStackTrace();
-                    }
-
-                    @Override
-                    public void cancelled() {
-                        // Handle the case where the HTTP request was cancelled
-                    }
-                });
-
-
-            }
-        });
-
-        btn_acceder.setSize(200, 70);
-
-
-        TextField.TextFieldStyle textFieldStyle = skin_inputs.get("default", TextField.TextFieldStyle.class);
-
-        // Crear una instancia de TextField con el estilo obtenido
-        codigo = new TextField("Ingrese codigo", textFieldStyle);
-
-        // Configurar el controlador de eventos para el TextField
-        codigo.addListener(new InputListener() {
-            @Override
-            public boolean keyDown(InputEvent event, int keycode) {
-                if (codigo.getText().equals("Ingrese codigo")) {
-                    // Si lo es, borrar el texto
-                    codigo.setText("");
-                } else {
-                    // Procesa los datos ingresados por el usuario
-                    String userInput = codigo.getText();
-                    // Aquí puedes hacer algo con los datos ingresados, como validación o procesamiento.
-                    // Limpiar el TextField después de procesar los datos (opcional)
-                    codigo.setText(userInput);
-                }
-                return true;
-            }
-        });
-
-
-        //LABELS
-        // Obtener el estilo del Label del Skin
-        Label.LabelStyle labelStyle = skin_inputs.get("title", Label.LabelStyle.class);
-
-        // Crear una instancia de Label con el texto "Username" y el estilo definido
-        salaLabel = new Label("Codigo Sala", labelStyle);
-
 
         //VENTANA
         Window.WindowStyle windowStyle = skin_inputs.get(Window.WindowStyle.class);
@@ -243,12 +150,16 @@ public class CodigoSalaScreen implements Screen {
         Table table = new Table();
         table.setFillParent(false); // La tabla ocupará todo el espacio del padre, que es la ventana en este caso
 
+        //LABELS
+        // Obtener el estilo del Label del Skin
+        Label.LabelStyle labelStyle = skin_inputs.get("title", Label.LabelStyle.class);
+
+        salaLabel = new Label("HAS MORT! ESPERANT A QUE ACABI LA PARTIDA...", labelStyle);
 
         table.add(salaLabel);
         table.getCell(salaLabel).center();
         table.row();
         table.add(codigo).prefSize(250, 50).row();
-        table.add(btn_acceder);
 
         window.add(table); // Agregar la tabla a la ventana
 
@@ -261,21 +172,32 @@ public class CodigoSalaScreen implements Screen {
         //PARA INTRODUCIR DATOS
         Gdx.input.setInputProcessor(stage);
 
-        // Crear instancia del TextButton con el estilo obtenido del Skin
-        TextButton btn_volver = new TextButton("Volver", textButtonStyle);
-
-        btn_volver.setSize(200, 70);
-
-        btn_volver.addListener(new ClickListener() {
+        MapaPrueba.mSocket.on("partida_acabada", new Emitter.Listener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new PantallaPrincipal(game, false));
+            public void call(Object... args) {
+                JSONObject data = (JSONObject) args[0];
+
+                if (data.get("id_sala").equals(Sala.id)) {
+                    if (data.get("ganadores").equals("equip1")) {
+                        Gdx.app.postRunnable(() -> {
+                            game.setScreen(new PantallaWIN(game, MapaPrueba.array_jugadors_equip1_copia, MapaPrueba.array_jugadors_equip2_copia));
+                        });
+                    }
+
+                    else {
+                        Gdx.app.postRunnable(() -> {
+                            game.setScreen(new PantallaWIN(game, MapaPrueba.array_jugadors_equip2_copia, MapaPrueba.array_jugadors_equip1_copia));
+                        });
+                    }
+                }
+
+
+
+
             }
         });
 
-        btn_volver.setPosition(windowX + 100, windowY - 100);
 
-        stage.addActor(btn_volver);
     }
 
 
@@ -286,6 +208,9 @@ public class CodigoSalaScreen implements Screen {
 
     @Override
     public void render(float delta) {
+
+
+
         stage.draw();
         stage.act(delta);
 

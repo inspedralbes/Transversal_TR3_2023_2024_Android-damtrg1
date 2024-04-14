@@ -49,12 +49,16 @@ public class UnidoSalaScreen implements Screen {
     Skin skin, skin_inputs;
     ArrayList<String> usuarisSala = new ArrayList<>();
     ArrayList<Label> labelsUsuaris = new ArrayList<>();
+    ArrayList<String> skinsSala = new ArrayList<>();
 
     ArrayList<String> usuarisAtacantes = new ArrayList<>();
     ArrayList<Label> labelsAtacantes = new ArrayList<>();
+    ArrayList<String> skinsAtacantes = new ArrayList<>();
 
     ArrayList<String> usuarisDefensores = new ArrayList<>();
     ArrayList<Label> labelDefensores = new ArrayList<>();
+    ArrayList<String> skinsDefensores = new ArrayList<>();
+
     Label salaLabel, aliadoLabel, jugadorLabel, enemigoLabel;
 
     String salaId;
@@ -74,7 +78,7 @@ public class UnidoSalaScreen implements Screen {
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url = "http://r6pixel.duckdns.org:3168/getSala?idSala=" + idSala;
+        String url = "http://192.168.0.14:3168/getSala?idSala=" + idSala;
         String username = preferences.getString("username");
 
         httpRequest.setUrl(url);
@@ -93,12 +97,17 @@ public class UnidoSalaScreen implements Screen {
                     JSONObject json = new JSONObject(responseData);
                     salaId = json.getString("salaId");// Parse the JSON response string
                     JSONArray jsonArray = json.getJSONArray("users");
+                    JSONArray jsonArray_skins = json.getJSONArray("skins");
                     // Iterate through the JSON array
                     for (int i = 0; i < jsonArray.length(); i++) {
                         System.out.println(jsonArray);
+                        System.out.println(jsonArray_skins);
                         // Get each element from the JSON array and add it to the list
                         String element = jsonArray.getString(i);
+                        String skin = jsonArray_skins.getString(i);
                         usuarisSala.set(i, element);
+                        skinsSala.add(skin);
+                        System.out.println("skinsSala: " + skinsSala);
                     }
                     System.out.println(responseData);
                 } else {
@@ -219,7 +228,7 @@ public class UnidoSalaScreen implements Screen {
 
 
         try {
-            mSocket = IO.socket("http://r6pixel.duckdns.org:3168");
+            mSocket = IO.socket("http://192.168.0.14:3168");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -236,6 +245,7 @@ public class UnidoSalaScreen implements Screen {
                     String user = data.getString("user");
                     String sala = data.getString("sala");
                     String equip = data.getString("equip");
+                    String nom_skin = data.getString("nom_skin");
                     if (sala.equals(salaId)) {
 
                         if (!user.equals(preferences.getString("username"))) {
@@ -248,11 +258,15 @@ public class UnidoSalaScreen implements Screen {
 
                             if (!usuarisSala.contains(user)) {
                                 usuarisSala.set(contador, user);
+                                skinsSala.add(nom_skin);
+                                System.out.println("skinsSala: " + skinsSala);
                             }
 
 
                             if (equip.equals("EQUIP 1")) {
                                 usuarisAtacantes.add(user);
+                                skinsAtacantes.add(nom_skin);
+                                System.out.println("skinsAtacantes: " + skinsAtacantes);
                                 if (usuarisSala.contains(user)) {
                                     int id = usuarisSala.indexOf(user);
                                     System.out.println("ANTES NOM: "+user);
@@ -265,10 +279,14 @@ public class UnidoSalaScreen implements Screen {
                                         System.out.println("MEDIO: " + la);
                                     }
                                     usuarisSala.remove(id);
+                                    skinsSala.remove(id);
+                                    System.out.println("skinsSala: " + skinsSala);
                                 }
                                 if (usuarisDefensores.contains(user)) {
                                     int id = usuarisDefensores.indexOf(user);
                                     usuarisDefensores.remove(id);
+                                    skinsDefensores.remove(id);
+                                    System.out.println("skinsDefensores: " + skinsDefensores);
                                     //labelDefensores.remove(user);
                                     System.out.println("N: " + labelDefensores.size());
                                     //labelDefensores.get(id).setText("Defensores");
@@ -285,11 +303,15 @@ public class UnidoSalaScreen implements Screen {
                                  */
                             } else if (equip.equals("EQUIP 2")) {
                                 usuarisDefensores.add(user);
+                                skinsDefensores.add(nom_skin);
+                                System.out.println("skinsDefensores: " + skinsDefensores);
                                 if (usuarisSala.contains(user)) {
                                     int id = usuarisSala.indexOf(user);
                                     System.out.println("ANTES NOM: "+user);
                                     System.out.println("SALA: "+ id);
                                     usuarisSala.remove(id);
+                                    skinsSala.remove(id);
+                                    System.out.println("skinsSala: " + skinsSala);
                                     //usuarisSala.add("NO PLAYER");
                                     System.out.println("DESPUES NOM: "+user);
                                     //labelsUsuaris.get(id).setText("NO PLAYER");
@@ -300,6 +322,8 @@ public class UnidoSalaScreen implements Screen {
                                 if (usuarisAtacantes.contains(user)) {
                                     int id = usuarisAtacantes.indexOf(user);
                                     usuarisAtacantes.remove(id);
+                                    skinsAtacantes.remove(id);
+                                    System.out.println("skinsAtacantes: " + skinsAtacantes);
                                     //labelsAtacantes.remove(user);
                                     System.out.println("N: " + labelsAtacantes.size());
                                     //labelsAtacantes.get(id).setText("Atacantes");
@@ -334,7 +358,7 @@ public class UnidoSalaScreen implements Screen {
                     String sala = data.getString("sala");
                     String mapaSelecionado = data.getString("mapaSelecionado");
                     if (sala.equals(salaId)) {
-                        Sala salaNova = new Sala(sala, mapaSelecionado, usuarisAtacantes, usuarisDefensores);
+                        Sala salaNova = new Sala(sala, mapaSelecionado, usuarisAtacantes, usuarisDefensores, skinsAtacantes, skinsDefensores);
                         Gdx.app.postRunnable(() -> {
                             //AssetManager.music.stop();
                             game.setScreen(new MapaPrueba(game, salaNova));
@@ -405,14 +429,19 @@ public class UnidoSalaScreen implements Screen {
                 json_canvi_equip.put("user", usuarioClic);
                 json_canvi_equip.put("sala", salaId);
                 json_canvi_equip.put("equip", "EQUIP 1");
+                json_canvi_equip.put("nom_skin", LoadingScreen.nom_skin);
 
                 mSocket.emit("userNuevo", json_canvi_equip.toString());
 
 
                 usuarisAtacantes.add(usuarioClic);
+                skinsAtacantes.add(LoadingScreen.nom_skin);
+                System.out.println("skinsAtacantes: " + skinsAtacantes);
 
                 if (usuarisSala.contains(usuarioClic)) {
                     usuarisSala.remove(usuarioClic);
+                    skinsSala.remove(LoadingScreen.nom_skin);
+                    System.out.println("skinsSala: " + skinsSala);
                 }
 
 
@@ -422,6 +451,8 @@ public class UnidoSalaScreen implements Screen {
 
                     int id = usuarisDefensores.indexOf(usuarioClic);
                     usuarisDefensores.remove(id);
+                    skinsDefensores.remove(id);
+                    System.out.println("skinsDefensores: " + skinsDefensores);
                     //labelDefensores.remove(usuarioClic);
                     System.out.println("N: " + labelDefensores.size());
                     //enemigoLabel.setText("Defensor "+i);
@@ -445,13 +476,18 @@ public class UnidoSalaScreen implements Screen {
                 json_canvi_equip.put("user", usuarioClic);
                 json_canvi_equip.put("sala", salaId);
                 json_canvi_equip.put("equip", "EQUIP 2");
+                json_canvi_equip.put("nom_skin", LoadingScreen.nom_skin);
 
                 mSocket.emit("userNuevo", json_canvi_equip.toString());
 
                 usuarisDefensores.add(usuarioClic);
+                skinsDefensores.add(LoadingScreen.nom_skin);
+                System.out.println("skinsDefensores: " + skinsDefensores);
 
                 if (usuarisSala.contains(usuarioClic)) {
                     usuarisSala.remove(usuarioClic);
+                    skinsSala.remove(LoadingScreen.nom_skin);
+                    System.out.println("skinsSala: " + skinsSala);
                 }
 
 
@@ -461,6 +497,8 @@ public class UnidoSalaScreen implements Screen {
 
                     int id = usuarisAtacantes.indexOf(usuarioClic);
                     usuarisAtacantes.remove(id);
+                    skinsAtacantes.remove(id);
+                    System.out.println("skinsAtacantes: " + skinsAtacantes);
                     //labelDefensores.remove(usuarioClic);
                     System.out.println("N: " + labelDefensores.size());
                     //enemigoLabel.setText("Defensor "+i);

@@ -6,17 +6,22 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.json.JSONException;
@@ -43,7 +48,7 @@ public class MapaPrueba implements Screen {
     Pixel_R6 game;
 
     Background bg;
-    int numJugador;
+    public static int numJugador;
 
 
     public static Stage stage;
@@ -57,7 +62,7 @@ public class MapaPrueba implements Screen {
 
     public static Socket mSocket;
 
-    Preferences preferences;
+    public static Preferences preferences;
 
     Skin skin, skin_vida;
 
@@ -91,6 +96,18 @@ public class MapaPrueba implements Screen {
     TextButton textButtonEquip1;
     TextButton textButtonEquip2;
 
+    static Skin skin_txt;
+
+    Window popupWindow;
+    Table table;
+    Skin skin_inputs;
+
+    public static boolean permetre_render = true;
+
+    // Guarda la posición original de la cámara
+    Vector3 posicionOriginal;
+
+
     public MapaPrueba(Pixel_R6 game, Sala sala) {
         preferences = Gdx.app.getPreferences("Pref");
         this.sala = sala;
@@ -100,12 +117,15 @@ public class MapaPrueba implements Screen {
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         skin_vida = new Skin(Gdx.files.internal("skin_vida2/tubular-ui.json"));
 
+        // Carga el Skin
+        skin_txt = new Skin(Gdx.files.internal("skin_txt/arcade-ui.json"));
+
         AssetManager.load();
 
         //AssetManager.music.stop();
 
         try {
-            mSocket = IO.socket("http://r6pixel.duckdns.org:3168");
+            mSocket = IO.socket("http://192.168.0.14:3168");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -117,6 +137,9 @@ public class MapaPrueba implements Screen {
         // Posant el paràmetre a true configurem la càmera perquè
         // faci servir el sistema de coordenades Y-Down
         camera.setToOrtho(false);
+
+        // Guarda la posición original de la cámara
+        posicionOriginal = new Vector3(camera.position);
 
         // Creem el viewport amb les mateixes dimensions que la càmera
         StretchViewport viewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
@@ -137,15 +160,15 @@ public class MapaPrueba implements Screen {
         JSONObject jsonPosicions = jsonLoader.loadJson("posicions.json");
         jsonPosicions = jsonPosicions.getJSONObject("Mazmorra");
         int contador = 0;
-        for (String usuari : sala.getUsuarisAtacantes()) {
-            if (!usuari.equals("NO PLAYER")) {
+        for (int i=0; i<sala.getUsuarisAtacantes().size();i++) {
+            if (!sala.getUsuarisAtacantes().get(i).equals("NO PLAYER")) {
                 JSONObject posicions = jsonPosicions.getJSONObject("pos" + (contador + 1));
                 System.out.println("ATA: " + posicions);
                 Jugador player;
                 if (sala.getNombreMapa().equals("castillo")) {
-                    player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari, AssetManager.tiledCastillo);
+                    player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, sala.getUsuarisAtacantes().get(i), AssetManager.tiledCastillo, sala.getSkinsAtacantes().get(i));
                 } else {
-                    player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari, AssetManager.tiledMazmorra);
+                    player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, sala.getUsuarisAtacantes().get(i), AssetManager.tiledMazmorra, sala.getSkinsAtacantes().get(i));
                 }
                 jugadors.add(player);
                 stage.addActor(player);
@@ -165,23 +188,23 @@ public class MapaPrueba implements Screen {
                 progressBars.add(progressBar); // Agregar la ProgressBar a la lista
                 stage.addActor(progressBar); // Agregar el ProgressBar al Stage
             }
-            if (usuari.equals(preferences.getString("username"))) {
+            if (sala.getUsuarisAtacantes().get(i).equals(preferences.getString("username"))) {
                 numJugador = contador;
             }
 
             contador++;
         }
 
-        for (String usuari : sala.getUsuarisDefensores()) {
-            if (!usuari.equals("NO PLAYER")) {
+        for (int i=0;i<sala.getUsuarisDefensores().size();i++) {
+            if (!sala.getUsuarisDefensores().get(i).equals("NO PLAYER")) {
                 JSONObject posicions = jsonPosicions.getJSONObject("pos" + (contador + 6));
                 System.out.println("DEF: " + posicions);
                 Jugador player;
                 if (sala.getNombreMapa().equals("castillo")) {
-                    player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari, AssetManager.tiledCastillo);
+                    player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, sala.getUsuarisDefensores().get(i), AssetManager.tiledCastillo, sala.getSkinsDefensores().get(i));
                     System.out.println("-------------------------------------------");
                 } else {
-                    player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, usuari, AssetManager.tiledMazmorra);
+                    player = new Jugador(Float.valueOf((String) posicions.get("x")), Float.valueOf((String) posicions.get("y")), Settings.JUGADOR_WIDTH, Settings.JUGADOR_HEIGHT, sala.getUsuarisDefensores().get(i), AssetManager.tiledMazmorra, sala.getSkinsDefensores().get(i));
                 }
                 jugadors.add(player);
                 stage.addActor(player);
@@ -201,7 +224,7 @@ public class MapaPrueba implements Screen {
                 progressBars.add(progressBar); // Agregar la ProgressBar a la lista
                 stage.addActor(progressBar); // Agregar el ProgressBar al Stage
             }
-            if (usuari.equals(preferences.getString("username"))) {
+            if (sala.getUsuarisDefensores().get(i).equals(preferences.getString("username"))) {
                 numJugador = contador;
             }
 
@@ -311,35 +334,39 @@ public class MapaPrueba implements Screen {
             @Override
             public void call(Object... args) {
                 JSONObject data = (JSONObject) args[0];
-                try {
-                    //JSONObject data = new JSONObject(jsonString);
-                    String salaDisparo = data.getString("sala");
-                    if (salaDisparo.equals(sala.getId())) {
-                        if (!data.getString("user").equals(jugadors.get(numJugador).getNomUsuari())) {
-                            String usernameToFind = data.getString("user");
-                            // Loop through the list of Jugadors
-                            int index = -1; // Initialize index to -1 (not found)
-                            for (int i = 0; i < jugadors.size(); i++) {
-                                Jugador jugador = jugadors.get(i);
-                                if (jugador.getNomUsuari().equals(usernameToFind)) {
-                                    // Found the Jugador with the specified username
-                                    index = i;
-                                    break; // No need to continue searching
+
+                if (numJugador<jugadors.size() && permetre_render) {
+                    try {
+                        //JSONObject data = new JSONObject(jsonString);
+                        String salaDisparo = data.getString("sala");
+                        if (salaDisparo.equals(sala.getId())) {
+                            if (!data.getString("user").equals(jugadors.get(numJugador).getNomUsuari())) {
+                                String usernameToFind = data.getString("user");
+                                // Loop through the list of Jugadors
+                                int index = -1; // Initialize index to -1 (not found)
+                                for (int i = 0; i < jugadors.size(); i++) {
+                                    Jugador jugador = jugadors.get(i);
+                                    if (jugador.getNomUsuari().equals(usernameToFind)) {
+                                        // Found the Jugador with the specified username
+                                        index = i;
+                                        break; // No need to continue searching
+                                    }
                                 }
+                                float x1 = Float.valueOf(data.getString("x1"));
+                                float y1 = Float.valueOf(data.getString("y1"));
+                                float x2 = Float.valueOf(data.getString("x2"));
+                                float y2 = Float.valueOf(data.getString("y2"));
+                                float x_vector_direccio = Float.valueOf(data.getString("x_vector_direccio"));
+                                float y_vector_direccio = Float.valueOf(data.getString("y_vector_direccio"));
+                                Disparo disparo = new Disparo(x1, y1, x2, y2, x_vector_direccio, y_vector_direccio, jugadors.get(index));
+                                stage.addActor(disparo);
                             }
-                            float x1 = Float.valueOf(data.getString("x1"));
-                            float y1 = Float.valueOf(data.getString("y1"));
-                            float x2 = Float.valueOf(data.getString("x2"));
-                            float y2 = Float.valueOf(data.getString("y2"));
-                            float x_vector_direccio = Float.valueOf(data.getString("x_vector_direccio"));
-                            float y_vector_direccio = Float.valueOf(data.getString("y_vector_direccio"));
-                            Disparo disparo = new Disparo(x1, y1, x2, y2, x_vector_direccio, y_vector_direccio, jugadors.get(index));
-                            stage.addActor(disparo);
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+
             }
         });
 
@@ -425,23 +452,36 @@ public class MapaPrueba implements Screen {
 
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                knobX = touchpad.getKnobPercentX();
-                knobY = touchpad.getKnobPercentY();
+
+                if (numJugador<jugadors.size() && permetre_render) {
+                    if (jugadors.get(numJugador).getNomUsuari().equals(preferences.getString("username"))) {
+                        knobX = touchpad.getKnobPercentX();
+                        knobY = touchpad.getKnobPercentY();
 
 
-                //if(knobX - knobXAnterior >= 0.1f || knobY - knobYAnterior >= 0.1f ||knobX - knobXAnterior <= -0.1f ||  knobY - knobYAnterior <= -0.1){
-                knobXAnterior = knobX;
-                knobYAnterior = knobY;
-                JSONObject movement = new JSONObject();
-                movement.put("knobX", String.valueOf(knobX));
-                movement.put("knobY", String.valueOf(knobY));
-                movement.put("sala", sala.getId());
-                movement.put("user", jugadors.get(numJugador).getNomUsuari());
-                mSocket.emit("touchDragged", movement);
-                //}
+                        //if(knobX - knobXAnterior >= 0.1f || knobY - knobYAnterior >= 0.1f ||knobX - knobXAnterior <= -0.1f ||  knobY - knobYAnterior <= -0.1){
+                        knobXAnterior = knobX;
+                        knobYAnterior = knobY;
 
-                // Llama al método move del jugador con los valores de deltaX y deltaY adecuados
-                jugadors.get(numJugador).move(knobX, knobY);
+                        // Llama al método move del jugador con los valores de deltaX y deltaY adecuados
+                        jugadors.get(numJugador).move(knobX, knobY);
+
+                        JSONObject movement = new JSONObject();
+                        movement.put("knobX", String.valueOf(knobX));
+                        movement.put("X", String.valueOf(jugadors.get(numJugador).getPosition().x));
+                        movement.put("knobY", String.valueOf(knobY));
+                        movement.put("Y", String.valueOf(jugadors.get(numJugador).getPosition().y));
+                        movement.put("sala", sala.getId());
+                        movement.put("user", jugadors.get(numJugador).getNomUsuari());
+                        mSocket.emit("touchDragged", movement);
+                        //}
+
+
+                    }
+                }
+
+
+
 
             }
 
@@ -458,67 +498,90 @@ public class MapaPrueba implements Screen {
             @Override
             public void call(Object... args) {
                 JSONObject data = (JSONObject) args[0];
-                try {
-                    //JSONObject data = new JSONObject(jsonString);
-                    String salaMovement = data.getString("sala");
-                    if (salaMovement.equals(sala.getId())) {
-                        if (!data.getString("user").equals(jugadors.get(numJugador).getNomUsuari())) {
-                            String usernameToFind = data.getString("user");
-                            System.out.println("usernametoFind:" + usernameToFind);
-                            // Loop through the list of Jugadors
-                            int index = -1; // Initialize index to -1 (not found)
-                            for (int i = 0; i < jugadors.size(); i++) {
-                                Jugador jugador = jugadors.get(i);
-                                System.out.println(jugador.getNomUsuari());
-                                if (jugador.getNomUsuari().equals(usernameToFind)) {
-                                    // Found the Jugador with the specified username
-                                    index = i;
-                                    break; // No need to continue searching
+
+                if (numJugador<jugadors.size() && permetre_render) {
+                    try {
+
+                        //JSONObject data = new JSONObject(jsonString);
+                        String salaMovement = data.getString("sala");
+                        if (salaMovement.equals(sala.getId())) {
+                            if (!data.getString("user").equals(jugadors.get(numJugador).getNomUsuari())) {
+                                String usernameToFind = data.getString("user");
+                                System.out.println("usernametoFind:" + usernameToFind);
+                                // Loop through the list of Jugadors
+                                int index = -1; // Initialize index to -1 (not found)
+                                for (int i = 0; i < jugadors.size(); i++) {
+                                    Jugador jugador = jugadors.get(i);
+                                    System.out.println(jugador.getNomUsuari());
+                                    if (jugador.getNomUsuari().equals(usernameToFind)) {
+                                        // Found the Jugador with the specified username
+                                        index = i;
+                                        break; // No need to continue searching
+                                    }
                                 }
+                                float X = Float.valueOf(data.getString("X"));
+                                float Y = Float.valueOf(data.getString("Y"));
+                                float knobX = Float.valueOf(data.getString("knobX"));
+                                float knobY = Float.valueOf(data.getString("knobY"));
+                                jugadors.get(index).moveRival(knobX, knobY);
+                                jugadors.get(index).setPosition(X, Y);
+                                jugadors.get(index).setBounds(jugadors.get(index).getBounds().setPosition(X,Y));
+                                //System.out.println("movement: " + jugadors.get(index).getPosition());
                             }
-                            float knobX = Float.valueOf(data.getString("knobX"));
-                            float knobY = Float.valueOf(data.getString("knobY"));
-                            jugadors.get(index).moveRival(knobX, knobY);
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+
+
             }
         });
-
+        /*
         mSocket.on("posicioCorrecio", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 JSONObject data = (JSONObject) args[0];
-                try {
-                    //JSONObject data = new JSONObject(jsonString);
-                    String salaMovement = data.getString("sala");
-                    if (salaMovement.equals(sala.getId())) {
-                        if (!data.getString("user").equals(jugadors.get(numJugador).getNomUsuari())) {
-                            String usernameToFind = data.getString("user");
-                            // Loop through the list of Jugadors
-                            int index = -1; // Initialize index to -1 (not found)
-                            for (int i = 0; i < jugadors.size(); i++) {
-                                Jugador jugador = jugadors.get(i);
-                                //System.out.println("hola");
-                                if (jugador.getNomUsuari().equals(usernameToFind)) {
-                                    // Found the Jugador with the specified username
-                                    index = i;
-                                    break; // No need to continue searching
+
+                if (numJugador < jugadors.size() && permetre_render) {
+                    try {
+                        //JSONObject data = new JSONObject(jsonString);
+                        String salaMovement = data.getString("sala");
+                        if (salaMovement.equals(sala.getId()) && numJugador<jugadors.size()) {
+                            if (!data.getString("user").equals(jugadors.get(numJugador).getNomUsuari())) {
+                                String usernameToFind = data.getString("user");
+                                // Loop through the list of Jugadors
+                                int index = -1; // Initialize index to -1 (not found)
+                                for (int i = 0; i < jugadors.size(); i++) {
+                                    Jugador jugador = jugadors.get(i);
+                                    //System.out.println("hola");
+                                    if (jugador.getNomUsuari().equals(usernameToFind)) {
+                                        // Found the Jugador with the specified username
+                                        index = i;
+                                        break; // No need to continue searching
+                                    }
                                 }
+                                float x = Float.valueOf(data.getString("x"));
+                                float y = Float.valueOf(data.getString("y"));
+                                //System.out.println("CORRECIO DE " + jugadors.get(index).getNomUsuari() + "X / Y: " + x + "/" + y);
+                                if (index != -1) {
+                                    jugadors.get(index).setPosition(x, y);
+                                    System.out.println("user: " + jugadors.get(numJugador).getNomUsuari() + ", posicio: " + jugadors.get(numJugador).getPosition());
+                                }
+
+
+
                             }
-                            float x = Float.valueOf(data.getString("x"));
-                            float y = Float.valueOf(data.getString("y"));
-                            //System.out.println("CORRECIO DE " + jugadors.get(index).getNomUsuari() + "X / Y: " + x + "/" + y);
-                            jugadors.get(index).setPosition(x, y);
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+
             }
         });
+
+         */
 
 
         System.out.println("COPIA 1: " + array_jugadors_equip1_copia.size());
@@ -543,13 +606,24 @@ public class MapaPrueba implements Screen {
             @Override
             public void run() {
                 // Emit socket event here
-                JSONObject jsonEnviar = new JSONObject();
-                jsonEnviar.put("user", jugadors.get(numJugador).getNomUsuari());
-                jsonEnviar.put("sala", sala.getId());
-                jsonEnviar.put("x", String.valueOf(jugadors.get(numJugador).getPosition().x));
-                jsonEnviar.put("y", String.valueOf(jugadors.get(numJugador).getPosition().y));
-                mSocket.emit("posicioCorrecio", jsonEnviar);
-                //System.out.println("CORRECIO ENVIADA");
+                if (numJugador<jugadors.size() && permetre_render) {
+                        JSONObject jsonEnviar = new JSONObject();
+                        jsonEnviar.put("user", jugadors.get(numJugador).getNomUsuari());
+                        jsonEnviar.put("sala", sala.getId());
+                        jsonEnviar.put("x", String.valueOf(jugadors.get(numJugador).getPosition().x));
+                    //System.out.println("x: " + jugadors.get(numJugador).getPosition().x);
+                        jsonEnviar.put("y", String.valueOf(jugadors.get(numJugador).getPosition().y));
+                    //System.out.println("y: " + jugadors.get(numJugador).getPosition().y);
+                        mSocket.emit("posicioCorrecio", jsonEnviar);
+                        //System.out.println("CORRECIO ENVIADA");
+
+
+
+
+                }
+
+
+
             }
         }, 0, 10);
     }
@@ -557,8 +631,9 @@ public class MapaPrueba implements Screen {
     @Override
     public void render(float delta) {
 
-        // Actualizar la posición de la cámara para que siga al jugador
-        camera.position.set(jugadors.get(numJugador).getPosition().x, jugadors.get(numJugador).getPosition().y, 0);
+        if (numJugador<jugadors.size()){
+            // Actualizar la posición de la cámara para que siga al jugador
+            camera.position.set(jugadors.get(numJugador).getPosition().x, jugadors.get(numJugador).getPosition().y, 0);
 
         /*
         // Limitar la posición de la cámara para que no se salga del mapa
@@ -570,85 +645,117 @@ public class MapaPrueba implements Screen {
         float maxY = AssetManager.tiledMazmorra.getProperties().get("height", Integer.class) * AssetManager.tiledMazmorra.getProperties().get("tileheight", Integer.class) - halfHeight;
         */
 
-        camera.position.x = MathUtils.clamp(camera.position.x, (float) 0.25 * Gdx.graphics.getWidth(), (float) 0.65 * Gdx.graphics.getWidth());
-        camera.position.y = MathUtils.clamp(camera.position.y, (float) 0.27 * Gdx.graphics.getHeight(), (float) 1.70 * Gdx.graphics.getHeight());
+            camera.position.x = MathUtils.clamp(camera.position.x, (float) 0.25 * Gdx.graphics.getWidth(), (float) 0.65 * Gdx.graphics.getWidth());
+            camera.position.y = MathUtils.clamp(camera.position.y, (float) 0.27 * Gdx.graphics.getHeight(), (float) 1.70 * Gdx.graphics.getHeight());
 
 
-        // Actualizar la cámara
-        camera.update();
+            // Actualizar la cámara
+            camera.update();
 
-        // Actualizar la posición del Touchpad en relación con la cámara
-        float touchpadX = 30; // Ajustar la posición del Touchpad en X
-        float touchpadY = 225; // Ajustar la posición del Touchpad en Y
+            // Actualizar la posición del Touchpad en relación con la cámara
+            float touchpadX = 30; // Ajustar la posición del Touchpad en X
+            float touchpadY = 225; // Ajustar la posición del Touchpad en Y
 
-        touchpadX = camera.position.x - (float) 0.25 * Gdx.graphics.getWidth(); // Ajustar la posición del Touchpad en X
-        touchpadY = camera.position.y - (float) 0.20 * Gdx.graphics.getHeight(); // Ajustar la posición del Touchpad en Y
-
-
-        // Establecer límites para el Touchpad
-
-        touchpadX = MathUtils.clamp(touchpadX, camera.position.x - (float) 0.50 * Gdx.graphics.getWidth(), Gdx.graphics.getWidth() - touchpad.getWidth());
-        touchpadY = MathUtils.clamp(touchpadY, camera.position.y - (float) 0.50 * Gdx.graphics.getHeight(), (float) 2 * Gdx.graphics.getHeight() - touchpad.getHeight());
-
-        touchpad.setPosition(touchpadX, touchpadY);
-
-        textButtonEquip1.setPosition(camera.position.x - (float) 0.25 * Gdx.graphics.getWidth(), camera.position.y + (float) 0.20 * Gdx.graphics.getHeight());
-        textButtonEquip1.setText("EQUIP 1: " + array_jugadors_equip1.size() + " JUGADOR(S) VIUS");
-        //System.out.println("equip 1:" + array_jugadors_equip1.size());
-
-        textButtonEquip2.setPosition(camera.position.x + (float) 0.05 * Gdx.graphics.getWidth(), camera.position.y + (float) 0.20 * Gdx.graphics.getHeight());
-        textButtonEquip2.setText("EQUIP 2: " + array_jugadors_equip2.size() + " JUGADOR(S) VIUS");
-        //System.out.println("equip 2:" + array_jugadors_equip2.size());
+            touchpadX = camera.position.x - (float) 0.25 * Gdx.graphics.getWidth(); // Ajustar la posición del Touchpad en X
+            touchpadY = camera.position.y - (float) 0.20 * Gdx.graphics.getHeight(); // Ajustar la posición del Touchpad en Y
 
 
-        // Actualizar la posición del ProgressBar para que esté encima del jugador
-        //progressBar.setPosition(jugadors.get(numJugador).getPosition().x,  jugadors.get(numJugador).getPosition().y +  jugadors.get(numJugador).getHeight() + 20);
+            // Establecer límites para el Touchpad
 
-        // Actualizar la posición de las ProgressBar para que estén encima de cada jugador
-        for (int i = 0; i < jugadors.size(); i++) {
-            progressBars.get(i).setPosition(jugadors.get(i).getPosition().x, jugadors.get(i).getPosition().y + jugadors.get(i).getHeight() + 25);
+            touchpadX = MathUtils.clamp(touchpadX, camera.position.x - (float) 0.50 * Gdx.graphics.getWidth(), Gdx.graphics.getWidth() - touchpad.getWidth());
+            touchpadY = MathUtils.clamp(touchpadY, camera.position.y - (float) 0.50 * Gdx.graphics.getHeight(), (float) 2 * Gdx.graphics.getHeight() - touchpad.getHeight());
+
+            touchpad.setPosition(touchpadX, touchpadY);
+
+            textButtonEquip1.setPosition(camera.position.x - (float) 0.25 * Gdx.graphics.getWidth(), camera.position.y + (float) 0.20 * Gdx.graphics.getHeight());
+            textButtonEquip1.setText("EQUIP 1: " + array_jugadors_equip1.size() + " JUGADOR(S) VIUS");
+            //System.out.println("equip 1:" + array_jugadors_equip1.size());
+
+            textButtonEquip2.setPosition(camera.position.x + (float) 0.05 * Gdx.graphics.getWidth(), camera.position.y + (float) 0.20 * Gdx.graphics.getHeight());
+            textButtonEquip2.setText("EQUIP 2: " + array_jugadors_equip2.size() + " JUGADOR(S) VIUS");
+            //System.out.println("equip 2:" + array_jugadors_equip2.size());
+
+
+            // Actualizar la posición del ProgressBar para que esté encima del jugador
+            //progressBar.setPosition(jugadors.get(numJugador).getPosition().x,  jugadors.get(numJugador).getPosition().y +  jugadors.get(numJugador).getHeight() + 20);
+
+            // Actualizar la posición de las ProgressBar para que estén encima de cada jugador
+            for (int i = 0; i < jugadors.size(); i++) {
+                progressBars.get(i).setPosition(jugadors.get(i).getPosition().x, jugadors.get(i).getPosition().y + jugadors.get(i).getHeight() + 25);
+            }
+
+            for (int i = 0; i < jugadors.size(); i++) {
+                labelsNoms.get(i).setPosition(jugadors.get(i).getPosition().x, jugadors.get(i).getPosition().y + jugadors.get(i).getHeight() + 30);
+            }
+
+            // Definir la posición del botón de disparo
+
+            float buttonX = 150; // Ajustar la posición del Touchpad en X
+            float buttonY = 225; // Ajustar la posición del Touchpad en Y
+
+            buttonX = camera.position.x + (float) 0.15 * Gdx.graphics.getWidth(); // Ajustar la posición del Touchpad en X
+            buttonY = camera.position.y - (float) 0.20 * Gdx.graphics.getHeight(); // Ajustar la posición del Touchpad en Y
+
+
+            // Establecer límites para el botón de disparo
+
+
+            buttonX = MathUtils.clamp(buttonX, camera.position.x - (float) 0.50 * Gdx.graphics.getWidth(), Gdx.graphics.getWidth() - touchpad.getWidth());
+            buttonY = MathUtils.clamp(buttonY, camera.position.y - (float) 0.50 * Gdx.graphics.getHeight(), (float) 2 * Gdx.graphics.getHeight() - touchpad.getHeight());
+
+
+            // Actualizar la posición del botón de disparo
+            disparo.setPosition(buttonX, buttonY);
+
+
+
         }
 
-        for (int i = 0; i < jugadors.size(); i++) {
-            labelsNoms.get(i).setPosition(jugadors.get(i).getPosition().x, jugadors.get(i).getPosition().y + jugadors.get(i).getHeight() + 30);
+
+        else {
+            System.out.println("canviar pantalla");
+            Gdx.app.postRunnable(() -> {
+                game.setScreen(new WaitingScreen(game));
+            });
+
         }
 
-        // Definir la posición del botón de disparo
-
-        float buttonX = 150; // Ajustar la posición del Touchpad en X
-        float buttonY = 225; // Ajustar la posición del Touchpad en Y
-
-        buttonX = camera.position.x + (float) 0.15 * Gdx.graphics.getWidth(); // Ajustar la posición del Touchpad en X
-        buttonY = camera.position.y - (float) 0.20 * Gdx.graphics.getHeight(); // Ajustar la posición del Touchpad en Y
-
-
-        // Establecer límites para el botón de disparo
-
-
-        buttonX = MathUtils.clamp(buttonX, camera.position.x - (float) 0.50 * Gdx.graphics.getWidth(), Gdx.graphics.getWidth() - touchpad.getWidth());
-        buttonY = MathUtils.clamp(buttonY, camera.position.y - (float) 0.50 * Gdx.graphics.getHeight(), (float) 2 * Gdx.graphics.getHeight() - touchpad.getHeight());
-
-
-        // Actualizar la posición del botón de disparo
-        disparo.setPosition(buttonX, buttonY);
 
 
         if (array_jugadors_equip1.isEmpty() || array_jugadors_equip2.isEmpty()) {
+
             ArrayList<Jugador> ganadores;
             ArrayList<Jugador> perdedores;
 
             if (array_jugadors_equip1.isEmpty()) {
                 ganadores = array_jugadors_equip2_copia;
                 perdedores = array_jugadors_equip1_copia;
+
+                JSONObject partida_acabada = new JSONObject();
+                partida_acabada.put("id_sala",sala.getId());
+                partida_acabada.put("ganadores", "equip2");
+
+                mSocket.emit("partida_acabada", partida_acabada);
             } else {
                 ganadores = array_jugadors_equip1_copia;
                 perdedores = array_jugadors_equip2_copia;
+
+                JSONObject partida_acabada = new JSONObject();
+                partida_acabada.put("id_sala",sala.getId());
+                partida_acabada.put("ganadores", "equip1");
+
+                mSocket.emit("partida_acabada", partida_acabada);
             }
+
+
 
             Gdx.app.postRunnable(() -> {
                 game.setScreen(new PantallaWIN(game, ganadores, perdedores));
             });
+
+
         }
+
 
 
         // Dibujar el mapa
