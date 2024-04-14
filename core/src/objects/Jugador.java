@@ -58,7 +58,7 @@ public class Jugador extends Actor {
 
 
 
-
+    private int kills;
 
 
 
@@ -81,7 +81,7 @@ public class Jugador extends Actor {
         // Inicializar el área de colisión
         this.bounds = new Rectangle(x, y, width/2, height);
 
-
+        this.kills = 0;
 
         System.out.println("buscando las skins");
         FileHandle mapasDir = Gdx.files.local("skinsMod");
@@ -224,6 +224,14 @@ public class Jugador extends Actor {
 
     public void setBounds(Rectangle bounds) {
         this.bounds = bounds;
+    }
+
+    public void aumentarKills(){
+        this.kills++;
+    }
+
+    public int getKills(){
+        return this.kills;
     }
 
     public void moveRival(float deltaX, float deltaY) {

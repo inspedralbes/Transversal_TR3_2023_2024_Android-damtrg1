@@ -175,6 +175,7 @@ public class Disparo extends Actor {
                         for (int j=0;j<MapaPrueba.array_jugadors_equip1.size();j++) {
                             if (MapaPrueba.array_jugadors_equip1.get(j) == this.jugador_colisionat) {
                                 MapaPrueba.array_jugadors_equip1.remove(j);
+                                this.jugador_associat.aumentarKills();
                             }
 
                         }
@@ -183,6 +184,7 @@ public class Disparo extends Actor {
                             if (MapaPrueba.array_jugadors_equip2.get(j) == this.jugador_colisionat) {
                                 System.out.println(MapaPrueba.array_jugadors_equip2.size());
                                 MapaPrueba.array_jugadors_equip2.remove(j); // Elimina el elemento en el índice j
+                                this.jugador_associat.aumentarKills();
                                 System.out.println("eliminat");
                                 System.out.println(MapaPrueba.array_jugadors_equip2.size());
                                 break; // Importante: salir del bucle después de eliminar el elemento
@@ -267,6 +269,7 @@ public class Disparo extends Actor {
             // Verificar si los límites se intersectan
             if (jugador.getBounds().overlaps(this.bounds.getBoundingRectangle())) {
                 this.jugador_colisionat = jugador;
+                //this.jugador_associat.aumentarKills();
                 System.out.println("bounds rival: " + this.jugador_colisionat.getBounds());
                 System.out.println("bounds rival: " + this.jugador_associat.getBounds());
                 return true;

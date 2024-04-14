@@ -103,7 +103,7 @@ public class PantallaPrincipal implements Screen {
         if(nou) {
             // Create a GET request to fetch the image
             Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
-            httpRequest.setUrl("http://192.168.0.14:3168/logged/" + preferences.getString("username"));
+            httpRequest.setUrl("http://192.168.1.35:3168/logged/" + preferences.getString("username"));
             httpRequest.setHeader("Content-Type", "application/json");
 
             // Send the request
@@ -136,7 +136,7 @@ public class PantallaPrincipal implements Screen {
             });
 
             try {
-                mSocket = IO.socket("http://192.168.0.14:3168");
+                mSocket = IO.socket("http://192.168.1.35:3168");
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
@@ -148,7 +148,7 @@ public class PantallaPrincipal implements Screen {
 
         // Create a GET request to fetch the image
         Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
-        httpRequest2.setUrl("http://192.168.0.14:3168/getMonedes/" + preferences.getString("username"));
+        httpRequest2.setUrl("http://192.168.1.35:3168/getMonedes/" + preferences.getString("username"));
         httpRequest2.setHeader("Content-Type", "application/json");
 
         // Send the request
@@ -245,7 +245,6 @@ public class PantallaPrincipal implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new ScreenSettings(game));
-                //game.setScreen(new PantallaWIN(game));
             }
         });
 
@@ -277,7 +276,7 @@ public class PantallaPrincipal implements Screen {
 
 
         TextButton btn_tenda = new TextButton("TENDA", textButtonStyle);
-        btn_tenda.setSize(70,70);
+        btn_tenda.setSize(100,70);
         btn_tenda.setPosition(0, Settings.GAME_HEIGHT - btn_tenda.getHeight());
 
         btn_tenda.addListener(new ClickListener() {
@@ -288,8 +287,8 @@ public class PantallaPrincipal implements Screen {
         });
 
         TextButton btn_news = new TextButton("NOTICIES", textButtonStyle);
-        btn_news.setSize(70,70);
-        btn_news.setPosition(0 + btn_tenda.getWidth() , Settings.GAME_HEIGHT - btn_news.getHeight());
+        btn_news.setSize(150,70);
+        btn_news.setPosition(20 + btn_tenda.getWidth() , Settings.GAME_HEIGHT - btn_news.getHeight());
 
         btn_news.addListener(new ClickListener() {
             @Override
@@ -299,8 +298,8 @@ public class PantallaPrincipal implements Screen {
         });
 
         TextButton btn_inventari = new TextButton("INVENTARI", textButtonStyle);
-        btn_inventari.setSize(70,70);
-        btn_inventari.setPosition(0 + btn_tenda.getWidth() * 2, Settings.GAME_HEIGHT - btn_news.getHeight());
+        btn_inventari.setSize(150,70);
+        btn_inventari.setPosition(90 + btn_tenda.getWidth() * 2, Settings.GAME_HEIGHT - btn_news.getHeight());
 
         btn_inventari.addListener(new ClickListener() {
             @Override
@@ -419,7 +418,7 @@ public class PantallaPrincipal implements Screen {
         stage.addActor(closeButton);
 
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
-        httpRequest.setUrl("http://192.168.0.14:3168/getBroadcastNews");
+        httpRequest.setUrl("http://192.168.1.35:3168/getBroadcastNews");
         httpRequest.setHeader("Content-Type", "application/json");
 
         Label.LabelStyle titleLabelStyle = skin_txt.get("title", Label.LabelStyle.class);
@@ -464,7 +463,7 @@ public class PantallaPrincipal implements Screen {
                         table.add(title).expandX().fillX().pad(10).row(); // Add title to the table and start a new row
 
                         Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
-                        httpRequest2.setUrl("http://192.168.0.14:3168/getImgBroadcast/" + json.getString("image"));
+                        httpRequest2.setUrl("http://192.168.1.35:3168/getImgBroadcast/" + json.getString("image"));
                         httpRequest2.setHeader("Content-Type", "application/json");
                         // Send the request
                         int finalI = i;

@@ -122,23 +122,33 @@ public class SelectPlayScreen implements Screen {
             }
         });
 
+        TextButton btn_volver = new TextButton("VOLVER", textButtonStyle);
+        btn_volver.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new PantallaPrincipal(game, false));
+            }
+        });
 
 
         //TAMAÑO DEL BOTON
         btn_play.setSize(250, 70);
         btn_settings.setSize(250, 70);
+        btn_volver.setSize(250, 70);
 
         // Calcula las coordenadas X e Y para colocar los botones en el medio de la pantalla
         float btnX = (Gdx.graphics.getWidth() - btn_play.getWidth()) / 2;
         float btnY = (Settings.GAME_HEIGHT - btn_play.getHeight()) / 2;
 
         // Establece la posición de los botones
-        btn_play.setPosition(btnX- 150, btnY + 60); // Posición del botón "PLAY"
-        btn_settings.setPosition(btnX + 150, btnY+60); // Posición del botón "SETTINGS"
+        btn_play.setPosition(btnX - 150, btnY + 60); // Posición del botón "PLAY"
+        btn_settings.setPosition(btnX + 150, btnY + 60); // Posición del botón "SETTINGS"
+        btn_volver.setPosition(btnX, btnY - 80);// Posición del botón "VOLVER"
 
 
         stage.addActor(btn_play);
         stage.addActor(btn_settings);
+        stage.addActor(btn_volver);
 
 
         //USERNAME
