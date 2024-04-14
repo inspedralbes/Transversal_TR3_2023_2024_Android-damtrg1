@@ -86,6 +86,8 @@ public class LoadingScreen implements Screen {
 
     private boolean inventari_canviat;
 
+    public static String nom_skin;
+
 
     public LoadingScreen(Pixel_R6 game, boolean inventari_canviat) {
         this.game = game;
@@ -369,28 +371,9 @@ public class LoadingScreen implements Screen {
 
                                         System.out.println(subdir.name());
 
-                                        spritesheet_joc_dreta = new Texture(Gdx.files.local("skinsMod/swat_sprite_dreta.png"));
-                                        spritesheet_joc_dreta.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-                                        spritesheet_joc_avall = new Texture(Gdx.files.local("skinsMod/swat_sprite_avall.png"));
-                                        spritesheet_joc_avall.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-                                        spritesheet_joc_esquerra = new Texture(Gdx.files.local("skinsMod/swat_sprite_esquerra.png"));
-                                        spritesheet_joc_esquerra.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-                                        spritesheet_joc_amunt = new Texture(Gdx.files.local("skinsMod/swat_sprite_amunt.png"));
-                                        spritesheet_joc_amunt.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
-                                        jugador_dreta = new TextureRegion(spritesheet_joc_dreta, 47, 8, 31, 23);
-                                        // Crear una nueva Sprite con la región de textura
-                                        AssetManager.jugadorSprite_dreta = new Sprite(jugador_dreta);
 
-                                        jugador_avall = new TextureRegion(spritesheet_joc_avall, 426, 42, 31, 38);
-                                        // Crear una nueva Sprite con la región de textura
-                                        AssetManager.jugadorSprite_avall = new Sprite(jugador_avall);
-                                        jugador_esquerra = new TextureRegion(spritesheet_joc_esquerra, 485, 427, 36, 30);
-                                        // Crear una nueva Sprite con la región de textura
-                                        AssetManager.jugadorSprite_esquerra = new Sprite(jugador_esquerra);
-                                        jugador_amunt = new TextureRegion(spritesheet_joc_amunt, 7, 484, 26, 38);
-                                        // Crear una nueva Sprite con la región de textura
-                                        AssetManager.jugadorSprite_amunt = new Sprite(jugador_amunt);
+
                                         peticion_getSkin_guardada = true;
                                         System.out.println("peticion_getAssets true");
                                     }
@@ -543,8 +526,8 @@ public class LoadingScreen implements Screen {
                 JSONObject a = skins.getJSONObject(i);
                 if (idEquipat.equals(a.getString("_id"))) {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("directory",a.getString("path_directori_skin"));
-
+                    jsonObject.put("directory","skinsMod");
+                    nom_skin = a.getString("path_directori_skin");
                     fetchAndSetAssets(jsonObject.toString());
                     break;
                 }

@@ -54,12 +54,16 @@ public class CreacionPartidaScreen implements Screen {
     Skin skin, skin_inputs, skin_btns;
     ArrayList<String> usuarisSala = new ArrayList<>();
     ArrayList<Label> labelsUsuaris = new ArrayList<>();
+    ArrayList<String> skinsSala = new ArrayList<>();
+
 
     ArrayList<String> usuarisAtacantes = new ArrayList<>();
     ArrayList<Label> labelsAtacantes = new ArrayList<>();
+    ArrayList<String> skinsAtacantes = new ArrayList<>();
 
     ArrayList<String> usuarisDefensores = new ArrayList<>();
     ArrayList<Label> labelDefensores = new ArrayList<>();
+    ArrayList<String> skinsDefensores = new ArrayList<>();
     Label salaLabel, seleccioMapa, aliadoLabel, jugadorLabel, enemigoLabel;
 
     int numMapa = 0;
@@ -94,6 +98,8 @@ public class CreacionPartidaScreen implements Screen {
         String url = "http://192.168.0.14:3168/crearSala";
         String username = preferences.getString("username");
         url += "?user=" + username;
+        System.out.println(LoadingScreen.nom_skin);
+        url += "&skin=" + String.valueOf(LoadingScreen.nom_skin);
 
         httpRequest.setUrl(url);
         httpRequest.setHeader("Content-Type", "application/json");
@@ -116,6 +122,8 @@ public class CreacionPartidaScreen implements Screen {
                         // Get each element from the JSON array and add it to the list
                         String element = jsonArray.getString(i);
                         usuarisSala.set(i, element);
+                        skinsSala.add(LoadingScreen.nom_skin);
+                        System.out.println("skinsSala: " + skinsSala);
                     }
                     System.out.println(responseData);
                 } else {
@@ -350,6 +358,7 @@ public class CreacionPartidaScreen implements Screen {
                     String user = data.getString("user");
                     String sala = data.getString("sala");
                     String equip = data.getString("equip");
+                    String nom_skin = data.getString("nom_skin");
                     //System.out.println("hola");
                     if (sala.equals(salaId)) {
 
@@ -363,11 +372,15 @@ public class CreacionPartidaScreen implements Screen {
 
                             if (!usuarisSala.contains(user)) {
                                 usuarisSala.set(contador, user);
+                                skinsSala.add(nom_skin);
+                                System.out.println("skinsSala: " + skinsSala);
                             }
 
 
                             if (equip.equals("EQUIP 1")) {
                                 usuarisAtacantes.add(user);
+                                skinsAtacantes.add(nom_skin);
+                                System.out.println("skinsAtacantes: " + skinsAtacantes);
                                 if (usuarisSala.contains(user)) {
                                     int id = usuarisSala.indexOf(user);
                                     System.out.println("ANTES NOM: "+user);
@@ -380,10 +393,14 @@ public class CreacionPartidaScreen implements Screen {
                                         System.out.println("MEDIO: " + la);
                                     }
                                     usuarisSala.remove(id);
+                                    skinsSala.remove(id);
+                                    System.out.println("skinsSala: " + skinsSala);
                                 }
                                 if (usuarisDefensores.contains(user)) {
                                     int id = usuarisDefensores.indexOf(user);
                                     usuarisDefensores.remove(id);
+                                    skinsDefensores.remove(id);
+                                    System.out.println("skinsDefensores: " + skinsDefensores);
                                     //labelDefensores.remove(user);
                                     System.out.println("N: " + labelDefensores.size());
                                     //labelDefensores.get(id).setText("Defensores");
@@ -400,11 +417,15 @@ public class CreacionPartidaScreen implements Screen {
                                  */
                             } else if (equip.equals("EQUIP 2")) {
                                 usuarisDefensores.add(user);
+                                skinsDefensores.add(nom_skin);
+                                System.out.println("skinsDefensores: " + skinsDefensores);
                                 if (usuarisSala.contains(user)) {
                                     int id = usuarisSala.indexOf(user);
                                     System.out.println("ANTES NOM: "+user);
                                     System.out.println("SALA: "+ id);
                                     usuarisSala.remove(id);
+                                    skinsSala.remove(id);
+                                    System.out.println("skinsSala: " + skinsSala);
                                     //usuarisSala.add("NO PLAYER");
                                     System.out.println("DESPUES NOM: "+user);
                                     //labelsUsuaris.get(id).setText("NO PLAYER");
@@ -415,6 +436,8 @@ public class CreacionPartidaScreen implements Screen {
                                 if (usuarisAtacantes.contains(user)) {
                                     int id = usuarisAtacantes.indexOf(user);
                                     usuarisAtacantes.remove(id);
+                                    skinsAtacantes.remove(id);
+                                    System.out.println("skinsAtacantes: " + skinsAtacantes);
                                     //labelsAtacantes.remove(user);
                                     System.out.println("N: " + labelsAtacantes.size());
                                     //labelsAtacantes.get(id).setText("Atacantes");
@@ -448,7 +471,7 @@ public class CreacionPartidaScreen implements Screen {
                     JSONObject data = new JSONObject(jsonString);
                     String sala = data.getString("sala");
                     if (sala.equals(salaId)) {
-                        salaNova = new Sala(sala, mapaSelecionado, usuarisAtacantes, usuarisDefensores);
+                        salaNova = new Sala(sala, mapaSelecionado, usuarisAtacantes, usuarisDefensores, skinsAtacantes, skinsDefensores);
                         if (usuarisAtacantes.isEmpty() && usuarisDefensores.isEmpty()) {
                             System.out.println("No puedes jugar sin elegir equipo");
                         } else {
@@ -540,14 +563,19 @@ public class CreacionPartidaScreen implements Screen {
                 json_canvi_equip.put("user", usuarioClic);
                 json_canvi_equip.put("sala", salaId);
                 json_canvi_equip.put("equip", "EQUIP 1");
+                json_canvi_equip.put("nom_skin", LoadingScreen.nom_skin);
 
                 mSocket.emit("userNuevo", json_canvi_equip.toString());
 
 
                 usuarisAtacantes.add(usuarioClic);
+                skinsAtacantes.add(LoadingScreen.nom_skin);
+                System.out.println("skinsAtacantes: " + skinsAtacantes);
 
                 if (usuarisSala.contains(usuarioClic)) {
                     usuarisSala.remove(usuarioClic);
+                    skinsSala.remove(LoadingScreen.nom_skin);
+                    System.out.println("skinsSala: " + skinsSala);
                 }
 
 
@@ -557,6 +585,8 @@ public class CreacionPartidaScreen implements Screen {
 
                     int id = usuarisDefensores.indexOf(usuarioClic);
                     usuarisDefensores.remove(id);
+                    skinsDefensores.remove(id);
+                    System.out.println("skinsDefensores: " + skinsDefensores);
                     //labelDefensores.remove(usuarioClic);
                     System.out.println("N: " + labelDefensores.size());
                     //enemigoLabel.setText("Defensor "+i);
@@ -604,13 +634,18 @@ public class CreacionPartidaScreen implements Screen {
                 json_canvi_equip.put("user", usuarioClic);
                 json_canvi_equip.put("sala", salaId);
                 json_canvi_equip.put("equip", "EQUIP 2");
+                json_canvi_equip.put("nom_skin", LoadingScreen.nom_skin);
 
                 mSocket.emit("userNuevo", json_canvi_equip.toString());
 
                 usuarisDefensores.add(usuarioClic);
+                skinsDefensores.add(LoadingScreen.nom_skin);
+                System.out.println("skinsDefensores: " + skinsDefensores);
 
                 if (usuarisSala.contains(usuarioClic)) {
                     usuarisSala.remove(usuarioClic);
+                    skinsSala.remove(LoadingScreen.nom_skin);
+                    System.out.println("skinsSala: " + skinsSala);
                 }
 
 
@@ -620,6 +655,8 @@ public class CreacionPartidaScreen implements Screen {
 
                     int id = usuarisAtacantes.indexOf(usuarioClic);
                     usuarisAtacantes.remove(id);
+                    skinsAtacantes.remove(id);
+                    System.out.println("skinsAtacantes: " + skinsAtacantes);
                     //labelDefensores.remove(usuarioClic);
                     System.out.println("N: " + labelDefensores.size());
                     //enemigoLabel.setText("Defensor "+i);

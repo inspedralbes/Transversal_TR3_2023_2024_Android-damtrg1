@@ -3,20 +3,25 @@ package Utils;
 import java.util.ArrayList;
 
 public class Sala {
-    String id;
+    public static String id;
     ArrayList<String> users;
 
     ArrayList<String> usuarisAtacantes;
 
     ArrayList<String> usuarisDefensores;
+    ArrayList<String> skinsAtacantes;
+
+    ArrayList<String> skinsDefensores;
 
     String nombreMapa;
 
-    public Sala(String id, String nombreMapa, ArrayList<String> atacantes, ArrayList<String> defensores) {
+    public Sala(String id, String nombreMapa, ArrayList<String> atacantes, ArrayList<String> defensores, ArrayList<String> skinsAtacantes, ArrayList<String> skinsDefensores ) {
         this.id = id;
         this.nombreMapa = nombreMapa;
         this.usuarisAtacantes = atacantes;
         this.usuarisDefensores = defensores;
+        this.skinsAtacantes = skinsAtacantes;
+        this.skinsDefensores = skinsDefensores;
     }
 
     public Sala(String id,  ArrayList<String> atacantes, ArrayList<String> defensores) {
@@ -47,6 +52,14 @@ public class Sala {
 
     public void setNombreMapa(String nombreMapa) {
         this.nombreMapa = nombreMapa;
+    }
+
+    public ArrayList<String> getSkinsAtacantes() {
+        return skinsAtacantes;
+    }
+
+    public ArrayList<String> getSkinsDefensores() {
+        return skinsDefensores;
     }
 
     public ArrayList<String> getUsuarisAtacantes() {
