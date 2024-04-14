@@ -78,7 +78,7 @@ public class UnidoSalaScreen implements Screen {
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
         // Construct the URL with query parameters
-        String url = "http://192.168.1.46:3168/getSala?idSala=" + idSala;
+        String url = "http://192.168.0.14:3168/getSala?idSala=" + idSala;
         String username = preferences.getString("username");
 
         httpRequest.setUrl(url);
@@ -228,7 +228,7 @@ public class UnidoSalaScreen implements Screen {
 
 
         try {
-            mSocket = IO.socket("http://192.168.1.46:3168");
+            mSocket = IO.socket("http://192.168.0.14:3168");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
