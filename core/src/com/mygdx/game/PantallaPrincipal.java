@@ -388,39 +388,6 @@ public class PantallaPrincipal implements Screen {
         Gdx.input.setInputProcessor(stage);
 
 
-        Label.LabelStyle labelDescripcioStyle = skin.get(Label.LabelStyle.class);
-        Label.LabelStyle labelTitleStyle = skin.get("title-plain",Label.LabelStyle.class);
-        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
-        httpRequest.setUrl("http://r6pixel.duckdns.org:3168/getBroadcastNews");
-        httpRequest.setHeader("Content-Type", "application/json");
-
-        // Send the request
-        Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
-            @Override
-            public void handleHttpResponse(Net.HttpResponse httpResponse) {
-                HttpStatus status = httpResponse.getStatus();
-                if (status.getStatusCode() == 200) {
-                    // If the request was successful (status code 200)
-                    String responseData = httpResponse.getResultAsString();
-                    noticies = new JSONArray(responseData);
-                    llistaImatges = new ArrayList<>(Collections.nCopies(noticies.length(), null));
-                    imgList = new ArrayList<>();
-
-                    creat = true;
-                }
-            }
-
-            @Override
-            public void failed(Throwable t) {
-                // Handle failure
-            }
-
-            @Override
-            public void cancelled() {
-                // Handle cancellation
-            }
-        });
-
     }
 
     @Override
@@ -479,7 +446,7 @@ public class PantallaPrincipal implements Screen {
         TextButton.TextButtonStyle textButtonStyle = skin.get(TextButton.TextButtonStyle.class);
 
         closeButton = new TextButton("VOLVER", textButtonStyle);
-        closeButton.setSize(Settings.GAME_WIDTH * 0.2f, Settings.GAME_HEIGHT * 0.1f);
+        closeButton.setSize(Settings.GAME_WIDTH * 0.1f, Settings.GAME_HEIGHT * 0.1f);
 
         // Add listener to close button
         closeButton.addListener(new ClickListener() {
@@ -493,121 +460,113 @@ public class PantallaPrincipal implements Screen {
                 noticies = null;
                 llistaImatges = null;
                 table = null;
+                imgList = null;
 
             }
         });
-        closeButton.setPosition(0,0);
+        closeButton.setPosition(Settings.GAME_WIDTH / 2 - closeButton.getWidth(),0);
         stage.addActor(closeButton);
+
+
+        Label.LabelStyle titleLabelStyle = skin_txt.get("title", Label.LabelStyle.class);
 
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
         httpRequest.setUrl("http://r6pixel.duckdns.org:3168/getBroadcastNews");
         httpRequest.setHeader("Content-Type", "application/json");
 
-        Label.LabelStyle titleLabelStyle = skin_txt.get("title", Label.LabelStyle.class);
-        popupWindow = new Window("NOTICIES", skin);
-        popupWindow.getTitleLabel().setAlignment(Align.center);
 
-        popupWindow.setSize(Settings.GAME_WIDTH * 0.75f, Settings.GAME_HEIGHT * 0.75f);
-        popupWindow.setPosition((Gdx.graphics.getWidth() - popupWindow.getWidth()) / 2, (Gdx.graphics.getHeight() - popupWindow.getHeight()) / 2);
-        popupWindow.setMovable(false); // Make the window non-movable
-
-
-
-        for (int i = 0; i < noticies.length(); i++) {
-            JSONObject json = noticies.getJSONObject(i);
-
-            //Load image asynchronously
-            TextureRegionDrawable imageDrawable = new TextureRegionDrawable(new TextureRegion(AssetManager.persona));
-            Image image = new Image(imageDrawable);
-            table.add(image).colspan(1).size(Settings.GAME_WIDTH * 0.15f, Settings.GAME_HEIGHT * 0.15f); // Add image to the table and make it span two rows
-            imgList.add(image);
-
-
-            // Create title label
-            Label title = new Label(json.getString("title"), labelTitleStyle);
-            title.setWrap(true);
-            table.add(title).expandX().fillX().pad(10).row(); // Add title to the table and start a new row
-
-            Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
-            httpRequest2.setUrl("http://r6pixel.duckdns.org:3168/getImgBroadcast/" + json.getString("image"));
-            httpRequest2.setHeader("Content-Type", "application/json");
-            // Send the request
-            int finalI = i;
-            Gdx.net.sendHttpRequest(httpRequest2, new Net.HttpResponseListener() {
-                @Override
-                public void handleHttpResponse(Net.HttpResponse httpResponse) {
-                    byte[] imageData = httpResponse.getResult();
-                    // Load the image data into a Pixmap
-                    Pixmap pixmap = new Pixmap(imageData, 0, imageData.length);
-
-                    Gdx.app.postRunnable(new Runnable() {
-                        @Override
-                        public void run () {
-                            // Create a Texture from the Pixmap
-                            Texture texture = new Texture(pixmap);
-
-                            // Dispose the Pixmap to release its resources
-                            pixmap.dispose();
-
-                            // Create a TextureRegion from the Texture
-                            TextureRegion textureRegion = new TextureRegion(texture);
-
-                            // Create a TextureRegionDrawable from the TextureRegion
-                            TextureRegionDrawable drawable = new TextureRegionDrawable(textureRegion);
-
-                            llistaImatges.set(finalI, drawable);
-
-                        }
-                    });
-                }
-
-                @Override
-                public void failed(Throwable t) {
-
-                }
-
-                @Override
-                public void cancelled() {
-
-                }
-            });
-
-            // Create description label
-            Label description = new Label(json.getString("description"), labelDescripcioStyle);
-            description.setWrap(true);
-            description.setAlignment(Align.center);
-            table.add(description).left().expandX().fillX().pad(10).colspan(2).row(); // Add description to the table and start a new row
-
-        }
-
-
-
-
-
-
-        closeButton = new TextButton("VOLVER", textButtonStyle);
-        closeButton.setSize(Settings.GAME_WIDTH * 0.2f, Settings.GAME_HEIGHT * 0.1f);
-
-        // Add listener to close button
-        closeButton.addListener(new ClickListener() {
+        // Send the request
+        Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                // Hide the Noticies window
-                popupWindow.remove();
-                // Remove the close button
-                closeButton.remove();
-                sp.remove();
-                noticies = null;
-                llistaImatges = null;
-                table = null;
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                HttpStatus status = httpResponse.getStatus();
+                if (status.getStatusCode() == 200) {
+                    // If the request was successful (status code 200)
+                    String responseData = httpResponse.getResultAsString();
+                    noticies = new JSONArray(responseData);
+                    llistaImatges = new ArrayList<>(Collections.nCopies(noticies.length(), null));
+                    imgList = new ArrayList<>();
+                    for (int i = 0; i < noticies.length(); i++) {
+                        JSONObject json = noticies.getJSONObject(i);
 
+                        //Load image asynchronously
+                        TextureRegionDrawable imageDrawable = new TextureRegionDrawable(new TextureRegion(AssetManager.persona));
+                        Image image = new Image(imageDrawable);
+                        table.add(image).colspan(1).size(Settings.GAME_WIDTH * 0.15f, Settings.GAME_HEIGHT * 0.15f); // Add image to the table and make it span two rows
+                        imgList.add(image);
+
+
+                        // Create title label
+                        Label title = new Label(json.getString("title"), labelTitleStyle);
+                        title.setWrap(true);
+                        table.add(title).expandX().fillX().pad(10).row(); // Add title to the table and start a new row
+
+                        Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
+                        httpRequest2.setUrl("http://r6pixel.duckdns.org:3168/getImgBroadcast/" + json.getString("image"));
+                        httpRequest2.setHeader("Content-Type", "application/json");
+                        // Send the request
+                        int finalI = i;
+                        Gdx.net.sendHttpRequest(httpRequest2, new Net.HttpResponseListener() {
+                            @Override
+                            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                                byte[] imageData = httpResponse.getResult();
+                                // Load the image data into a Pixmap
+                                Pixmap pixmap = new Pixmap(imageData, 0, imageData.length);
+
+                                Gdx.app.postRunnable(new Runnable() {
+                                    @Override
+                                    public void run () {
+                                        // Create a Texture from the Pixmap
+                                        Texture texture = new Texture(pixmap);
+
+                                        // Dispose the Pixmap to release its resources
+                                        pixmap.dispose();
+
+                                        // Create a TextureRegion from the Texture
+                                        TextureRegion textureRegion = new TextureRegion(texture);
+
+                                        // Create a TextureRegionDrawable from the TextureRegion
+                                        TextureRegionDrawable drawable = new TextureRegionDrawable(textureRegion);
+
+                                        llistaImatges.set(finalI, drawable);
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void failed(Throwable t) {
+
+                            }
+
+                            @Override
+                            public void cancelled() {
+
+                            }
+                        });
+
+                        // Create description label
+                        Label description = new Label(json.getString("description"), labelDescripcioStyle);
+                        description.setWrap(true);
+                        description.setAlignment(Align.center);
+                        table.add(description).left().expandX().fillX().pad(10).colspan(2).row(); // Add description to the table and start a new row
+
+                    }
+
+                    creat = true;
+                }
+            }
+
+            @Override
+            public void failed(Throwable t) {
+                // Handle failure
+            }
+
+            @Override
+            public void cancelled() {
+                // Handle cancellation
             }
         });
-        closeButton.setPosition(0,0);
-        stage.addActor(closeButton);
-
-
-
         //Label.LabelStyle titleLabelStyle = skin_txt.get("title", Label.LabelStyle.class);
         popupWindow = new Window("NOTICIES", skin);
         popupWindow.getTitleLabel().setAlignment(Align.center);
