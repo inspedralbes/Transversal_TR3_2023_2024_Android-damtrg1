@@ -120,7 +120,7 @@ public class WaitingScreen implements Screen {
         stage.addActor(titleLabel);
 
         try {
-            mSocket = IO.socket("http://192.168.1.35:3168");
+            mSocket = IO.socket("http://r6pixel.duckdns.org:3168");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

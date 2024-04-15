@@ -22,6 +22,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -88,6 +90,8 @@ public class LoadingScreen implements Screen {
 
     public static String nom_skin = "";
 
+    public static ArrayList<TiledMap> array_mapes = new ArrayList<>();
+
 
     public LoadingScreen(Pixel_R6 game, boolean inventari_canviat) {
         this.game = game;
@@ -97,6 +101,7 @@ public class LoadingScreen implements Screen {
         this.inventari_canviat = inventari_canviat;
 
         preferences = Gdx.app.getPreferences("Pref");
+        System.out.println("USUARI: " + preferences.getString("username"));
 
         // Creem la càmera de les dimensions del joc
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Settings.GAME_HEIGHT);
@@ -232,7 +237,7 @@ public class LoadingScreen implements Screen {
         noms_skins = new ArrayList<String>();
 
         Net.HttpRequest httpRequest_assets = new Net.HttpRequest(Net.HttpMethods.GET);
-        String url_assets = "http://192.168.1.35:3168/getAssets";
+        String url_assets = "http://r6pixel.duckdns.org:3168/getAssets";
         httpRequest_assets.setUrl(url_assets);
         httpRequest_assets.setHeader("Content-Type", "application/json");
 
@@ -275,7 +280,7 @@ public class LoadingScreen implements Screen {
 
         // Create a POST request to fetch the image
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-        httpRequest.setUrl("http://192.168.1.35:3168/getAssets_post/");
+        httpRequest.setUrl("http://r6pixel.duckdns.org:3168/getAssets_post/");
         httpRequest.setHeader("Content-Type", "application/json");
 
         // Set the body data if needed
@@ -337,6 +342,8 @@ public class LoadingScreen implements Screen {
                                             System.out.println("Archivo encontrado: " + mapaFile.path());
                                             Texture imatge_mapa = new Texture(Gdx.files.local(mapaFile.path()));
                                             imatges_mapes.add(imatge_mapa);
+                                            //TiledMap mapa = new TmxMapLoader().load(String.valueOf(Gdx.files.local("mapas/"+subdir.name()+"/mapa_"+subdir.name()+".tmx")));
+                                            //array_mapes.add(mapa);
                                         } else {
                                             System.out.println("Archivo no encontrado para el directorio: " + subdir.name());
                                         }
@@ -431,7 +438,7 @@ public class LoadingScreen implements Screen {
             Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
 
             // Construct the URL with query parameters
-            String url = "http://192.168.1.35:3168/getAssets";
+            String url = "http://r6pixel.duckdns.org:3168/getAssets";
             httpRequest.setUrl(url);
             httpRequest.setHeader("Content-Type", "application/json");
 
@@ -473,7 +480,7 @@ public class LoadingScreen implements Screen {
             Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
 
             // Construct the URL with query parameters
-            String url2 = "http://192.168.1.35:3168/getInventari/" + preferences.getString("username");
+            String url2 = "http://r6pixel.duckdns.org:3168/getInventari/" + preferences.getString("username");
             httpRequest2.setUrl(url2);
             httpRequest2.setHeader("Content-Type", "application/json");
 

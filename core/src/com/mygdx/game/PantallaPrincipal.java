@@ -103,7 +103,7 @@ public class PantallaPrincipal implements Screen {
         if(nou) {
             // Create a GET request to fetch the image
             Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
-            httpRequest.setUrl("http://192.168.1.35:3168/logged/" + preferences.getString("username"));
+            httpRequest.setUrl("http://r6pixel.duckdns.org:3168/logged/" + preferences.getString("username"));
             httpRequest.setHeader("Content-Type", "application/json");
 
             // Send the request
@@ -136,7 +136,7 @@ public class PantallaPrincipal implements Screen {
             });
 
             try {
-                mSocket = IO.socket("http://192.168.1.35:3168");
+                mSocket = IO.socket("http://r6pixel.duckdns.org:3168");
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
@@ -148,7 +148,7 @@ public class PantallaPrincipal implements Screen {
 
         // Create a GET request to fetch the image
         Net.HttpRequest httpRequest2 = new Net.HttpRequest(Net.HttpMethods.GET);
-        httpRequest2.setUrl("http://192.168.1.35:3168/getMonedes/" + preferences.getString("username"));
+        httpRequest2.setUrl("http://r6pixel.duckdns.org:3168/getMonedes/" + preferences.getString("username"));
         httpRequest2.setHeader("Content-Type", "application/json");
 
         // Send the request
@@ -500,7 +500,7 @@ public class PantallaPrincipal implements Screen {
         stage.addActor(closeButton);
 
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.GET);
-        httpRequest.setUrl("http://192.168.1.35:3168/getBroadcastNews");
+        httpRequest.setUrl("http://r6pixel.duckdns.org:3168/getBroadcastNews");
         httpRequest.setHeader("Content-Type", "application/json");
 
         Label.LabelStyle titleLabelStyle = skin_txt.get("title", Label.LabelStyle.class);

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="21" nextobjectid="147">
- <tileset firstgid="1" source="C:/Users/alum-01/Downloads/TerrenosExterirores.tsx"/>
- <tileset firstgid="484" source="C:/Users/alum-01/Downloads/TerrenosInteriores.tsx"/>
- <tileset firstgid="2500" source="assetsMapa/hyptosis_til-art-batch-2.tsx"/>
- <tileset firstgid="3400" source="assetsMapa/hyptosis_tile-art-batch-1.tsx"/>
+ <tileset firstgid="1" source="TerrenosExterirores.tsx"/>
+ <tileset firstgid="484" source="terrenosInterior.tsx"/>
+ <tileset firstgid="2500" source="hyptosis_til-art-batch-2.tsx"/>
+ <tileset firstgid="3400" source="hyptosis_tile-art-batch-1.tsx"/>
  <layer id="14" name="sueloExterior" width="50" height="50">
   <data encoding="csv">
 2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,2869,

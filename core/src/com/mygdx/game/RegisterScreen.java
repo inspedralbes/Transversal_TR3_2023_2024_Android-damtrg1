@@ -283,7 +283,7 @@ public class RegisterScreen implements Screen {
 
                     // Crear una solicitud HTTP POST
                     Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-                    httpRequest.setUrl("http://192.168.1.35:3168/register"); // URL de tu servidor
+                    httpRequest.setUrl("http://r6pixel.duckdns.org:3168/register"); // URL de tu servidor
                     httpRequest.setHeader("Content-Type", "application/json");
                     String data = json.toString();
                     httpRequest.setContent(data);
@@ -309,7 +309,7 @@ public class RegisterScreen implements Screen {
                                     game.setLoggedIn(true, Username.getText().toString());
                                     // Redirige a la pantalla principal
                                     Gdx.app.postRunnable(() -> {
-                                        game.setScreen(new PantallaPrincipal(game, true));
+                                        game.setScreen(new LoadingScreen(game, false));
                                     });
                                 } else {
                                     Window.WindowStyle windowStyle = skin_windows.get(Window.WindowStyle.class);

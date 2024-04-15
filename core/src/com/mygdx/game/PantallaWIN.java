@@ -196,7 +196,7 @@ public class PantallaWIN implements Screen {
 
         // Crear una solicitud HTTP POST
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
-        httpRequest.setUrl("http://192.168.1.35:3168/finalGame"); // URL de tu servidor
+        httpRequest.setUrl("http://r6pixel.duckdns.org:3168/finalGame"); // URL de tu servidor
         httpRequest.setHeader("Content-Type", "application/json");
         String data = json.toString();
         httpRequest.setContent(data);
